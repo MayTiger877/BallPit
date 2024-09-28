@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio Version 17
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ball Pit - VST3", "Ball Pit_VST3.vcxproj", "{06A409FA-60E1-4E64-5B94-AD55211BAC81}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8668E471-3BE9-7575-ACC8-970B7791A7DE} = {8668E471-3BE9-7575-ACC8-970B7791A7DE}
+		{FC713B3A-6964-AB36-42F5-45930827B062} = {FC713B3A-6964-AB36-42F5-45930827B062}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ball Pit - Shared Code", "Ball Pit_SharedCode.vcxproj", "{8668E471-3BE9-7575-ACC8-970B7791A7DE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ball Pit - VST3 Manifest Helper", "Ball Pit_VST3ManifestHelper.vcxproj", "{FC713B3A-6964-AB36-42F5-45930827B062}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{06A409FA-60E1-4E64-5B94-AD55211BAC81}.Debug|x64.ActiveCfg = Debug|x64
+		{06A409FA-60E1-4E64-5B94-AD55211BAC81}.Debug|x64.Build.0 = Debug|x64
+		{06A409FA-60E1-4E64-5B94-AD55211BAC81}.Release|x64.ActiveCfg = Release|x64
+		{06A409FA-60E1-4E64-5B94-AD55211BAC81}.Release|x64.Build.0 = Release|x64
+		{8668E471-3BE9-7575-ACC8-970B7791A7DE}.Debug|x64.ActiveCfg = Debug|x64
+		{8668E471-3BE9-7575-ACC8-970B7791A7DE}.Debug|x64.Build.0 = Debug|x64
+		{8668E471-3BE9-7575-ACC8-970B7791A7DE}.Release|x64.ActiveCfg = Release|x64
+		{8668E471-3BE9-7575-ACC8-970B7791A7DE}.Release|x64.Build.0 = Release|x64
+		{FC713B3A-6964-AB36-42F5-45930827B062}.Debug|x64.ActiveCfg = Debug|x64
+		{FC713B3A-6964-AB36-42F5-45930827B062}.Debug|x64.Build.0 = Debug|x64
+		{FC713B3A-6964-AB36-42F5-45930827B062}.Release|x64.ActiveCfg = Release|x64
+		{FC713B3A-6964-AB36-42F5-45930827B062}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
