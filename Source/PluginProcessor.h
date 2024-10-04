@@ -9,6 +9,8 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Pit.h"
+#include "Ball.h"
 
 //==============================================================================
 /**
@@ -56,4 +58,6 @@ public:
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BallPitAudioProcessor)
+    juce::MidiBuffer midiBuffer;
+    Pit pit;
 };

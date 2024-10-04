@@ -1,10 +1,11 @@
 #pragma once
 #include <JuceHeader.h>
+#include "PluginProcessor.h"
 
-class Ball 
+class Ball
 {
 public:
-    Ball(float x, float y, float radius, float speedX, float speedY); //Ctor
+    Ball(float x, float y, float radius, float speedX, float speedY, BallPitAudioProcessor& processor);
 
     void update();
     void draw(juce::Graphics& g) const;
@@ -21,6 +22,8 @@ private:
     float x, y;           // Position of the ball
     float radius;       // radius of the ball
     float speedX, speedY; // Speed in X and Y directions
+
+    BallPitAudioProcessor& audioProcessor;
 
     void bounce();
 };

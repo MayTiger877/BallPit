@@ -11,8 +11,8 @@ public:
 	const int getMinY() { return minY; }
 	const int getMaxX() { return maxX; }
 	const int getMaxY() { return maxY; }
+	void findAndPlayNote(const int hitPointX, const int hitPointY);
 
-	void playMIDI(const int hitPointX, const int hitPointY);
 private:
 	const int minX = 12;
 	const int minY = 15;

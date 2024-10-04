@@ -8,10 +8,11 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "Ball.h"
 
 //==============================================================================
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), ball1(50, 50, 3, 10, 10)
+    : AudioProcessorEditor (&p), audioProcessor (p), ball_1(50, 50, 6, 5, 5, p)
 {
     // Load the SVG file (replace with the actual path to your SVG file)
     auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
@@ -43,7 +44,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
         drawable->draw(g, 1.0f);
     }
 
-    ball1.draw(g);
+    ball_1.draw(g);
 }
 
 void BallPitAudioProcessorEditor::resized()
@@ -53,6 +54,6 @@ void BallPitAudioProcessorEditor::resized()
 }
 
 void BallPitAudioProcessorEditor::timerCallback() {
-    ball1.update();  // Update the ball's position
+    ball_1.update();  // Update the ball's position
     repaint();      // Repaint the component to reflect the updated position
 }

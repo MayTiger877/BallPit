@@ -18,11 +18,10 @@ void createMIDI() { return; } // TODO
 
 //----------------------------------------------------------------------------
 
-Pit::Pit(int phase, int numerator, int denomenator)
-	: phase(phase), numerator(numerator), denomenator(denomenator)
+Pit::Pit(int phase, int numerator, int denomenator) : phase(phase), numerator(numerator), denomenator(denomenator) 
 {}
 
-void Pit::playMIDI(const int hitPointX, const int hitPointY)
+void Pit::findAndPlayNote(const int hitPointX, const int hitPointY)
 {
 	if (!checkHitPoint(hitPointX, hitPointY))
 	{
