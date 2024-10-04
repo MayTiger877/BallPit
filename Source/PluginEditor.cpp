@@ -13,9 +13,17 @@
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    // Load the SVG file (replace with the actual path to your SVG file)
+    auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
+
+    std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
+
+    // Create the Drawable from the SVG XML
+    if (svgXml != nullptr)
+        drawable = juce::Drawable::createFromSVG(*svgXml);
+
+    // Set the size of the plugin window
+    setSize(836, 654);
 }
 
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
@@ -25,12 +33,16 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 //==============================================================================
 void BallPitAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    // Fill the background with a solid color
+    g.fillAll(juce::Colours::white);
 
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (15.0f));
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    // Draw the SVG if it has been successfully loaded
+    if (drawable != nullptr)
+    {
+        // Set the drawable's bounds to fit the component area
+        drawable->setBounds(getLocalBounds());
+        drawable->draw(g, 1.0f);  // Draw the SVG with a scale factor of 1.0
+    }
 }
 
 void BallPitAudioProcessorEditor::resized()

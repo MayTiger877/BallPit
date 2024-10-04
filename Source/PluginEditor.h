@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    This file contains the basic framework code for a JUCE plugin editor.
+	This file contains the basic framework code for a JUCE plugin editor.
 
   ==============================================================================
 */
@@ -17,17 +17,19 @@
 class BallPitAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
-    BallPitAudioProcessorEditor (BallPitAudioProcessor&);
-    ~BallPitAudioProcessorEditor() override;
+	BallPitAudioProcessorEditor (BallPitAudioProcessor&);
+	~BallPitAudioProcessorEditor() override;
 
-    //==============================================================================
-    void paint (juce::Graphics&) override;
-    void resized() override;
+	//==============================================================================
+	void paint (juce::Graphics&) override;
+	void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    BallPitAudioProcessor& audioProcessor;
+	// This reference is provided as a quick way for your editor to
+	// access the processor object that created it.
+	BallPitAudioProcessor& audioProcessor;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BallPitAudioProcessorEditor)
+	std::unique_ptr<juce::Drawable> drawable;     // SVG drawable object
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BallPitAudioProcessorEditor)
 };
