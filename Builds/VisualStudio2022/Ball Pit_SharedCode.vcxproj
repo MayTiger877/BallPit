@@ -141,6 +141,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\Source\PluginProcessor.cpp"/>
     <ClCompile Include="..\..\Source\PluginEditor.cpp"/>
+    <ClCompile Include="..\..\Source\Ball.cpp"/>
+    <ClCompile Include="..\..\Source\Pit.cpp"/>
     <ClCompile Include="..\..\..\JUCE\modules\juce_animation\animation\juce_Animator.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -2874,6 +2876,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\PluginProcessor.h"/>
+    <ClInclude Include="..\..\Source\Ball.h"/>
+    <ClInclude Include="..\..\Source\Pit.h"/>
     <ClInclude Include="..\..\Source\PluginEditor.h"/>
     <ClInclude Include="..\..\..\JUCE\modules\juce_animation\animation\juce_Animator.h"/>
     <ClInclude Include="..\..\..\JUCE\modules\juce_animation\animation\juce_AnimatorSetBuilder.h"/>

@@ -715,6 +715,12 @@
     <ClCompile Include="..\..\Source\PluginEditor.cpp">
       <Filter>Ball Pit\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Ball.cpp">
+      <Filter>Ball Pit\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Pit.cpp">
+      <Filter>Ball Pit\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\JUCE\modules\juce_animation\animation\juce_Animator.cpp">
       <Filter>JUCE Modules\juce_animation\animation</Filter>
     </ClCompile>
@@ -3622,6 +3628,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\PluginProcessor.h">
+      <Filter>Ball Pit\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Ball.h">
+      <Filter>Ball Pit\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Pit.h">
       <Filter>Ball Pit\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\PluginEditor.h">

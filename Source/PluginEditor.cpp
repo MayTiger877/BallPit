@@ -11,7 +11,7 @@
 
 //==============================================================================
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+    : AudioProcessorEditor (&p), audioProcessor (p), ball1(50, 50, 3, 10, 10)
 {
     // Load the SVG file (replace with the actual path to your SVG file)
     auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
@@ -24,6 +24,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 
     // Set the size of the plugin window
     setSize(836, 654);
+    startTimerHz(60);
 }
 
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
@@ -31,22 +32,27 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 }
 
 //==============================================================================
-void BallPitAudioProcessorEditor::paint (juce::Graphics& g)
-{
-    // Fill the background with a solid color
-    g.fillAll(juce::Colours::white);
 
-    // Draw the SVG if it has been successfully loaded
+void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
+{
+    g.fillAll(juce::Colours::black);
+
     if (drawable != nullptr)
     {
-        // Set the drawable's bounds to fit the component area
         drawable->setBounds(getLocalBounds());
-        drawable->draw(g, 1.0f);  // Draw the SVG with a scale factor of 1.0
+        drawable->draw(g, 1.0f);
     }
+
+    ball1.draw(g);
 }
 
 void BallPitAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
+}
+
+void BallPitAudioProcessorEditor::timerCallback() {
+    ball1.update();  // Update the ball's position
+    repaint();      // Repaint the component to reflect the updated position
 }

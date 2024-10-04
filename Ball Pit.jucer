@@ -12,6 +12,10 @@
             file="Source/PluginProcessor.h"/>
       <FILE id="oAEpat" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
+      <FILE id="DkoKBQ" name="Ball.cpp" compile="1" resource="0" file="Source/Ball.cpp"/>
+      <FILE id="AxMvgl" name="Ball.h" compile="0" resource="0" file="Source/Ball.h"/>
+      <FILE id="sFgfp2" name="Pit.cpp" compile="1" resource="0" file="Source/Pit.cpp"/>
+      <FILE id="xD9Gqd" name="Pit.h" compile="0" resource="0" file="Source/Pit.h"/>
       <FILE id="lfa31n" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
   </MAINGROUP>
