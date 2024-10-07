@@ -9,8 +9,9 @@
 #pragma once
 
 #include <JuceHeader.h>
+
 #include "Pit.h"
-#include "Ball.h"
+#include "EdgeEventListener.h"
 
 //==============================================================================
 /**
@@ -55,9 +56,13 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+	const Pit& getPit() const;
+
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BallPitAudioProcessor)
-    juce::MidiBuffer midiBuffer;
+        
     Pit pit;
+    juce::MidiBuffer midiBuffer;
+    std::vector<std::unique_ptr<EdgeEventListener>> listeners;
 };

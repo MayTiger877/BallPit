@@ -3627,6 +3627,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\EdgeEventListener.h">
+      <Filter>Ball Pit\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\PluginProcessor.h">
       <Filter>Ball Pit\Source</Filter>
     </ClInclude>

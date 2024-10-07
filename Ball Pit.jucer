@@ -6,6 +6,8 @@
               cppLanguageStandard="latest">
   <MAINGROUP id="U9BnPz" name="Ball Pit">
     <GROUP id="{69F35049-CA00-8238-08A9-0404F25C31A4}" name="Source">
+      <FILE id="Rl8e1X" name="EdgeEventListener.h" compile="0" resource="0"
+            file="Source/EdgeEventListener.h"/>
       <FILE id="LqvQxR" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="yxDFTH" name="PluginProcessor.h" compile="0" resource="0"

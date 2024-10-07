@@ -8,11 +8,10 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "Ball.h"
 
 //==============================================================================
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), ball_1(50, 50, 6, 5, 5, p)
+    : AudioProcessorEditor (&p), audioProcessor (p)
 {
     // Load the SVG file (replace with the actual path to your SVG file)
     auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
@@ -38,13 +37,23 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 {
     g.fillAll(juce::Colours::black);
 
+	// draw background 
     if (drawable != nullptr)
     {
         drawable->setBounds(getLocalBounds());
         drawable->draw(g, 1.0f);
     }
-
-    ball_1.draw(g);
+    
+	// draw balls
+    const auto& balls = audioProcessor.getPit().getBalls();
+    for (const auto& ball : balls) 
+    {
+        g.setColour(juce::Colours::white);
+        g.fillEllipse(ball->getX() - ball->getRadius(),
+                      ball->getY() - ball->getRadius(),
+                      ball->getRadius() * 2.0f,
+                      ball->getRadius() * 2.0f);
+    }
 }
 
 void BallPitAudioProcessorEditor::resized()
@@ -53,7 +62,7 @@ void BallPitAudioProcessorEditor::resized()
     // subcomponents in your editor..
 }
 
-void BallPitAudioProcessorEditor::timerCallback() {
-    ball_1.update();  // Update the ball's position
-    repaint();      // Repaint the component to reflect the updated position
+void BallPitAudioProcessorEditor::timerCallback() 
+{
+    repaint();
 }

@@ -1,36 +1,42 @@
 #include "Pit.h"
 #include <iostream>
 
-bool Pit::checkHitPoint(const int hitPointX, const int hitPointY)
-{
-	if (hitPointX < this->minX ||
-		hitPointX > this->maxX ||
-		hitPointY < this->minY ||
-		hitPointY > this->maxY )
-	{
-		return false;
-	}
-
-	return true;
-}
-
-void createMIDI() { return; } // TODO
-
 //----------------------------------------------------------------------------
 
-Pit::Pit(int phase, int numerator, int denomenator) : phase(phase), numerator(numerator), denomenator(denomenator) 
-{}
-
-void Pit::findAndPlayNote(const int hitPointX, const int hitPointY)
+Pit::Pit()
 {
-	if (!checkHitPoint(hitPointX, hitPointY))
-	{
-		return;
-	}
-	
-	if (hitPointX <= this->minX) { createMIDI(); }
-	else if (hitPointX >= this->maxX) { createMIDI(); }
+	// Initialize the pit edges
+	this->phase = 0;
+	this->numerator = 1;
+	this->denomenator = 1;
 
-	if (hitPointY <= this->minY) { createMIDI(); }
-	else if (hitPointY >= this->maxY) { createMIDI(); }
+	// Initialize the pit edges musical scale
+	this->fundamental = 60; // middle C4
+	this->scale[0] = 0;
+	this->scale[1] = 2;
+	this->scale[2] = 4;
+	this->scale[3] = 5;
+	this->scale[4] = 7;
+	this->scale[5] = 9;
+	this->scale[6] = 11;
+	this->scale[7] = 12;
+	this->range = 8;
+}
+
+void Pit::addBall(std::unique_ptr<Ball> ball)
+{
+	balls.push_back(ball);
+}
+
+void Pit::update()
+{
+	for (auto& ball : balls)
+	{
+		ball->update();
+	}
+}
+
+const std::vector<std::unique_ptr<Ball>>& Pit::getBalls() const
+{
+	return balls;
 }

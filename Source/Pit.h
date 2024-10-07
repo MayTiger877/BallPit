@@ -1,26 +1,38 @@
 #pragma once
 #include <JuceHeader.h>
+#include <vector>
+#include <memory>
+
+#include "Ball.h"
 
 class Pit
 {
 
 public:
-	Pit(int phase, int numerator, int denomenator);
+	Pit();
 
-	const int getMinX() { return minX; }
-	const int getMinY() { return minY; }
-	const int getMaxX() { return maxX; }
-	const int getMaxY() { return maxY; }
-	void findAndPlayNote(const int hitPointX, const int hitPointY);
+	void addBall(std::unique_ptr<Ball> ball);
+	void update();
+	
+	const std::vector<std::unique_ptr<Ball>>& getBalls() const;
 
 private:
+	// pit coordinates
 	const int minX = 12;
 	const int minY = 15;
 	const int maxX = 402;
 	const int maxY = 405;
+	
+	// pit edges diviation
 	int phase;
 	int numerator;
 	int denomenator;
 
-	bool checkHitPoint(const int hitPointX, const int hitPointY);
+	// pit edges musical scale
+	int fundamental;
+	int scale[8];
+	int range;
+	
+	// balls
+	std::vector<std::unique_ptr<Ball>> balls;
 };
