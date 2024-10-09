@@ -8,8 +8,11 @@ public:
     Ball(float x, float y, float radius, float speedX, float speedY);
     
     void setBallEdgeEventListener(BallEdgeEventListener* l);
+	void setBallCollideEventListener(BallCollideEventListener* l);
 
     void update();
+    bool checkCollision(const Ball& other) const;
+    void resolveCollision(Ball& other);
 
     void setRadius(float radius);
     float getRadius() const;
@@ -34,7 +37,8 @@ private:
     float radius;
     float speedX, speedY;
 
-    BallEdgeEventListener* listener;
+    BallEdgeEventListener* edgeListener;
+	BallCollideEventListener* collideListener;
 
-    void bounce();
+    void edgeBounce();
 };

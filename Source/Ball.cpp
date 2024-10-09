@@ -2,19 +2,24 @@
 #include <iostream>
 
 Ball::Ball(float x, float y, float radius, float speedX, float speedY)
-	: x(x), y(y), radius(radius), speedX(speedX), speedY(speedY)
+	: x(x), y(y), radius(radius), speedX(0.1 * speedX), speedY(0.1 * speedY)
 {}
 
 void Ball::setBallEdgeEventListener(BallEdgeEventListener* l)
 {
-	this->listener = l;
+	this->edgeListener = l;
+}
+
+void Ball::setBallCollideEventListener(BallCollideEventListener* l)
+{
+	this->collideListener = l;
 }
 
 void Ball::update()
 {
 	x += speedX;
 	y += speedY;
-	bounce();
+	edgeBounce();
 }
 
 void Ball::draw(juce::Graphics& g) const
@@ -69,18 +74,76 @@ void Ball::setPosition(float x, float y)
 	this->y = y;
 }
 
-void Ball::bounce()
+void Ball::edgeBounce()
 {
 	if (x - radius <= minX || x + radius >= maxX)
 	{
 		speedX = -speedX;
-		if (this->listener) this->listener->onEdgeHit(x, y);
+		if (this->edgeListener) this->edgeListener->onEdgeHit(x, y);
 	}
 
 	if (y - radius <= minY || y + radius >= maxY)
 	{
 		speedY = -speedY;
-		if (this->listener) this->listener->onEdgeHit(x, y);
+		if (this->edgeListener) this->edgeListener->onEdgeHit(x, y);
 	}
 }
 
+bool Ball::checkCollision(const Ball& other) const 
+{
+	float dx = x - other.x;
+	float dy = y - other.y;
+	float distance = std::sqrt(dx * dx + dy * dy);
+	return distance <= (radius + other.radius);
+}
+
+void Ball::resolveCollision(Ball& other) 
+{
+	// Calculate distance between balls
+	float dx = x - other.x;
+	float dy = y - other.y;
+	float distance = std::sqrt(dx * dx + dy * dy);
+
+	// Normalize the direction vector
+	float nx = dx / distance;
+	float ny = dy / distance;
+
+	// Correct overlap by moving balls apart
+	float overlap = (radius + other.radius) - distance;
+	x += nx * (overlap / 2.0f);
+	y += ny * (overlap / 2.0f);
+	other.x -= nx * (overlap / 2.0f);
+	other.y -= ny * (overlap / 2.0f);
+
+	// Calculate relative velocity in the normal direction
+	float dvx = speedX - other.speedX;
+	float dvy = speedY - other.speedY;
+	float dotProduct = dvx * nx + dvy * ny;
+
+	// If the balls are moving away from each other, no need to resolve the collision
+	if (dotProduct > 0.0f)
+	{
+		return;
+	}
+
+	// Reflect velocities without changing the speed
+	float speedA = std::sqrt(speedX * speedX + speedY * speedY);  // Speed of ball A
+	float speedB = std::sqrt(other.speedX * other.speedX + other.speedY * other.speedY);  // Speed of ball B
+
+	// Exchange velocities along the normal direction
+	speedX -= 2.0f * dotProduct * nx;
+	speedY -= 2.0f * dotProduct * ny;
+	other.speedX += 2.0f * dotProduct * nx;
+	other.speedY += 2.0f * dotProduct * ny;
+
+	// Normalize the new velocities to maintain the original speed
+	float newSpeedA = std::sqrt(speedX * speedX + speedY * speedY);
+	speedX = (speedX / newSpeedA) * speedA;
+	speedY = (speedY / newSpeedA) * speedA;
+
+	float newSpeedB = std::sqrt(other.speedX * other.speedX + other.speedY * other.speedY);
+	other.speedX = (other.speedX / newSpeedB) * speedB;
+	other.speedY = (other.speedY / newSpeedB) * speedB;
+
+	if (this->collideListener) this->collideListener->onEdgeHit(x, y);
+}

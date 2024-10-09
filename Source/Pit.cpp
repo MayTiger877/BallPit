@@ -34,6 +34,18 @@ void Pit::update()
 	{
 		ball->update();
 	}
+
+	// balls collisions
+	for (size_t i = 0; i < balls.size(); ++i) 
+	{
+		for (size_t j = i + 1; j < balls.size(); ++j) 
+		{
+			if (balls[i]->checkCollision(*balls[j])) 
+			{
+				balls[i]->resolveCollision(*balls[j]);
+			}
+		}
+	}
 }
 
 const std::vector<std::unique_ptr<Ball>>& Pit::getBalls() const

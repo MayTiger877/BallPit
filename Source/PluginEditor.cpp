@@ -46,9 +46,13 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
     
 	// draw balls
     const auto& balls = audioProcessor.getPit().getBalls();
+	int color = 0;
     for (const auto& ball : balls) 
     {
-        g.setColour(juce::Colours::white);
+        if (color == 0) { g.setColour(juce::Colours::blue); }
+        if (color == 1) { g.setColour(juce::Colours::crimson); }
+        if (color == 2) { g.setColour(juce::Colours::darkgreen); }
+        color++;
         g.fillEllipse(ball->getX() - ball->getRadius(),
                       ball->getY() - ball->getRadius(),
                       ball->getRadius() * 2.0f,

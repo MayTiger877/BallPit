@@ -22,11 +22,24 @@ BallPitAudioProcessor::BallPitAudioProcessor()
                        ), pit()
 #endif
 {
+    // ball 1
     auto ball1 = std::make_unique<Ball>(250.0f, 250.0f, 10.0f, 10.0f, 6.0f);
     auto midiListener1 = std::make_unique<BallEdgeEventListener>(midiBuffer);
+	auto collisionListener1 = std::make_unique<BallCollideEventListener>(midiBuffer);
     ball1->setBallEdgeEventListener(midiListener1.get());
+	ball1->setBallCollideEventListener(collisionListener1.get());
     pit.addBall(std::move(ball1));
     listeners.push_back(std::move(midiListener1));
+
+	// ball 2
+	auto ball2 = std::make_unique<Ball>(100.0f, 100.0f, 20.0f, 1.0f, 6.0f);
+	auto midiListener2 = std::make_unique<BallEdgeEventListener>(midiBuffer);
+	auto collisionListener2 = std::make_unique<BallCollideEventListener>(midiBuffer);
+	ball2->setBallEdgeEventListener(midiListener2.get());
+	ball2->setBallCollideEventListener(collisionListener2.get());
+	pit.addBall(std::move(ball2));
+	listeners.push_back(std::move(midiListener2));
+    
 }
 
 BallPitAudioProcessor::~BallPitAudioProcessor()
