@@ -24,16 +24,13 @@ public:
 
     void onEdgeHit(float x, float y) override 
     {
-        int midiNote = 60; // C4 note
+		int midiNote = 100; // C4
         int velocity = 100; // Velocity for the note
         juce::MidiMessage noteOn = juce::MidiMessage::noteOn(1, midiNote, (juce::uint8)velocity);
         juce::MidiMessage noteOff = juce::MidiMessage::noteOff(1, midiNote);
 
-        // Send note-on
         midiBuffer.addEvent(noteOn, 0);
-
-        // Add a delayed note-off event for 100 milliseconds later
-        midiBuffer.addEvent(noteOff, 100);
+        midiBuffer.addEvent(noteOff, 300);
     }
 
 private:

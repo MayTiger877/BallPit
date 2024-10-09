@@ -7,7 +7,7 @@ class Ball
 public:
     Ball(float x, float y, float radius, float speedX, float speedY);
     
-    void setEdgeEventListener(EdgeEventListener* l);
+    void setBallEdgeEventListener(BallEdgeEventListener* l);
 
     void update();
 
@@ -34,7 +34,7 @@ private:
     float radius;
     float speedX, speedY;
 
-    EdgeEventListener* listener;
+    BallEdgeEventListener* listener;
 
     void bounce();
 };

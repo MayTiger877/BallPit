@@ -5,7 +5,7 @@ Ball::Ball(float x, float y, float radius, float speedX, float speedY)
 	: x(x), y(y), radius(radius), speedX(speedX), speedY(speedY)
 {}
 
-void Ball::setEdgeEventListener(EdgeEventListener* l) 
+void Ball::setBallEdgeEventListener(BallEdgeEventListener* l)
 {
 	this->listener = l;
 }

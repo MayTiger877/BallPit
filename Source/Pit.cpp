@@ -25,7 +25,7 @@ Pit::Pit()
 
 void Pit::addBall(std::unique_ptr<Ball> ball)
 {
-	balls.push_back(ball);
+	balls.push_back(std::move(ball));
 }
 
 void Pit::update()
