@@ -14,7 +14,8 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     // Load the SVG file (replace with the actual path to your SVG file)
-    auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
+    //auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
+    auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg");
 
     std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
 

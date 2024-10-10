@@ -2,7 +2,7 @@
 #include <iostream>
 
 Ball::Ball(float x, float y, float radius, float speedX, float speedY)
-	: x(x), y(y), radius(radius), speedX(0.1 * speedX), speedY(0.1 * speedY)
+	: x(x), y(y), radius(radius), speedX(0.4 * speedX), speedY(0.4 * speedY)
 {}
 
 void Ball::setBallEdgeEventListener(BallEdgeEventListener* l)
