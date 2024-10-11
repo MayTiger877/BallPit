@@ -28,11 +28,21 @@ void Pit::addBall(std::unique_ptr<Ball> ball)
 	balls.push_back(std::move(ball));
 }
 
-void Pit::update()
+void Pit::setSampleRate(double updatedSampleRate)
 {
 	for (auto& ball : balls)
 	{
+		ball->setSampleRate(updatedSampleRate);
+	}
+}
+
+void Pit::update()
+{
+	// edges hit
+	for (auto& ball : balls)
+	{
 		ball->update();
+		ball->edgeBounce();
 	}
 
 	// balls collisions

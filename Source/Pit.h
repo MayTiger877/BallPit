@@ -12,6 +12,7 @@ public:
 	Pit();
 
 	void addBall(std::unique_ptr<Ball> ball);
+	void setSampleRate(double updatedSampleRate);
 	void update();
 	
 	const std::vector<std::unique_ptr<Ball>>& getBalls() const;

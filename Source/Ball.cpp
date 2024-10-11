@@ -19,7 +19,6 @@ void Ball::update()
 {
 	x += speedX;
 	y += speedY;
-	edgeBounce();
 }
 
 void Ball::draw(juce::Graphics& g) const
@@ -79,13 +78,13 @@ void Ball::edgeBounce()
 	if (x - radius <= minX || x + radius >= maxX)
 	{
 		speedX = -speedX;
-		if (this->edgeListener) this->edgeListener->onEdgeHit(x, y);
+		if (this->edgeListener) this->edgeListener->onEdgeHit(x, y, sampleRate);
 	}
 
 	if (y - radius <= minY || y + radius >= maxY)
 	{
 		speedY = -speedY;
-		if (this->edgeListener) this->edgeListener->onEdgeHit(x, y);
+		if (this->edgeListener) this->edgeListener->onEdgeHit(x, y, sampleRate);
 	}
 }
 
@@ -145,5 +144,5 @@ void Ball::resolveCollision(Ball& other)
 	other.speedX = (other.speedX / newSpeedB) * speedB;
 	other.speedY = (other.speedY / newSpeedB) * speedB;
 
-	if (this->collideListener) this->collideListener->onEdgeHit(x, y);
+	if (this->collideListener) this->collideListener->onEdgeHit(x, y, sampleRate);
 }

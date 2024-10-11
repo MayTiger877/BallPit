@@ -6,11 +6,14 @@ class Ball
 {
 public:
     Ball(float x, float y, float radius, float speedX, float speedY);
-    
+
     void setBallEdgeEventListener(BallEdgeEventListener* l);
 	void setBallCollideEventListener(BallCollideEventListener* l);
 
+    void setSampleRate(double newSampleRate) { this->sampleRate = newSampleRate; }
+
     void update();
+    void edgeBounce();
     bool checkCollision(const Ball& other) const;
     void resolveCollision(Ball& other);
 
@@ -37,8 +40,8 @@ private:
     float radius;
     float speedX, speedY;
 
+    double sampleRate;
+
     BallEdgeEventListener* edgeListener;
 	BallCollideEventListener* collideListener;
-
-    void edgeBounce();
 };

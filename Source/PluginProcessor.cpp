@@ -19,13 +19,13 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					  #endif
 					   .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
 					 #endif
-					   ), pit()
+					   ), pit(), midiBuffer()
 #endif
 {
 	// ball 1
 	auto ball1 = std::make_unique<Ball>(250.0f, 250.0f, 10.0f, 10.0f, 6.0f);
 	auto midiListener1 = std::make_unique<BallEdgeEventListener>(midiBuffer);
-	auto collisionListener1 = std::make_unique<BallCollideEventListener>(midiBuffer, getSampleRate());
+	auto collisionListener1 = std::make_unique<BallCollideEventListener>(midiBuffer);
 	ball1->setBallEdgeEventListener(midiListener1.get());
 	ball1->setBallCollideEventListener(collisionListener1.get());
 	pit.addBall(std::move(ball1));
@@ -35,7 +35,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	// ball 2
 	auto ball2 = std::make_unique<Ball>(100.0f, 150.0f, 20.0f, 15.0f, 2.0f);
 	auto midiListener2 = std::make_unique<BallEdgeEventListener>(midiBuffer);
-	auto collisionListener2 = std::make_unique<BallCollideEventListener>(midiBuffer, getSampleRate());
+	auto collisionListener2 = std::make_unique<BallCollideEventListener>(midiBuffer);
 	ball2->setBallEdgeEventListener(midiListener2.get());
 	ball2->setBallCollideEventListener(collisionListener2.get());
 	pit.addBall(std::move(ball2));
@@ -45,7 +45,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	// ball 3
 	auto ball3 = std::make_unique<Ball>(100.0f, 100.0f, 20.0f, 1.0f, 6.0f);
 	auto midiListener3 = std::make_unique<BallEdgeEventListener>(midiBuffer);
-	auto collisionListener3 = std::make_unique<BallCollideEventListener>(midiBuffer, getSampleRate());
+	auto collisionListener3 = std::make_unique<BallCollideEventListener>(midiBuffer);
 	ball3->setBallEdgeEventListener(midiListener3.get());
 	ball3->setBallCollideEventListener(collisionListener3.get());
 	pit.addBall(std::move(ball3));
@@ -123,8 +123,7 @@ void BallPitAudioProcessor::changeProgramName (int index, const juce::String& ne
 //==============================================================================
 void BallPitAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-	// Use this method as the place to do any pre-playback
-	// initialisation that you need..
+	pit.setSampleRate(this->getSampleRate());
 }
 
 void BallPitAudioProcessor::releaseResources()
@@ -159,11 +158,26 @@ bool BallPitAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 }
 #endif
 
+void dumpMIDIMessages(juce::MidiBuffer& midiMessages, juce::MidiBuffer *midiBufferPtr)
+{
+	juce::MidiBuffer midiBuffer = *midiBufferPtr;
+	juce::MidiBuffer::Iterator it(midiBuffer);
+	juce::MidiMessage message;
+	int samplePosition;
+
+	while (it.getNextEvent(message, samplePosition))
+	{
+		midiMessages.addEvent(message, samplePosition);
+	}
+
+	midiBuffer.clear();
+}
+
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	buffer.clear(); 
-	pit.update();
-	midiMessages.swapWith(midiBuffer);
+	//pit.update();
+	dumpMIDIMessages(midiMessages, &midiBuffer);
 	midiBuffer.clear();
 }
 
