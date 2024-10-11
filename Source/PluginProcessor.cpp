@@ -163,38 +163,44 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 {
 	buffer.clear();
 	pit.update();
+	
 	juce::MidiBuffer::Iterator reserveIt(midiBuffer);
 	juce::MidiBuffer::Iterator it(midiBuffer);
 	juce::MidiMessage message;
 	int samplePosition;
 	int samplesPerBlock = buffer.getNumSamples();
 
-	for (auto it = pendingEvents.begin(); it != pendingEvents.end();)
+	for (auto pendingIt = pendingEvents.begin(); pendingIt != pendingEvents.end();)
 	{
-		if (it->samplePosition < samplesPerBlock)
+		if (pendingIt->samplePosition < samplesPerBlock)
 		{
-			midiMessages.addEvent(it->message, it->samplePosition);
-			it = pendingEvents.erase(it);
+			DBG(pendingIt->message.getDescription() << "INSIDE MIDI BUFFER");
+			midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
+			pendingIt = pendingEvents.erase(pendingIt);
 		}
 		else
 		{
-			++it; 
+			++pendingIt;
 		}
 	}
 
 	while (it.getNextEvent(message, samplePosition))
 	{
-		DBG(message.getDescription());
 		if (samplePosition < samplesPerBlock)
 		{
+			DBG(message.getDescription() << "INSIDE MIDI BUFFER");
 			midiMessages.addEvent(message, samplePosition);
 		}
 		else
 		{
+			DBG(message.getDescription() << "SENT PENDING");
 			pendingEvents.push_back({message, (samplePosition- samplesPerBlock)});
 		}
 	}
 
+	message = juce::MidiMessage::allNotesOff(1);
+	//DBG(message.getDescription());
+	//midiMessages.addEvent(message, samplePosition + 1);
 	midiBuffer.clear();
 }
 

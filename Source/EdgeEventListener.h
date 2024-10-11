@@ -29,7 +29,7 @@ public:
 		int velocity = 100; // Velocity for the note
 		juce::MidiMessage noteOn = juce::MidiMessage::noteOn(1, midiNote, (juce::uint8)velocity);
 		juce::MidiMessage noteOff = juce::MidiMessage::noteOff(1, midiNote);
-		int noteDurationSamples = static_cast<int>(0.200 * sampleRate); // 200ms
+		int noteDurationSamples = 1000;// static_cast<int>(0.300 * sampleRate); // 200ms
 
 		midiBuffer.addEvent(noteOn, 0);
 		midiBuffer.addEvent(noteOff, noteDurationSamples);
@@ -57,9 +57,8 @@ public:
 		int midiNote3 = 67;  // G4
 		int velocity = 100;  // Velocity for the notes
 		int samplePosition = 0;  // Starting at sample position 0
-		int duration = static_cast<int>(0.200 * sampleRate); // 200ms
+		int duration = 1000;//static_cast<int>(0.500 * sampleRate); // 200ms
 
-		// Add the C major chord with a slight sample offset between notes
 		midiBuffer.addEvent(juce::MidiMessage::noteOn(1, midiNote1, (juce::uint8)velocity), samplePosition);
 		midiBuffer.addEvent(juce::MidiMessage::noteOff(1, midiNote1), samplePosition + duration);
 
