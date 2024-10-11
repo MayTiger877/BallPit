@@ -24,7 +24,7 @@ public:
 
     void onEdgeHit(float x, float y) override 
     {
-		int midiNote = 60; // C4
+		int midiNote = 70;
         int velocity = 100; // Velocity for the note
         juce::MidiMessage noteOn = juce::MidiMessage::noteOn(1, midiNote, (juce::uint8)velocity);
         juce::MidiMessage noteOff = juce::MidiMessage::noteOff(1, midiNote);
@@ -45,7 +45,7 @@ public:
 
     void onEdgeHit(float x, float y) override
     {   
-        int midiNote1 = 60;  // C4
+        int midiNote1 = 80;  // C4
         int midiNote2 = 64;  // E4
         int midiNote3 = 67;  // G4
         int velocity = 100;  // Velocity for the notes
