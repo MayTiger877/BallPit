@@ -42,15 +42,15 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	listeners.push_back(std::move(midiListener2));
 	listeners.push_back(std::move(collisionListener2));
 
-	// ball 3
-	auto ball3 = std::make_unique<Ball>(100.0f, 100.0f, 20.0f, 1.0f, 6.0f);
-	auto midiListener3 = std::make_unique<BallEdgeEventListener>(midiBuffer);
-	auto collisionListener3 = std::make_unique<BallCollideEventListener>(midiBuffer);
-	ball3->setBallEdgeEventListener(midiListener3.get());
-	ball3->setBallCollideEventListener(collisionListener3.get());
-	pit.addBall(std::move(ball3));
-	listeners.push_back(std::move(midiListener3));
-	listeners.push_back(std::move(collisionListener3));
+	//// ball 3
+	//auto ball3 = std::make_unique<Ball>(100.0f, 100.0f, 20.0f, 1.0f, 6.0f);
+	//auto midiListener3 = std::make_unique<BallEdgeEventListener>(midiBuffer);
+	//auto collisionListener3 = std::make_unique<BallCollideEventListener>(midiBuffer);
+	//ball3->setBallEdgeEventListener(midiListener3.get());
+	//ball3->setBallCollideEventListener(collisionListener3.get());
+	//pit.addBall(std::move(ball3));
+	//listeners.push_back(std::move(midiListener3));
+	//listeners.push_back(std::move(collisionListener3));
 	
 }
 
@@ -124,6 +124,7 @@ void BallPitAudioProcessor::changeProgramName (int index, const juce::String& ne
 void BallPitAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 	pit.setSampleRate(this->getSampleRate());
+	midiBuffer.clear();
 }
 
 void BallPitAudioProcessor::releaseResources()
@@ -158,26 +159,42 @@ bool BallPitAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 }
 #endif
 
-void dumpMIDIMessages(juce::MidiBuffer& midiMessages, juce::MidiBuffer *midiBufferPtr)
+void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-	juce::MidiBuffer midiBuffer = *midiBufferPtr;
+	buffer.clear();
+	pit.update();
+	juce::MidiBuffer::Iterator reserveIt(midiBuffer);
 	juce::MidiBuffer::Iterator it(midiBuffer);
 	juce::MidiMessage message;
 	int samplePosition;
+	int samplesPerBlock = buffer.getNumSamples();
+
+	for (auto it = pendingEvents.begin(); it != pendingEvents.end();)
+	{
+		if (it->samplePosition < samplesPerBlock)
+		{
+			midiMessages.addEvent(it->message, it->samplePosition);
+			it = pendingEvents.erase(it);
+		}
+		else
+		{
+			++it; 
+		}
+	}
 
 	while (it.getNextEvent(message, samplePosition))
 	{
-		midiMessages.addEvent(message, samplePosition);
+		DBG(message.getDescription());
+		if (samplePosition < samplesPerBlock)
+		{
+			midiMessages.addEvent(message, samplePosition);
+		}
+		else
+		{
+			pendingEvents.push_back({message, (samplePosition- samplesPerBlock)});
+		}
 	}
 
-	midiBuffer.clear();
-}
-
-void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
-{
-	buffer.clear(); 
-	//pit.update();
-	dumpMIDIMessages(midiMessages, &midiBuffer);
 	midiBuffer.clear();
 }
 

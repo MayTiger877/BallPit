@@ -13,6 +13,13 @@
 #include "Pit.h"
 #include "EdgeEventListener.h"
 
+
+typedef struct
+{
+    juce::MidiMessage message;
+    int samplePosition;
+}PendingMidiEvent;
+
 //==============================================================================
 /**
 */
@@ -65,4 +72,5 @@ private:
     Pit pit;
     juce::MidiBuffer midiBuffer;
     std::vector<std::unique_ptr<EdgeEventListener>> listeners;
+    std::vector<PendingMidiEvent> pendingEvents;
 };

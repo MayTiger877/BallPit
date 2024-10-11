@@ -24,6 +24,7 @@ public:
 
 	void onEdgeHit(float x, float y, double sampleRate) override
 	{
+		DBG("EDGE HIT");
 		int midiNote = 70;
 		int velocity = 100; // Velocity for the note
 		juce::MidiMessage noteOn = juce::MidiMessage::noteOn(1, midiNote, (juce::uint8)velocity);
@@ -46,27 +47,28 @@ public:
 	BallCollideEventListener(juce::MidiBuffer& midiBuffer) : midiBuffer(midiBuffer) {}
 
 	void onEdgeHit(float x, float y, double sampleRate) override
-	{   
+	{
+		DBG("BALL COLLIDE");
+		//int noteDurationSamples = static_cast<int>(0.200 * sampleRate); // 200ms;
+
+		// Define notes for a C major chord (C4, E4, G4)
 		int midiNote1 = 60;  // C4
 		int midiNote2 = 64;  // E4
 		int midiNote3 = 67;  // G4
 		int velocity = 100;  // Velocity for the notes
-		int noteDurationSamples = static_cast<int>(0.200 * sampleRate); // 200ms;
+		int samplePosition = 0;  // Starting at sample position 0
+		int duration = static_cast<int>(0.200 * sampleRate); // 200ms
 
-		// Create MIDI messages
-		juce::MidiMessage noteOn1 = juce::MidiMessage::noteOn(1, midiNote1, (juce::uint8)velocity);
-		juce::MidiMessage noteOff1 = juce::MidiMessage::noteOff(1, midiNote1);
-		juce::MidiMessage noteOn2 = juce::MidiMessage::noteOn(1, midiNote2, (juce::uint8)velocity);
-		juce::MidiMessage noteOff2 = juce::MidiMessage::noteOff(1, midiNote2);
-		juce::MidiMessage noteOn3 = juce::MidiMessage::noteOn(1, midiNote3, (juce::uint8)velocity);
-		juce::MidiMessage noteOff3 = juce::MidiMessage::noteOff(1, midiNote3);
+		// Add the C major chord with a slight sample offset between notes
+		midiBuffer.addEvent(juce::MidiMessage::noteOn(1, midiNote1, (juce::uint8)velocity), samplePosition);
+		midiBuffer.addEvent(juce::MidiMessage::noteOff(1, midiNote1), samplePosition + duration);
 
-		//midiBuffer.addEvent(noteOn1, 0);
-		midiBuffer.addEvent(noteOn2, 0);
-		midiBuffer.addEvent(noteOn3, 0);
-		//midiBuffer.addEvent(noteOff1, noteDurationSamples);
-		midiBuffer.addEvent(noteOff2, noteDurationSamples + 1);
-		midiBuffer.addEvent(noteOff3, noteDurationSamples + 2);
+		midiBuffer.addEvent(juce::MidiMessage::noteOn(1, midiNote2, (juce::uint8)velocity), samplePosition + 1);
+		midiBuffer.addEvent(juce::MidiMessage::noteOff(1, midiNote2), samplePosition + 1 + duration);
+
+		midiBuffer.addEvent(juce::MidiMessage::noteOn(1, midiNote3, (juce::uint8)velocity), samplePosition + 2);
+		midiBuffer.addEvent(juce::MidiMessage::noteOff(1, midiNote3), samplePosition + 2 + duration);
+
 	}
 
 private:
