@@ -15,6 +15,19 @@
 //==============================================================================
 /**
 */
+
+typedef struct 
+{
+	juce::Slider xSlider, ySlider, radiusSlider, speedXSlider, speedYSlider;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> xAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> yAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> radiusAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> speedXAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> speedYAttachment;
+}BallSlidersAndAttachments;
+
+//-------------------------------------------------------------------------------------------
+
 class BallPitAudioProcessorEditor  : public juce::AudioProcessorEditor, public juce::Timer
 {
 public:
@@ -32,6 +45,9 @@ private:
 	BallPitAudioProcessor& audioProcessor;
 
 	std::unique_ptr<juce::Drawable> drawable;
+
+	BallSlidersAndAttachments ballsSlidersAndAttachments[3];
+	void initiateComponents();
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BallPitAudioProcessorEditor)
 };

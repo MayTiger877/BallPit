@@ -19,7 +19,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					  #endif
 					   .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
 					 #endif
-					   ), pit(), midiBuffer()
+					   ), pit(), midiBuffer(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters())
 #endif
 {
 	// ball 1
@@ -159,8 +159,31 @@ bool BallPitAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 }
 #endif
 
+void BallPitAudioProcessor::getUpdatedBallParams()
+{
+	for (int i = 0; i < 3; i++)
+	{
+
+
+		std::string ballXId = "ballX" + std::to_string(i);
+		std::string ballYId = "ballY" + std::to_string(i);
+		std::string ballRadiusId = "ballRadius" + std::to_string(i);
+		std::string ballSpeedXId = "ballSpeedX" + std::to_string(i);
+		std::string ballSpeedYId = "ballSpeedY" + std::to_string(i);
+
+		pit.setBallParams(i, 
+			*valueTreeState.getRawParameterValue(ballXId), 
+			*valueTreeState.getRawParameterValue(ballYId), 
+			*valueTreeState.getRawParameterValue(ballRadiusId), 
+			*valueTreeState.getRawParameterValue(ballSpeedXId), 
+			*valueTreeState.getRawParameterValue(ballSpeedYId));
+	}
+}
+
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+	//getUpdatedBallParams();
+
 	buffer.clear();
 	pit.update();
 	
@@ -239,4 +262,26 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 const Pit& BallPitAudioProcessor::getPit() const
 {
 	return pit;
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::createParameters()
+{
+	std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+
+	for (int i = 0; i < 3; i++)
+	{
+		std::string ballXId = "ballX" + std::to_string(i);
+		std::string ballYId = "ballY" + std::to_string(i);
+		std::string ballRadiusId = "ballRadius" + std::to_string(i);
+		std::string ballSpeedXId = "ballSpeedX" + std::to_string(i);
+		std::string ballSpeedYId = "ballSpeedY" + std::to_string(i);
+
+		params.push_back(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", 0.0f, 800.0f, 100.0f));
+		params.push_back(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", 0.0f, 600.0f, 100.0f));
+		params.push_back(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", 5.0f, 50.0f, 10.0f));
+		params.push_back(std::make_unique<juce::AudioParameterFloat>(ballSpeedXId, "Speed X", -10.0f, 10.0f, 1.0f));
+		params.push_back(std::make_unique<juce::AudioParameterFloat>(ballSpeedYId, "Speed Y", -10.0f, 10.0f, 1.0f));
+	}
+
+	return { params.begin(), params.end() };
 }

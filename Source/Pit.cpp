@@ -62,3 +62,10 @@ const std::vector<std::unique_ptr<Ball>>& Pit::getBalls() const
 {
 	return balls;
 }
+
+void Pit::setBallParams(int index, float x, float y, float radius, float speedX, float speedY)
+{
+	balls[index]->setPosition(x, y);
+	balls[index]->setRadius(radius);
+	balls[index]->setSpeed(speedX, speedY);
+}

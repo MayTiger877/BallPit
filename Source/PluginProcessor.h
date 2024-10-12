@@ -63,6 +63,10 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    juce::AudioProcessorValueTreeState& getValueTreeState() { return valueTreeState; }
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
+    juce::AudioProcessorValueTreeState valueTreeState;
+
 	const Pit& getPit() const;
 
 private:
@@ -73,4 +77,6 @@ private:
     juce::MidiBuffer midiBuffer;
     std::vector<std::unique_ptr<EdgeEventListener>> listeners;
     std::vector<PendingMidiEvent> pendingEvents;
+
+    void getUpdatedBallParams();
 };

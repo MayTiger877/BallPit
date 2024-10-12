@@ -2,3 +2,5 @@
 Builds
 Builds/
 ./Builds/
+./Builds/VisualStudio2022
+./Builds/VisualStudio2022/*
