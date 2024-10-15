@@ -24,6 +24,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 {
 	// ball 1
 	auto ball1 = std::make_unique<Ball>(250.0f, 250.0f, 10.0f, 10.0f, 6.0f);
+	ball1->setActive(true);
 	auto midiListener1 = std::make_unique<BallEdgeEventListener>(midiBuffer);
 	auto collisionListener1 = std::make_unique<BallCollideEventListener>(midiBuffer);
 	ball1->setBallEdgeEventListener(midiListener1.get());
@@ -34,6 +35,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 
 	// ball 2
 	auto ball2 = std::make_unique<Ball>(100.0f, 150.0f, 20.0f, 15.0f, 2.0f);
+	ball2->setActive(false);
 	auto midiListener2 = std::make_unique<BallEdgeEventListener>(midiBuffer);
 	auto collisionListener2 = std::make_unique<BallCollideEventListener>(midiBuffer);
 	ball2->setBallEdgeEventListener(midiListener2.get());
@@ -42,15 +44,16 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	listeners.push_back(std::move(midiListener2));
 	listeners.push_back(std::move(collisionListener2));
 
-	//// ball 3
-	//auto ball3 = std::make_unique<Ball>(100.0f, 100.0f, 20.0f, 1.0f, 6.0f);
-	//auto midiListener3 = std::make_unique<BallEdgeEventListener>(midiBuffer);
-	//auto collisionListener3 = std::make_unique<BallCollideEventListener>(midiBuffer);
-	//ball3->setBallEdgeEventListener(midiListener3.get());
-	//ball3->setBallCollideEventListener(collisionListener3.get());
-	//pit.addBall(std::move(ball3));
-	//listeners.push_back(std::move(midiListener3));
-	//listeners.push_back(std::move(collisionListener3));
+	// ball 3
+	auto ball3 = std::make_unique<Ball>(100.0f, 100.0f, 5.0f, 1.0f, 1.0f);
+	ball3->setActive(false);
+	auto midiListener3 = std::make_unique<BallEdgeEventListener>(midiBuffer);
+	auto collisionListener3 = std::make_unique<BallCollideEventListener>(midiBuffer);
+	ball3->setBallEdgeEventListener(midiListener3.get());
+	ball3->setBallCollideEventListener(collisionListener3.get());
+	pit.addBall(std::move(ball3));
+	listeners.push_back(std::move(midiListener3));
+	listeners.push_back(std::move(collisionListener3));
 	
 }
 
@@ -163,26 +166,27 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 {
 	for (int i = 0; i < 3; i++)
 	{
-
+		if (pit.getBalls()[i]->isActive() == false) continue;
 
 		std::string ballXId = "ballX" + std::to_string(i);
 		std::string ballYId = "ballY" + std::to_string(i);
 		std::string ballRadiusId = "ballRadius" + std::to_string(i);
-		std::string ballSpeedXId = "ballSpeedX" + std::to_string(i);
-		std::string ballSpeedYId = "ballSpeedY" + std::to_string(i);
+		std::string ballVelocityId = "ballVelocity" + std::to_string(i);
+		std::string ballAngleId = "ballAngle" + std::to_string(i);
 
-		pit.setBallParams(i, 
-			*valueTreeState.getRawParameterValue(ballXId), 
-			*valueTreeState.getRawParameterValue(ballYId), 
-			*valueTreeState.getRawParameterValue(ballRadiusId), 
-			*valueTreeState.getRawParameterValue(ballSpeedXId), 
-			*valueTreeState.getRawParameterValue(ballSpeedYId));
+		float x = valueTreeState.getRawParameterValue(ballXId)->load();
+		float y = valueTreeState.getRawParameterValue(ballYId)->load();
+		float radius = valueTreeState.getRawParameterValue(ballRadiusId)->load();
+		float velocity = 2;// valueTreeState.getRawParameterValue(ballVelocityId)->load();
+		float angle = valueTreeState.getRawParameterValue(ballAngleId)->load();
+
+		pit.setBallParams(i, x, y, radius, velocity, angle);
 	}
 }
 
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-	//getUpdatedBallParams();
+	getUpdatedBallParams();
 
 	buffer.clear();
 	pit.update();
@@ -266,22 +270,22 @@ const Pit& BallPitAudioProcessor::getPit() const
 
 juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::createParameters()
 {
-	std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+	juce::AudioProcessorValueTreeState::ParameterLayout params;
 
 	for (int i = 0; i < 3; i++)
 	{
 		std::string ballXId = "ballX" + std::to_string(i);
 		std::string ballYId = "ballY" + std::to_string(i);
 		std::string ballRadiusId = "ballRadius" + std::to_string(i);
-		std::string ballSpeedXId = "ballSpeedX" + std::to_string(i);
-		std::string ballSpeedYId = "ballSpeedY" + std::to_string(i);
+		std::string ballVelocityId = "ballVelocity" + std::to_string(i);
+		std::string ballAngleId = "ballAngle" + std::to_string(i);
 
-		params.push_back(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", 0.0f, 800.0f, 100.0f));
-		params.push_back(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", 0.0f, 600.0f, 100.0f));
-		params.push_back(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", 5.0f, 50.0f, 10.0f));
-		params.push_back(std::make_unique<juce::AudioParameterFloat>(ballSpeedXId, "Speed X", -10.0f, 10.0f, 1.0f));
-		params.push_back(std::make_unique<juce::AudioParameterFloat>(ballSpeedYId, "Speed Y", -10.0f, 10.0f, 1.0f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", 0.0f, 390.0f, 10.0f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", 0.0f, 390.0f, 10.0f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", 5.0f, 15.0f, 0.5f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Speed", 0.0f, 10.0f, 0.5f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", 0.0f, 360.0f, 1.0f));
 	}
 
-	return { params.begin(), params.end() };
+	return params;
 }

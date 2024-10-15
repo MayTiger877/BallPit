@@ -5,7 +5,7 @@
 class Ball
 {
 public:
-    Ball(float x, float y, float radius, float speedX, float speedY);
+    Ball(float x, float y, float radius, float velocity, float angle);
 
     void setBallEdgeEventListener(BallEdgeEventListener* l);
 	void setBallCollideEventListener(BallCollideEventListener* l);
@@ -20,12 +20,16 @@ public:
     void setRadius(float radius);
     float getRadius() const;
     
-	void setAngledSpeed(float speed, float angle);
-	void setSpeed(float speedX, float speedY);
+	void setAngledSpeed();
+	void setAngle(float angle);
+	void setVelocity(float velocity);
 
 	void setPosition(float x, float y);
 	float getX() const { return x; }
 	float getY() const { return y; }
+
+	bool isActive() const { return active; }
+	void setActive(bool active) { this->active = active; }
     
     void draw(juce::Graphics& g) const;
 
@@ -38,7 +42,9 @@ private:
     
     float x, y;
     float radius;
+    float velocity, angle;
     float speedX, speedY;
+    bool active;
 
     double sampleRate;
 

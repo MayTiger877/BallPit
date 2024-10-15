@@ -18,12 +18,12 @@
 
 typedef struct 
 {
-	juce::Slider xSlider, ySlider, radiusSlider, speedXSlider, speedYSlider;
+	juce::Slider xSlider, ySlider, radiusSlider, velocitySlider, angleSlider;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> xAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> yAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> radiusAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> speedXAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> speedYAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> velocityAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> angleAttachment;
 }BallSlidersAndAttachments;
 
 //-------------------------------------------------------------------------------------------

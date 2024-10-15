@@ -1,9 +1,11 @@
 #include "Ball.h"
 #include <iostream>
 
-Ball::Ball(float x, float y, float radius, float speedX, float speedY)
-	: x(x), y(y), radius(radius), speedX(0.4 * speedX), speedY(0.4 * speedY)
-{}
+Ball::Ball(float x, float y, float radius, float velocity, float angle)
+	: x(x), y(y), radius(radius), velocity(0.4 * velocity), angle(angle)
+{
+	setAngledSpeed();
+}
 
 void Ball::setBallEdgeEventListener(BallEdgeEventListener* l)
 {
@@ -37,16 +39,22 @@ float Ball::getRadius() const
 	return radius;
 }
 
-void Ball::setAngledSpeed(float speed, float angle)
+void Ball::setAngledSpeed()
 {
-	this->speedX = speed * cos(angle);
-	this->speedY = speed * sin(angle);
+	this->speedX = velocity * cos(angle);
+	this->speedY = velocity * sin(angle);
 }
 
-void Ball::setSpeed(float speedX, float speedY)
+void Ball::setAngle(float angle)
 {
-	this->speedX = speedX;
-	this->speedY = speedY;
+	this->angle = angle;
+	setAngledSpeed();
+}
+
+void Ball::setVelocity(float velocity)
+{
+	this->velocity = velocity;
+	setAngledSpeed();
 }
 
 void Ball::setPosition(float x, float y)

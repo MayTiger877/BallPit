@@ -16,7 +16,7 @@ public:
 	void update();
 	
 	const std::vector<std::unique_ptr<Ball>>& getBalls() const;
-	void setBallParams(int index, float x, float y, float radius, float speedX, float speedY);
+	void setBallParams(int index, float x, float y, float radius, float velocity, float angle);
 
 private:
 	// pit coordinates
