@@ -23,7 +23,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 #endif
 {
 	// ball 1
-	auto ball1 = std::make_unique<Ball>(250.0f, 250.0f, 10.0f, 10.0f, 6.0f);
+	auto ball1 = std::make_unique<Ball>(0, 250.0f, 250.0f, 10.0f, 10.0f, 6.0f);
 	ball1->setActive(true);
 	auto midiListener1 = std::make_unique<BallEdgeEventListener>(midiBuffer);
 	auto collisionListener1 = std::make_unique<BallCollideEventListener>(midiBuffer);
@@ -34,7 +34,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	listeners.push_back(std::move(collisionListener1));
 
 	// ball 2
-	auto ball2 = std::make_unique<Ball>(100.0f, 150.0f, 20.0f, 15.0f, 2.0f);
+	auto ball2 = std::make_unique<Ball>(1, 100.0f, 150.0f, 20.0f, 15.0f, 2.0f);
 	ball2->setActive(false);
 	auto midiListener2 = std::make_unique<BallEdgeEventListener>(midiBuffer);
 	auto collisionListener2 = std::make_unique<BallCollideEventListener>(midiBuffer);
@@ -45,7 +45,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	listeners.push_back(std::move(collisionListener2));
 
 	// ball 3
-	auto ball3 = std::make_unique<Ball>(100.0f, 100.0f, 5.0f, 1.0f, 1.0f);
+	auto ball3 = std::make_unique<Ball>(2, 100.0f, 100.0f, 5.0f, 1.0f, 1.0f);
 	ball3->setActive(false);
 	auto midiListener3 = std::make_unique<BallEdgeEventListener>(midiBuffer);
 	auto collisionListener3 = std::make_unique<BallCollideEventListener>(midiBuffer);
@@ -282,8 +282,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", 0.0f, 390.0f, 10.0f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", 0.0f, 390.0f, 10.0f));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", 5.0f, 15.0f, 0.5f));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Speed", 0.0f, 10.0f, 0.5f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", 5.0f, 25.0f, 0.5f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Velocity", 0.0f, 10.0f, 0.5f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", 0.0f, 360.0f, 1.0f));
 	}
 

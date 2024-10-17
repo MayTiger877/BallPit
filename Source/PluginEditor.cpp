@@ -13,8 +13,8 @@
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
 	: AudioProcessorEditor (&p), audioProcessor (p)
 {
-	auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
-	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg");
+	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
+	auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg");
 	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
 	if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
 
@@ -68,7 +68,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 		if (color == 1) { g.setColour(juce::Colours::crimson); }
 		if (color == 2) { g.setColour(juce::Colours::orange); }
 		color++;
-		if (ball->isActive() == true)
+		//if (ball->isActive() == true)
 		{
 			g.fillEllipse(ball->getX() - ball->getRadius(),
 						  ball->getY() - ball->getRadius(),
@@ -116,7 +116,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].radiusSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].radiusSlider.setDoubleClickReturnValue(true, 5.0f);
 		ballsSlidersAndAttachments[i].radiusSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballsSlidersAndAttachments[i].radiusSlider.setRange(5.0f, 15.0f, 0.5f);
+		ballsSlidersAndAttachments[i].radiusSlider.setRange(5.0f, 25.0f, 0.5f);
 	}
 	// TODO- remove this and add the tabs
 		addAndMakeVisible(ballsSlidersAndAttachments[0].xSlider);

@@ -1,8 +1,8 @@
 #include "Ball.h"
 #include <iostream>
 
-Ball::Ball(float x, float y, float radius, float velocity, float angle)
-	: x(x), y(y), radius(radius), velocity(0.4 * velocity), angle(angle)
+Ball::Ball(int index, float x, float y, float radius, float velocity, float angle)
+	: index(index), x(x), y(y), radius(radius), velocity(0.4 * velocity), angle(angle)
 {
 	setAngledSpeed();
 }
@@ -19,8 +19,18 @@ void Ball::setBallCollideEventListener(BallCollideEventListener* l)
 
 void Ball::update()
 {
-	x += speedX;
-	y += speedY;
+	if (this->active == true)
+	{
+		x += speedX;
+		y += speedY;
+	}
+	else
+	{
+		speedX = speedY = 0;
+		x = 440 + index * 50;
+		y = 340;
+	}
+
 }
 
 void Ball::draw(juce::Graphics& g) const
@@ -83,6 +93,11 @@ void Ball::setPosition(float x, float y)
 
 void Ball::edgeBounce()
 {
+	if (this->active == false)
+	{
+		return;
+	}
+	
 	if (x - radius <= minX || x + radius >= maxX)
 	{
 		speedX = -speedX;

@@ -5,7 +5,7 @@
 class Ball
 {
 public:
-    Ball(float x, float y, float radius, float velocity, float angle);
+    Ball(int index, float x, float y, float radius, float velocity, float angle);
 
     void setBallEdgeEventListener(BallEdgeEventListener* l);
 	void setBallCollideEventListener(BallCollideEventListener* l);
@@ -45,6 +45,7 @@ private:
     float velocity, angle;
     float speedX, speedY;
     bool active;
+    int index;
 
     double sampleRate;
 
