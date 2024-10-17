@@ -67,7 +67,7 @@ public:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
     juce::AudioProcessorValueTreeState valueTreeState;
 
-	const Pit& getPit() const;
+	Pit& getPit();
 
 private:
     //==============================================================================

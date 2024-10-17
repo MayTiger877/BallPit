@@ -124,6 +124,15 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		addAndMakeVisible(ballsSlidersAndAttachments[0].angleSlider);
 		addAndMakeVisible(ballsSlidersAndAttachments[0].radiusSlider);
 		addAndMakeVisible(ballsSlidersAndAttachments[0].velocitySlider);
+
+	startStopButton.setButtonText("Start");
+	startStopButton.onClick = [this]()
+	{
+		audioProcessor.getPit().toggleBallMovement();
+		updateButtonText();
+	};
+	startStopButton.setBounds(530, 290, 145, 40);
+	addAndMakeVisible(startStopButton);
 }
 
 void BallPitAudioProcessorEditor::resized()
@@ -133,4 +142,12 @@ void BallPitAudioProcessorEditor::resized()
 void BallPitAudioProcessorEditor::timerCallback() 
 {
 	repaint();
+}
+
+void BallPitAudioProcessorEditor::updateButtonText()
+{
+	if (audioProcessor.getPit().isBallsMoving())
+		startStopButton.setButtonText("Stop");
+	else
+		startStopButton.setButtonText("Start");
 }

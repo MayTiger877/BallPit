@@ -55,6 +55,8 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	listeners.push_back(std::move(midiListener3));
 	listeners.push_back(std::move(collisionListener3));
 	
+	getUpdatedBallParams();
+	
 }
 
 BallPitAudioProcessor::~BallPitAudioProcessor()
@@ -186,10 +188,15 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-	getUpdatedBallParams();
-
 	buffer.clear();
-	pit.update();
+	if (this->pit.isBallsMoving() == false)
+	{
+		getUpdatedBallParams();
+	}
+	else
+	{
+		pit.update();
+	}
 	
 	juce::MidiBuffer::Iterator reserveIt(midiBuffer);
 	juce::MidiBuffer::Iterator it(midiBuffer);
@@ -263,7 +270,7 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 	return new BallPitAudioProcessor();
 }
 
-const Pit& BallPitAudioProcessor::getPit() const
+Pit& BallPitAudioProcessor::getPit()
 {
 	return pit;
 }

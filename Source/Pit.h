@@ -17,6 +17,8 @@ public:
 	
 	const std::vector<std::unique_ptr<Ball>>& getBalls() const;
 	void setBallParams(int index, float x, float y, float radius, float velocity, float angle);
+	void toggleBallMovement() { isMoving = !isMoving; }
+	bool isBallsMoving() const { return isMoving; }
 
 private:
 	// pit coordinates
@@ -37,4 +39,6 @@ private:
 	
 	// balls
 	std::vector<std::unique_ptr<Ball>> balls;
+
+	bool isMoving;
 };

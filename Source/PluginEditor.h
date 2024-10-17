@@ -38,6 +38,7 @@ public:
 	void paint (juce::Graphics&) override;
 	void resized() override;
 	void timerCallback() override;
+	void updateButtonText();
 
 private:
 	// This reference is provided as a quick way for your editor to
@@ -48,6 +49,8 @@ private:
 
 	BallSlidersAndAttachments ballsSlidersAndAttachments[3];
 	void initiateComponents();
+
+	juce::TextButton startStopButton;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BallPitAudioProcessorEditor)
 };

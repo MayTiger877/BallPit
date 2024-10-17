@@ -21,6 +21,8 @@ Pit::Pit()
 	this->scale[6] = 11;
 	this->scale[7] = 12;
 	this->range = 8;
+	
+	this->isMoving = false;
 }
 
 void Pit::addBall(std::unique_ptr<Ball> ball)

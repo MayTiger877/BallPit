@@ -28,7 +28,7 @@ void Ball::update()
 	{
 		speedX = speedY = 0;
 		x = 440 + index * 50;
-		y = 340;
+		y = 380;
 	}
 
 }
