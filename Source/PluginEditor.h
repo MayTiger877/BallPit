@@ -16,15 +16,18 @@
 /**
 */
 
-typedef struct 
+class BallSlidersAndAttachments : public juce::Component
 {
+public:
+	BallSlidersAndAttachments() {}
+
 	juce::Slider xSlider, ySlider, radiusSlider, velocitySlider, angleSlider;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> xAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> yAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> radiusAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> velocityAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> angleAttachment;
-}BallSlidersAndAttachments;
+};
 
 //-------------------------------------------------------------------------------------------
 
@@ -38,7 +41,6 @@ public:
 	void paint (juce::Graphics&) override;
 	void resized() override;
 	void timerCallback() override;
-	void updateButtonText();
 
 private:
 	// This reference is provided as a quick way for your editor to
@@ -49,8 +51,12 @@ private:
 
 	BallSlidersAndAttachments ballsSlidersAndAttachments[3];
 	void initiateComponents();
+	void displayKnobsByTab();
 
 	juce::TextButton startStopButton;
+	juce::TextButton addRemoveBallButton;
+	
+	std::unique_ptr<juce::TabbedComponent> tabs;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BallPitAudioProcessorEditor)
 };

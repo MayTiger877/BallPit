@@ -18,6 +18,17 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
 	if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
 
+	// Tabs
+	tabs.reset(new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop));
+	for (int i = 0; i < 3; ++i)
+	{
+		auto ballControlComponent = std::make_unique<BallSlidersAndAttachments>();
+		tabs->addTab("Ball " + std::to_string(i + 1), juce::Colours::grey, ballControlComponent.release(), true);
+	}
+	tabs->setBounds(407, 10, 421, 398);
+	addAndMakeVisible(tabs.get());
+	
+
 	setSize(836, 654);
 	startTimerHz(60);
 
@@ -46,6 +57,126 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 {
 }
 
+void BallPitAudioProcessorEditor::displayKnobsByTab()
+{
+	int currentTab = tabs->getCurrentTabIndex();
+	int otherTab1 = (currentTab + 1) % 3;
+	int otherTab2 = (currentTab + 2) % 3;
+	
+	ballsSlidersAndAttachments[currentTab].xSlider.setVisible(true);
+	ballsSlidersAndAttachments[currentTab].ySlider.setVisible(true);
+	ballsSlidersAndAttachments[currentTab].angleSlider.setVisible(true);
+	ballsSlidersAndAttachments[currentTab].radiusSlider.setVisible(true);
+	ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(true);
+	
+	ballsSlidersAndAttachments[otherTab1].xSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].ySlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].angleSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].radiusSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].velocitySlider.setVisible(false);
+	
+	ballsSlidersAndAttachments[otherTab2].xSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].ySlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].angleSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].radiusSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].velocitySlider.setVisible(false);
+	
+	if (audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->isActive() == true)
+	{
+		addRemoveBallButton.setButtonText("Remove");
+	}
+	else
+	{
+		addRemoveBallButton.setButtonText("Add");
+	}
+}
+
+void BallPitAudioProcessorEditor::initiateComponents()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		ballsSlidersAndAttachments[i].xSlider.setBounds(656, 65, 65, 65);
+		ballsSlidersAndAttachments[i].xSlider.setValue(250.0f);
+		ballsSlidersAndAttachments[i].xSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballsSlidersAndAttachments[i].xSlider.setDoubleClickReturnValue(true, 0.0f);
+		ballsSlidersAndAttachments[i].xSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+		ballsSlidersAndAttachments[i].xSlider.setRange(0.0f, 390.0f, 10.0f);
+		ballsSlidersAndAttachments[i].xSlider.toFront(false);
+		addChildComponent(ballsSlidersAndAttachments[i].xSlider);
+
+		ballsSlidersAndAttachments[i].ySlider.setBounds(744, 65, 65, 65);
+		ballsSlidersAndAttachments[i].ySlider.setValue(250.0f);
+		ballsSlidersAndAttachments[i].ySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballsSlidersAndAttachments[i].ySlider.setDoubleClickReturnValue(true, 0.0f);
+		ballsSlidersAndAttachments[i].ySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+		ballsSlidersAndAttachments[i].ySlider.setRange(0.0f, 390.0f, 10.0f);
+		ballsSlidersAndAttachments[i].ySlider.toFront(false);
+		addChildComponent(ballsSlidersAndAttachments[i].ySlider);
+
+		ballsSlidersAndAttachments[i].angleSlider.setBounds(656, 115, 65, 65);
+		ballsSlidersAndAttachments[i].angleSlider.setValue(6.0f);
+		ballsSlidersAndAttachments[i].angleSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballsSlidersAndAttachments[i].angleSlider.setDoubleClickReturnValue(true, 3.0f);
+		ballsSlidersAndAttachments[i].angleSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+		ballsSlidersAndAttachments[i].angleSlider.setRotaryParameters(0, 2*3.14159265358979323846f, false);
+		ballsSlidersAndAttachments[i].angleSlider.setRange(0.0f, 360.0f, 1.0f);
+		ballsSlidersAndAttachments[i].angleSlider.toFront(false);
+		addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
+
+		ballsSlidersAndAttachments[i].velocitySlider.setBounds(656, 165, 65, 65);
+		ballsSlidersAndAttachments[i].velocitySlider.setValue(10.0f);
+		ballsSlidersAndAttachments[i].velocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballsSlidersAndAttachments[i].velocitySlider.setDoubleClickReturnValue(true, 3.0f);
+		ballsSlidersAndAttachments[i].velocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+		ballsSlidersAndAttachments[i].velocitySlider.setRange(0.0f, 10.0f, 0.5f);
+		ballsSlidersAndAttachments[i].velocitySlider.toFront(false);
+		addChildComponent(ballsSlidersAndAttachments[i].velocitySlider);
+
+		ballsSlidersAndAttachments[i].radiusSlider.setBounds(656, 215, 65, 65);
+		ballsSlidersAndAttachments[i].radiusSlider.setValue(10.0f);
+		ballsSlidersAndAttachments[i].radiusSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballsSlidersAndAttachments[i].radiusSlider.setDoubleClickReturnValue(true, 5.0f);
+		ballsSlidersAndAttachments[i].radiusSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+		ballsSlidersAndAttachments[i].radiusSlider.setRange(5.0f, 25.0f, 0.5f);
+		ballsSlidersAndAttachments[i].radiusSlider.toFront(false);
+		addChildComponent(ballsSlidersAndAttachments[i].radiusSlider);
+	}
+	
+	ballsSlidersAndAttachments[0].xSlider.setVisible(true);
+	ballsSlidersAndAttachments[0].ySlider.setVisible(true);
+	ballsSlidersAndAttachments[0].angleSlider.setVisible(true);
+	ballsSlidersAndAttachments[0].radiusSlider.setVisible(true);
+	ballsSlidersAndAttachments[0].velocitySlider.setVisible(true);
+	
+	startStopButton.setButtonText("Start");
+	startStopButton.onClick = [this]()
+	{
+		audioProcessor.getPit().toggleBallMovement();
+		if (audioProcessor.getPit().isBallsMoving())
+			startStopButton.setButtonText("Stop");
+		else
+			startStopButton.setButtonText("Start");
+	};
+	startStopButton.setBounds(470, 290, 140, 40);
+	addAndMakeVisible(startStopButton);
+
+	addRemoveBallButton.setButtonText("Add");
+	addRemoveBallButton.onClick = [this]()
+	{
+		if (audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->isActive() == true)
+		{
+			addRemoveBallButton.setButtonText("Add");
+			audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->setActive(false);
+		}
+		else
+		{
+			addRemoveBallButton.setButtonText("Remove");
+			audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->setActive(true);
+		}
+	};
+	addRemoveBallButton.setBounds(620, 290, 140, 40);
+}
+
 //==============================================================================
 
 void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
@@ -68,7 +199,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 		if (color == 1) { g.setColour(juce::Colours::crimson); }
 		if (color == 2) { g.setColour(juce::Colours::orange); }
 		color++;
-		//if (ball->isActive() == true)
+		if (ball->isActive() == true)
 		{
 			g.fillEllipse(ball->getX() - ball->getRadius(),
 						  ball->getY() - ball->getRadius(),
@@ -76,63 +207,8 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 						  ball->getRadius() * 2.0f);
 		}
 	}
-}
-
-void BallPitAudioProcessorEditor::initiateComponents()
-{
-	for (int i = 0; i < 3; i++) // TODO- add slider for each ball by tab
-	{
-		ballsSlidersAndAttachments[i].xSlider.setBounds(656, 65, 65, 65);
-		ballsSlidersAndAttachments[i].xSlider.setValue(250.0f);
-		ballsSlidersAndAttachments[i].xSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].xSlider.setDoubleClickReturnValue(true, 0.0f);
-		ballsSlidersAndAttachments[i].xSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballsSlidersAndAttachments[i].xSlider.setRange(0.0f, 390.0f, 10.0f);
-
-		ballsSlidersAndAttachments[i].ySlider.setBounds(744, 65, 65, 65);
-		ballsSlidersAndAttachments[i].ySlider.setValue(250.0f);
-		ballsSlidersAndAttachments[i].ySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].ySlider.setDoubleClickReturnValue(true, 0.0f);
-		ballsSlidersAndAttachments[i].ySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballsSlidersAndAttachments[i].ySlider.setRange(0.0f, 390.0f, 10.0f);
-
-		ballsSlidersAndAttachments[i].angleSlider.setBounds(656, 115, 65, 65);
-		ballsSlidersAndAttachments[i].angleSlider.setValue(6.0f);
-		ballsSlidersAndAttachments[i].angleSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].angleSlider.setDoubleClickReturnValue(true, 3.0f);
-		ballsSlidersAndAttachments[i].angleSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballsSlidersAndAttachments[i].angleSlider.setRotaryParameters(0, 2*3.14159265358979323846f, false);
-		ballsSlidersAndAttachments[i].angleSlider.setRange(0.0f, 360.0f, 1.0f);
-
-		ballsSlidersAndAttachments[i].velocitySlider.setBounds(656, 165, 65, 65);
-		ballsSlidersAndAttachments[i].velocitySlider.setValue(10.0f);
-		ballsSlidersAndAttachments[i].velocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].velocitySlider.setDoubleClickReturnValue(true, 3.0f);
-		ballsSlidersAndAttachments[i].velocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballsSlidersAndAttachments[i].velocitySlider.setRange(0.0f, 10.0f, 0.5f);
-
-		ballsSlidersAndAttachments[i].radiusSlider.setBounds(656, 215, 65, 65);
-		ballsSlidersAndAttachments[i].radiusSlider.setValue(10.0f);
-		ballsSlidersAndAttachments[i].radiusSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].radiusSlider.setDoubleClickReturnValue(true, 5.0f);
-		ballsSlidersAndAttachments[i].radiusSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballsSlidersAndAttachments[i].radiusSlider.setRange(5.0f, 25.0f, 0.5f);
-	}
-	// TODO- remove this and add the tabs
-		addAndMakeVisible(ballsSlidersAndAttachments[0].xSlider);
-		addAndMakeVisible(ballsSlidersAndAttachments[0].ySlider);
-		addAndMakeVisible(ballsSlidersAndAttachments[0].angleSlider);
-		addAndMakeVisible(ballsSlidersAndAttachments[0].radiusSlider);
-		addAndMakeVisible(ballsSlidersAndAttachments[0].velocitySlider);
-
-	startStopButton.setButtonText("Start");
-	startStopButton.onClick = [this]()
-	{
-		audioProcessor.getPit().toggleBallMovement();
-		updateButtonText();
-	};
-	startStopButton.setBounds(530, 290, 145, 40);
-	addAndMakeVisible(startStopButton);
+	
+	displayKnobsByTab();
 }
 
 void BallPitAudioProcessorEditor::resized()
@@ -142,12 +218,4 @@ void BallPitAudioProcessorEditor::resized()
 void BallPitAudioProcessorEditor::timerCallback() 
 {
 	repaint();
-}
-
-void BallPitAudioProcessorEditor::updateButtonText()
-{
-	if (audioProcessor.getPit().isBallsMoving())
-		startStopButton.setButtonText("Stop");
-	else
-		startStopButton.setButtonText("Start");
 }

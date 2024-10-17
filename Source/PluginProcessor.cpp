@@ -45,7 +45,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	listeners.push_back(std::move(collisionListener2));
 
 	// ball 3
-	auto ball3 = std::make_unique<Ball>(2, 100.0f, 100.0f, 5.0f, 1.0f, 1.0f);
+	auto ball3 = std::make_unique<Ball>(2, 100.0f, 100.0f, 20.0f, 1.0f, 1.0f);
 	ball3->setActive(false);
 	auto midiListener3 = std::make_unique<BallEdgeEventListener>(midiBuffer);
 	auto collisionListener3 = std::make_unique<BallCollideEventListener>(midiBuffer);
