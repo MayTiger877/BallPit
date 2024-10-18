@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "Ball.h"
+#include "Edge.h"
 
 class Pit
 {
@@ -22,20 +23,13 @@ public:
 
 private:
 	// pit coordinates
+	// size is 390x390
 	const int minX = 12;
 	const int minY = 15;
 	const int maxX = 402;
 	const int maxY = 405;
 	
-	// pit edges diviation
-	int phase;
-	int numerator;
-	int denomenator;
-
-	// pit edges musical scale
-	int fundamental;
-	int scale[8];
-	int range;
+	Edge edge;
 	
 	// balls
 	std::vector<std::unique_ptr<Ball>> balls;

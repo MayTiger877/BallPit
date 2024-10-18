@@ -3,25 +3,8 @@
 
 //----------------------------------------------------------------------------
 
-Pit::Pit()
-{
-	// Initialize the pit edges
-	this->phase = 0;
-	this->numerator = 1;
-	this->denomenator = 1;
-
-	// Initialize the pit edges musical scale
-	this->fundamental = 60; // middle C4
-	this->scale[0] = 0;
-	this->scale[1] = 2;
-	this->scale[2] = 4;
-	this->scale[3] = 5;
-	this->scale[4] = 7;
-	this->scale[5] = 9;
-	this->scale[6] = 11;
-	this->scale[7] = 12;
-	this->range = 8;
-	
+Pit::Pit() : edge()
+{	
 	this->isMoving = false;
 }
 

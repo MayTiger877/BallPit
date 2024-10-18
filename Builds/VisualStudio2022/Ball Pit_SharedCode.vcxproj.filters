@@ -709,6 +709,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Scales.cpp">
+      <Filter>Ball Pit\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Edge.cpp">
+      <Filter>Ball Pit\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\PluginProcessor.cpp">
       <Filter>Ball Pit\Source</Filter>
     </ClCompile>
@@ -3627,7 +3633,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Scales.h">
+      <Filter>Ball Pit\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\EdgeEventListener.h">
+      <Filter>Ball Pit\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Edge.h">
       <Filter>Ball Pit\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\PluginProcessor.h">
