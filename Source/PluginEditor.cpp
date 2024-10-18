@@ -96,27 +96,27 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	for (int i = 0; i < 3; i++)
 	{
 		ballsSlidersAndAttachments[i].xSlider.setBounds(656, 65, 65, 65);
-		ballsSlidersAndAttachments[i].xSlider.setValue(250.0f);
+		ballsSlidersAndAttachments[i].xSlider.setValue(75.0f + (i * 130.0f));
 		ballsSlidersAndAttachments[i].xSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].xSlider.setDoubleClickReturnValue(true, 0.0f);
+		ballsSlidersAndAttachments[i].xSlider.setDoubleClickReturnValue(true, 50.0f);
 		ballsSlidersAndAttachments[i].xSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].xSlider.setRange(0.0f, 390.0f, 10.0f);
 		ballsSlidersAndAttachments[i].xSlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].xSlider);
 
 		ballsSlidersAndAttachments[i].ySlider.setBounds(744, 65, 65, 65);
-		ballsSlidersAndAttachments[i].ySlider.setValue(250.0f);
+		ballsSlidersAndAttachments[i].ySlider.setValue(200.0f);
 		ballsSlidersAndAttachments[i].ySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].ySlider.setDoubleClickReturnValue(true, 0.0f);
+		ballsSlidersAndAttachments[i].ySlider.setDoubleClickReturnValue(true, 50.0f);
 		ballsSlidersAndAttachments[i].ySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].ySlider.setRange(0.0f, 390.0f, 10.0f);
 		ballsSlidersAndAttachments[i].ySlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].ySlider);
 
 		ballsSlidersAndAttachments[i].angleSlider.setBounds(656, 115, 65, 65);
-		ballsSlidersAndAttachments[i].angleSlider.setValue(6.0f);
+		ballsSlidersAndAttachments[i].angleSlider.setValue(0.0f + (i * 60.0f));
 		ballsSlidersAndAttachments[i].angleSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].angleSlider.setDoubleClickReturnValue(true, 3.0f);
+		ballsSlidersAndAttachments[i].angleSlider.setDoubleClickReturnValue(true, 0.0f);
 		ballsSlidersAndAttachments[i].angleSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].angleSlider.setRotaryParameters(0, 2*3.14159265358979323846f, false);
 		ballsSlidersAndAttachments[i].angleSlider.setRange(0.0f, 360.0f, 1.0f);
@@ -135,7 +135,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].radiusSlider.setBounds(656, 215, 65, 65);
 		ballsSlidersAndAttachments[i].radiusSlider.setValue(10.0f);
 		ballsSlidersAndAttachments[i].radiusSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].radiusSlider.setDoubleClickReturnValue(true, 5.0f);
+		ballsSlidersAndAttachments[i].radiusSlider.setDoubleClickReturnValue(true, 10.0f);
 		ballsSlidersAndAttachments[i].radiusSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].radiusSlider.setRange(5.0f, 25.0f, 0.5f);
 		ballsSlidersAndAttachments[i].radiusSlider.toFront(false);
@@ -157,7 +157,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		else
 			startStopButton.setButtonText("Start");
 	};
-	startStopButton.setBounds(470, 290, 140, 40);
+	startStopButton.setBounds(420, 290, 140, 40);
 	addAndMakeVisible(startStopButton);
 
 	addRemoveBallButton.setButtonText("Add");
@@ -174,7 +174,8 @@ void BallPitAudioProcessorEditor::initiateComponents()
 			audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->setActive(true);
 		}
 	};
-	addRemoveBallButton.setBounds(620, 290, 140, 40);
+	addRemoveBallButton.setBounds(580, 290, 140, 40);
+	addAndMakeVisible(addRemoveBallButton);
 }
 
 //==============================================================================
