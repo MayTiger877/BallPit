@@ -37,7 +37,7 @@ public:
 	void setScaleNote(int index, int scaleNote) { this->scaleNotes[index] = scaleNote; }
 	int getScaleNotes(int index) const { return scaleNotes[index]; }
 	
-	void setScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode) { scale = Scale(scaleKind, mode); }
+	void setScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode);
 	Scale getScale() const { return scale; }
 	
 	void getMIDI();
@@ -69,4 +69,5 @@ private:
 		juce::Colours::orange };
 
 	int abstractedEdge[1568];
+	void updateAbstractedEdge();
 };
