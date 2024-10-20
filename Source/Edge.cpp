@@ -43,18 +43,46 @@ void Edge::getMIDI()
 
 int Edge::hitPositionToScalenote(float x, float y)
 {
-	int index = (y-15) + (392 * (x-12));
+	int index = 0;
+	if (x <= 12)
+	{
+		index = (y - 15);
+	}
+	else if (x >= 404)
+	{
+		index = 1568 - (392 * 2) + (y - 15);
+	}
+	else if (y <= 15)
+	{
+		index = 1568 - 392 - (x - 12);
+	}
+	else if (y >= 407)
+	{
+		index = 392 + (x - 12);
+	}
+	
 	return abstractedEdge[index];
 }
 
 void Edge::updateAbstractedEdge()
 {
-	for (int i = 0; i < this->denomenator; i++) // number of different colors
+	int numOfEntriesForEachNote = (1568 / this->denomenator);
+	int reminder = (1568 % this->denomenator);
+	int colorIndex = 0;
+
+	for (int i = 0; i < this->denomenator; i++)
 	{
-		for (int j = 0; j < this->range; j++) // number of different notes
+		for (int j = 0; j < numOfEntriesForEachNote; j++)
 		{
-			int index = (i * 392) + j;
-			abstractedEdge[index] = this->rootNote + this->scaleNotes[j];
+			abstractedEdge[(i * this->denomenator) + j] = this->scaleNotes[colorIndex];
+		}
+		colorIndex++;
+	}
+	if (reminder != 0)
+	{
+		for (int i = 0; i < reminder; i++)
+		{
+			abstractedEdge[1567 - i] = this->scaleNotes[colorIndex]; // Maybe 1568....
 		}
 	}
 }

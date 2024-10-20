@@ -101,13 +101,57 @@ void Ball::edgeBounce()
 	if (x - radius <= minX || x + radius >= maxX)
 	{
 		speedX = -speedX;
-		if (this->edgeListener) this->edgeListener->onEdgeHit(x, y, sampleRate);
+		if (this->edgeListener)
+		{
+			// TODO- figure out how to get the not from the edge....
+			int index = 0;
+			if (x <= 12)
+			{
+				index = (y - 15);
+			}
+			else if (x >= 404)
+			{
+				index = 1568 - (392 * 2) + (y - 15);
+			}
+			else if (y <= 15)
+			{
+				index = 1568 - 392 - (x - 12);
+			}
+			else if (y >= 407)
+			{
+				index = 392 + (x - 12);
+			}
+
+			this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[index], sampleRate);
+		}
 	}
 
 	if (y - radius <= minY || y + radius >= maxY)
 	{
 		speedY = -speedY;
-		if (this->edgeListener) this->edgeListener->onEdgeHit(x, y, sampleRate);
+		if (this->edgeListener)
+		{
+			// TODO- figure out how to get the not from the edge....
+			int index = 0;
+			if (x <= 12)
+			{
+				index = (y - 15);
+			}
+			else if (x >= 404)
+			{
+				index = 1568 - (392 * 2) + (y - 15);
+			}
+			else if (y <= 15)
+			{
+				index = 1568 - 392 - (x - 12);
+			}
+			else if (y >= 407)
+			{
+				index = 392 + (x - 12);
+			}
+
+			this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[index], sampleRate);
+		}
 	}
 }
 
@@ -167,5 +211,5 @@ void Ball::resolveCollision(Ball& other)
 	other.speedX = (other.speedX / newSpeedB) * speedB;
 	other.speedY = (other.speedY / newSpeedB) * speedB;
 
-	if (this->collideListener) this->collideListener->onEdgeHit(x, y, sampleRate);
+	if (this->collideListener) this->collideListener->onEdgeHit(abstractedEdgeDuplicate[0], sampleRate);
 }

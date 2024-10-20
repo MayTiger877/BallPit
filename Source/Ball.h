@@ -49,6 +49,8 @@ private:
 
     double sampleRate;
 
+    int abstractedEdgeDuplicate[1568];
+
     BallEdgeEventListener* edgeListener;
 	BallCollideEventListener* collideListener;
 };
