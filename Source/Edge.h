@@ -58,16 +58,6 @@ private:
 
 	Scale scale;
 
-	juce::Colour edgeColors[8] = {
-		juce::Colours::red,
-		juce::Colours::green,
-		juce::Colours::blue,
-		juce::Colours::yellow,
-		juce::Colours::pink,
-		juce::Colours::purple,
-		juce::Colours::brown,
-		juce::Colours::orange };
-
 	int abstractedEdge[1568];
 	void updateAbstractedEdge();
 };

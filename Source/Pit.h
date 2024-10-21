@@ -20,6 +20,8 @@ public:
 	void setBallParams(int index, float x, float y, float radius, float velocity, float angle);
 	void toggleBallMovement() { isMoving = !isMoving; }
 	bool isBallsMoving() const { return isMoving; }
+	
+	void drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const;
 
 private:
 	// pit coordinates

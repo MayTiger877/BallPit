@@ -13,8 +13,8 @@
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
 	: AudioProcessorEditor (&p), audioProcessor (p)
 {
-	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
-	auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg");
+	auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
+	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg");
 	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
 	if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
 
@@ -210,6 +210,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	}
 	
 	displayKnobsByTab();
+	audioProcessor.getPit().drawPitEdge(g, edgeColors);
 }
 
 void BallPitAudioProcessorEditor::resized()

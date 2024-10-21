@@ -15,7 +15,7 @@ Edge::Edge() : scale(Scale::ScaleKinds::MAJOR, 0)
 	// Initialize the pit edges
 	phase = 0;
 	numerator = 1;
-	denomenator = 1;
+	denomenator = 8;
 	range = 2;
 
 	// Initialize the pit edges musical scale

@@ -58,5 +58,16 @@ private:
 	
 	std::unique_ptr<juce::TabbedComponent> tabs;
 
+	juce::Colour edgeColors[8] = {
+		juce::Colours::red,
+		juce::Colours::limegreen,
+		juce::Colours::yellow,
+		juce::Colours::blue,
+		juce::Colours::pink,
+		juce::Colours::purple,
+		juce::Colours::cyan,
+		juce::Colours::orange
+	};
+
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BallPitAudioProcessorEditor)
 };

@@ -55,3 +55,42 @@ void Pit::setBallParams(int index, float x, float y, float radius, float velocit
 	balls[index]->setVelocity(velocity);
 	balls[index]->setAngle(angle);
 }
+
+void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const
+{
+	int numOfColors = this->edge.getDenomenator();
+	int split = 1568 / numOfColors;
+	int remainder = 1568 % numOfColors;
+	int index = 0;
+	for (int i = 0; i < numOfColors; i++)
+	{
+		for (int j = 0; j < split; j++)
+		{
+			index = (j + (i * split) + this->edge.getPhase()) % 1568;
+			if (index <= 392)
+			{
+				g.setColour(edgeColors[i]);
+				g.fillRect(8, 15 + index, 4, 2);
+			}
+			else if ((index > 392) && (index <= 784))
+			{
+				g.setColour(edgeColors[i]);
+				g.fillRect(8 + (index - 392), 402, 2, 4);
+			}
+			else if ((index > 784) && (index <= 1176))
+			{
+				g.setColour(edgeColors[i]);
+				g.fillRect(402, (15 + (1176 - index)), 4, 2);
+			}
+			else if ((index > 1176) && (index <= 1568))
+			{
+				g.setColour(edgeColors[i]);
+				g.fillRect(12 + (1568 - index), 12, 2, 4);
+			}
+		}
+		for (int i = 0; i < remainder; i++)
+		{
+			g.fillRect(12 + i, 12, 2, 4);
+		}
+	}
+}
