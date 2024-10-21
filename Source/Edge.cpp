@@ -77,7 +77,7 @@ void Edge::updateAbstractedEdge()
 	{
 		for (int j = 0; j < split; j++)
 		{
-			index = (i * 392) + j;
+			index = ((i * split) + j + this->phase) % 1568;
 			abstractedEdge[index] = this->scaleNotes[colorIndex];
 		}
 		colorIndex = i;

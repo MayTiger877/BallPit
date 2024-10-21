@@ -113,19 +113,19 @@ void Ball::edgeBounce()
 		{
 			// TODO- figure out how to get the not from the edge....
 			int index = 0;
-			if (x <= 12)
+			if (x - radius <= 12)
 			{
 				index = (y - 15);
 			}
-			else if (x >= 404)
+			else if (x + radius >= 404)
 			{
 				index = 1568 - (392 * 2) + (y - 15);
 			}
-			else if (y <= 15)
+			else if (y - radius <= 15)
 			{
 				index = 1568 - 392 - (x - 12);
 			}
-			else if (y >= 407)
+			else if (y + radius >= 407)
 			{
 				index = 392 + (x - 12);
 			}
@@ -141,19 +141,19 @@ void Ball::edgeBounce()
 		{
 			// TODO- figure out how to get the not from the edge....
 			int index = 0;
-			if (x <= 12)
+			if (x - radius <= 12)
 			{
 				index = (y - 15);
 			}
-			else if (x >= 404)
+			else if (x + radius >= 404)
 			{
 				index = 1568 - (392 * 2) + (y - 15);
 			}
-			else if (y <= 15)
+			else if (y - radius <= 15)
 			{
 				index = 1568 - 392 - (x - 12);
 			}
-			else if (y >= 407)
+			else if (y + radius >= 407)
 			{
 				index = 392 + (x - 12);
 			}

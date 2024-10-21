@@ -181,7 +181,7 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 		float y = valueTreeState.getRawParameterValue(ballYId)->load();
 		float radius = valueTreeState.getRawParameterValue(ballRadiusId)->load();
 		float velocity = valueTreeState.getRawParameterValue(ballVelocityId)->load();
-		float angle = valueTreeState.getRawParameterValue(ballAngleId)->load();
+		float angle = juce::MathConstants<float>::pi * (valueTreeState.getRawParameterValue(ballAngleId)->load()-90) / 180;
 
 		pit.setBallParams(i, x, y, radius, velocity, angle);
 	}
