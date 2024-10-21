@@ -20,14 +20,16 @@ Edge::Edge() : scale(Scale::ScaleKinds::MAJOR, 0)
 
 	// Initialize the pit edges musical scale
 	rootNote = 60; // middle C4
-	scaleNotes[0] = 0;
-	scaleNotes[1] = 2;
-	scaleNotes[2] = 4;
-	scaleNotes[3] = 5;
-	scaleNotes[4] = 7;
-	scaleNotes[5] = 9;
-	scaleNotes[6] = 11;
-	scaleNotes[7] = 12;
+	scaleNotes[0] = 60;
+	scaleNotes[1] = 62;
+	scaleNotes[2] = 64;
+	scaleNotes[3] = 65;
+	scaleNotes[4] = 67;
+	scaleNotes[5] = 69;
+	scaleNotes[6] = 71;
+	scaleNotes[7] = 75;
+
+	updateAbstractedEdge();
 }
 
 void Edge::setScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
@@ -66,23 +68,22 @@ int Edge::hitPositionToScalenote(float x, float y)
 
 void Edge::updateAbstractedEdge()
 {
-	int numOfEntriesForEachNote = (1568 / this->denomenator);
-	int reminder = (1568 % this->denomenator);
-	int colorIndex = 0;
+	int numOfColors = this->denomenator;
+	int split = 1568 / numOfColors;
+	int remainder = 1568 % numOfColors;
+	int index, colorIndex = 0;
 
-	for (int i = 0; i < this->denomenator; i++)
+	for (int i = 0; i < numOfColors; i++)
 	{
-		for (int j = 0; j < numOfEntriesForEachNote; j++)
+		for (int j = 0; j < split; j++)
 		{
-			abstractedEdge[(i * this->denomenator) + j] = this->scaleNotes[colorIndex];
+			index = (i * 392) + j;
+			abstractedEdge[index] = this->scaleNotes[colorIndex];
 		}
-		colorIndex++;
+		colorIndex = i;
 	}
-	if (reminder != 0)
+	for (int i = 0; i < remainder; i++)
 	{
-		for (int i = 0; i < reminder; i++)
-		{
-			abstractedEdge[1567 - i] = this->scaleNotes[colorIndex]; // Maybe 1568....
-		}
+		abstractedEdge[1567 - i] = this->scaleNotes[colorIndex];
 	}
 }

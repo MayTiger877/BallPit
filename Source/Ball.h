@@ -31,6 +31,8 @@ public:
 	bool isActive() const { return active; }
 	void setActive(bool active) { this->active = active; }
     
+    void updateAbstractedEdge(int* abstractedEdge);
+
     void draw(juce::Graphics& g) const;
 
 private:

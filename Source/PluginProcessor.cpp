@@ -185,6 +185,7 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 
 		pit.setBallParams(i, x, y, radius, velocity, angle);
 	}
+	pit.setBallsEdgeNotes();
 }
 
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)

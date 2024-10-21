@@ -39,7 +39,9 @@ public:
 	
 	void setScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode);
 	Scale getScale() const { return scale; }
-	
+
+	int* getAbstractedEdge() { return abstractedEdge; }
+
 	void getMIDI();
 
 	int hitPositionToScalenote(float x, float y);

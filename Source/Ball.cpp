@@ -33,6 +33,14 @@ void Ball::update()
 
 }
 
+void Ball::updateAbstractedEdge(int* abstractedEdge)
+{
+	for (int i = 0; i < 1568; i++)
+	{
+		abstractedEdgeDuplicate[i] = abstractedEdge[i];
+	}
+}
+
 void Ball::draw(juce::Graphics& g) const
 {
 	g.setColour(juce::Colours::honeydew);
