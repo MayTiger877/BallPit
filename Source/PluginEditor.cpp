@@ -50,6 +50,13 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 		std::string ballAngleID = "ballAngle" + std::to_string(i);
 		ballsSlidersAndAttachments[i].angleAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballAngleID, ballsSlidersAndAttachments[i].angleSlider);
 	}
+	std::string edgePhaseID = "edgePhase";
+	edgePhaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgePhaseID, edgePhaseSlider);
+
+	std::string edgeDenomenatorID = "edgeDenomenator";
+	edgeDenomenatorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgeDenomenatorID, edgeDenomenatorSlider);
+
+
 	initiateComponents();
 }
 
@@ -118,7 +125,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].angleSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].angleSlider.setDoubleClickReturnValue(true, 0.0f);
 		ballsSlidersAndAttachments[i].angleSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballsSlidersAndAttachments[i].angleSlider.setRotaryParameters(0, 2*3.14159265358979323846f, false);
+		ballsSlidersAndAttachments[i].angleSlider.setRotaryParameters(0, 2*juce::MathConstants<double>::pi, false);
 		ballsSlidersAndAttachments[i].angleSlider.setRange(0.0f, 360.0f, 1.0f);
 		ballsSlidersAndAttachments[i].angleSlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
@@ -176,6 +183,23 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	};
 	addRemoveBallButton.setBounds(580, 290, 140, 40);
 	addAndMakeVisible(addRemoveBallButton);
+
+	edgePhaseSlider.setBounds(200, 475, 100, 30);
+	edgePhaseSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
+	edgePhaseSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
+	edgePhaseSlider.setRange(0, 360, 10);
+	edgePhaseSlider.setValue(0);
+	/*edgePhaseSlider.setDoubleClickReturnValue(true, 0.0f);*/
+	addAndMakeVisible(edgePhaseSlider);
+	
+	edgeDenomenatorSlider.setBounds(200, 540, 100, 30);
+	edgeDenomenatorSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
+	edgeDenomenatorSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
+	edgeDenomenatorSlider.setRange(1, 8, 1);
+	edgeDenomenatorSlider.setValue(1);
+	/*edgePhaseSlider.setDoubleClickReturnValue(true, 0.0f);*/
+	addAndMakeVisible(edgeDenomenatorSlider);
+
 }
 
 //==============================================================================

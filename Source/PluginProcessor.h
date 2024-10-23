@@ -79,4 +79,5 @@ private:
     std::vector<PendingMidiEvent> pendingEvents;
 
     void getUpdatedBallParams();
+    void getUpdatedEdgeParams();
 };

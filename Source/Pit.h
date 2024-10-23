@@ -22,6 +22,7 @@ public:
 	void toggleBallMovement() { isMoving = !isMoving; }
 	bool isBallsMoving() const { return isMoving; }
 	
+	void setEdgeParams(int phase, int denomenator);
 	void drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const;
 
 private:

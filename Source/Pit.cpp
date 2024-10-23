@@ -56,6 +56,12 @@ void Pit::setBallParams(int index, float x, float y, float radius, float velocit
 	balls[index]->setAngle(angle);
 }
 
+void Pit::setEdgeParams(int phase, int denomenator)
+{
+	this->edge.setPhase(phase);
+	this->edge.setDenomenator(denomenator);
+}
+
 void Pit::setBallsEdgeNotes()
 {
 	for (auto& ball : balls)

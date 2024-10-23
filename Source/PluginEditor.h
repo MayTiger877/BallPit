@@ -22,11 +22,7 @@ public:
 	BallSlidersAndAttachments() {}
 
 	juce::Slider xSlider, ySlider, radiusSlider, velocitySlider, angleSlider;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> xAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> yAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> radiusAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> velocityAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> angleAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> xAttachment, yAttachment, radiusAttachment, velocityAttachment, angleAttachment;
 };
 
 //-------------------------------------------------------------------------------------------
@@ -55,6 +51,9 @@ private:
 
 	juce::TextButton startStopButton;
 	juce::TextButton addRemoveBallButton;
+
+	juce::Slider edgePhaseSlider, edgeDenomenatorSlider;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> edgePhaseAttachment, edgeDenomenatorAttachment;
 	
 	std::unique_ptr<juce::TabbedComponent> tabs;
 

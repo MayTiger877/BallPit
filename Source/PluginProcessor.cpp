@@ -188,12 +188,19 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 	pit.setBallsEdgeNotes();
 }
 
+void BallPitAudioProcessor::getUpdatedEdgeParams()
+{
+	pit.setEdgeParams(valueTreeState.getRawParameterValue("edgePhase")->load(), 
+					  valueTreeState.getRawParameterValue("edgeDenomenator")->load());
+}
+
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	buffer.clear();
 	if (this->pit.isBallsMoving() == false)
 	{
 		getUpdatedBallParams();
+		getUpdatedEdgeParams();
 	}
 	else
 	{
@@ -295,6 +302,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Velocity", 0.0f, 10.0f, 0.5f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", 0.0f, 360.0f, 1.0f));
 	}
+
+	std::string edgePhaseId = "edgePhase";
+	params.add(std::make_unique<juce::AudioParameterFloat>(edgePhaseId, "Edge Phase", 0.0f, 360.0f, 0.0f));
+
+	std::string edgeDenomenatorId = "edgeDenomenator";
+	params.add(std::make_unique<juce::AudioParameterFloat>(edgeDenomenatorId, "Edge Denomenator", 1.0f, 8.0f, 1.0f));
 
 	return params;
 }
