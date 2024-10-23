@@ -68,19 +68,20 @@ int Edge::hitPositionToScalenote(float x, float y)
 
 void Edge::updateAbstractedEdge()
 {
-	int numOfColors = this->denomenator;
-	int split = 1568 / numOfColors;
-	int remainder = 1568 % numOfColors;
+	int numOfSplits = this->denomenator;
+	int numOfColors = this->range;
+	int split = 1568 / numOfSplits;
+	int remainder = 1568 % numOfSplits;
 	int index, colorIndex = 0;
 
-	for (int i = 0; i < numOfColors; i++)
+	for (int i = 0; i < numOfSplits; i++)
 	{
 		for (int j = 0; j < split; j++)
 		{
 			index = ((i * split) + j + this->phase) % 1568;
 			abstractedEdge[index] = this->scaleNotes[colorIndex];
 		}
-		colorIndex = i;
+		colorIndex = (colorIndex + 1) % numOfColors;
 	}
 	for (int i = 0; i < remainder; i++)
 	{

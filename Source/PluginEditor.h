@@ -52,8 +52,8 @@ private:
 	juce::TextButton startStopButton;
 	juce::TextButton addRemoveBallButton;
 
-	juce::Slider edgePhaseSlider, edgeDenomenatorSlider;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> edgePhaseAttachment, edgeDenomenatorAttachment;
+	juce::Slider edgePhaseSlider, edgeDenomenatorSlider, edgeRangeSlider;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> edgePhaseAttachment, edgeDenomenatorAttachment, edgeRangeAttachment;
 	
 	std::unique_ptr<juce::TabbedComponent> tabs;
 

@@ -56,6 +56,8 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	std::string edgeDenomenatorID = "edgeDenomenator";
 	edgeDenomenatorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgeDenomenatorID, edgeDenomenatorSlider);
 
+	std::string edgeRangeID = "edgeRange";
+	edgeRangeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgeRangeID, edgeRangeSlider);
 
 	initiateComponents();
 }
@@ -189,7 +191,6 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgePhaseSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
 	edgePhaseSlider.setRange(0, 360, 10);
 	edgePhaseSlider.setValue(0);
-	/*edgePhaseSlider.setDoubleClickReturnValue(true, 0.0f);*/
 	addAndMakeVisible(edgePhaseSlider);
 	
 	edgeDenomenatorSlider.setBounds(200, 540, 100, 30);
@@ -197,8 +198,14 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgeDenomenatorSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
 	edgeDenomenatorSlider.setRange(1, 8, 1);
 	edgeDenomenatorSlider.setValue(1);
-	/*edgePhaseSlider.setDoubleClickReturnValue(true, 0.0f);*/
 	addAndMakeVisible(edgeDenomenatorSlider);
+
+	edgeRangeSlider.setBounds(630, 540, 100, 30);
+	edgeRangeSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
+	edgeRangeSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
+	edgeRangeSlider.setRange(1, 8, 1);
+	edgeRangeSlider.setValue(2);
+	addAndMakeVisible(edgeRangeSlider);
 
 }
 
