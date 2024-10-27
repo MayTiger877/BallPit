@@ -9,6 +9,8 @@
 */
 
 #pragma once
+#include <unordered_map>
+#include <juce_audio_basics/juce_audio_basics.h>
 
 class EdgeEventListener 
 {
@@ -24,11 +26,10 @@ public:
 
 	void onEdgeHit(int note, double sampleRate) override
 	{
-		DBG("EDGE HIT" << std::to_string(note));
 		int noteVelocity = 100; // noteVelocity for the note
 		juce::MidiMessage noteOn = juce::MidiMessage::noteOn(1, note, (juce::uint8)noteVelocity);
-		juce::MidiMessage noteOff = juce::MidiMessage::noteOff(1, note);
 		int noteDurationSamples = static_cast<int>(0.300 * sampleRate); // 300ms
+		juce::MidiMessage noteOff = juce::MidiMessage::noteOff(1, note);
 
 		midiBuffer.addEvent(noteOn, 0);
 		midiBuffer.addEvent(noteOff, noteDurationSamples);

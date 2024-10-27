@@ -19,7 +19,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					  #endif
 					   .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
 					 #endif
-					   ), pit(), midiBuffer(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters())
+					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters())
 #endif
 {
 	// ball 1
@@ -245,6 +245,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	message = juce::MidiMessage::allNotesOff(1);
 	DBG(message.getDescription());
 	midiMessages.addEvent(message, samplePosition + 1);
+
 	midiBuffer.clear();
 }
 
