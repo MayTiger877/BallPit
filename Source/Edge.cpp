@@ -36,6 +36,7 @@ void Edge::setScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
 {
 	this->scale.SetScale(scaleKind);
 	this->scale.SetMode(mode);
+	// TODO- figure out how to set the root note
 }
 
 void Edge::getMIDI()

@@ -59,6 +59,9 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	std::string edgeRangeID = "edgeRange";
 	edgeRangeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgeRangeID, edgeRangeSlider);
 
+	std::string scaleChoiceID = "scaleChoice";
+	scaleChoiceAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, scaleChoiceID, scaleChoiceComboBox);
+
 	initiateComponents();
 }
 
@@ -206,6 +209,29 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgeRangeSlider.setRange(1, 8, 1);
 	edgeRangeSlider.setValue(2);
 	addAndMakeVisible(edgeRangeSlider);
+
+	scaleChoiceComboBox.setBounds(630, 475, 100, 30);
+	scaleChoiceComboBox.addItem("Chromatic", 1);
+	scaleChoiceComboBox.addItem("Octatonic", 2);
+	scaleChoiceComboBox.addItem("Dominant Diminished", 3);
+	scaleChoiceComboBox.addItem("Diminished", 4);
+	scaleChoiceComboBox.addItem("Major", 5);
+	scaleChoiceComboBox.addItem("Minor", 6);
+	scaleChoiceComboBox.addItem("Melodic Minor", 7);
+	scaleChoiceComboBox.addItem("Harmonic Minor", 8);
+	scaleChoiceComboBox.addItem("Gypsy", 9);
+	scaleChoiceComboBox.addItem("Symetrical", 10);
+	scaleChoiceComboBox.addItem("Enigmatic", 11);
+	scaleChoiceComboBox.addItem("Arabian", 12);
+	scaleChoiceComboBox.addItem("Hungarian", 13);
+	scaleChoiceComboBox.addItem("Whole Tone", 14);
+	scaleChoiceComboBox.addItem("Augmented", 15);
+	scaleChoiceComboBox.addItem("Blues Major", 16);
+	scaleChoiceComboBox.addItem("Blues Minor", 17);
+	scaleChoiceComboBox.addItem("Pentatonic", 18);
+	scaleChoiceComboBox.addItem("Minor Pentatonic", 19);
+	scaleChoiceComboBox.setSelectedId(5);
+	addAndMakeVisible(scaleChoiceComboBox);
 
 }
 

@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "Pit.h"
+#include "Scales.h"
 
 //==============================================================================
 /**
@@ -56,6 +57,9 @@ private:
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> edgePhaseAttachment, edgeDenomenatorAttachment, edgeRangeAttachment;
 	
 	std::unique_ptr<juce::TabbedComponent> tabs;
+
+	juce::ComboBox scaleChoiceComboBox;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> scaleChoiceAttachment;
 
 	juce::Colour edgeColors[8] = {
 		juce::Colours::red,

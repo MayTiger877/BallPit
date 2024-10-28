@@ -12,6 +12,7 @@
 
 #include "Pit.h"
 #include "EdgeEventListener.h"
+#include "Scales.h"
 
 
 typedef struct

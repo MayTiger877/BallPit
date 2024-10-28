@@ -23,6 +23,7 @@ public:
 	bool isBallsMoving() const { return isMoving; }
 	
 	void setEdgeParams(int phase, int denomenator, int range);
+	void setEdgeScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode);
 	void drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const;
 
 private:

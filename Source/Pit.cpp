@@ -61,6 +61,7 @@ void Pit::setEdgeParams(int phase, int denomenator, int range)
 	this->edge.setPhase(phase);
 	this->edge.setDenomenator(denomenator);
 	this->edge.setRange(range);
+	this->edge.updateAbstractedEdge();
 }
 
 void Pit::setBallsEdgeNotes()
@@ -69,6 +70,12 @@ void Pit::setBallsEdgeNotes()
 	{
 		ball->updateAbstractedEdge(this->edge.getAbstractedEdge());
 	}
+}
+
+void Pit::setEdgeScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
+{
+	this->edge.setScale(scaleKind, rootNote, mode);
+	this->edge.getMIDI();
 }
 
 void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const

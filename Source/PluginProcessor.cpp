@@ -192,6 +192,8 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 
 void BallPitAudioProcessor::getUpdatedEdgeParams()
 {
+	int scaleChoice = valueTreeState.getRawParameterValue("scaleChoice")->load();
+	pit.setEdgeScale(static_cast<Scale::ScaleKinds>(scaleChoice), 60, 0);
 	pit.setEdgeParams(valueTreeState.getRawParameterValue("edgePhase")->load(), 
 					  valueTreeState.getRawParameterValue("edgeDenomenator")->load(),
 					  valueTreeState.getRawParameterValue("edgeRange")->load());
@@ -291,6 +293,14 @@ Pit& BallPitAudioProcessor::getPit()
 	return pit;
 }
 
+juce::StringArray getScaleOptions()
+{
+	return { "Chromatic", "Octatonic", "Dominant Diminished", "Diminished", "Major", "Minor",
+			 "Melodic Minor", "Harmonic Minor", "Gypsy", "Symmetrical", "Enigmatic", "Arabian",
+			 "Hungarian", "Whole Tone", "Augmented", "Blues Major", "Blues Minor",
+			 "Pentatonic", "Minor Pentatonic" };
+}
+
 juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::createParameters()
 {
 	juce::AudioProcessorValueTreeState::ParameterLayout params;
@@ -318,6 +328,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 
 	std::string edgeRangeId = "edgeRange";
 	params.add(std::make_unique<juce::AudioParameterFloat>(edgeRangeId, "Edge Range", 1.0f, 8.0f, 1.0f));
+
+	std::string scaleKindId = "scaleChoice";
+	params.add(std::make_unique<juce::AudioParameterChoice>(scaleKindId, "Scale", getScaleOptions(), 5));
 
 	return params;
 }

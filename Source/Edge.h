@@ -46,6 +46,7 @@ public:
 
 	int hitPositionToScalenote(float x, float y);
 
+	void updateAbstractedEdge();
 private:
 	
 	// pit edges diviation
@@ -61,5 +62,4 @@ private:
 	Scale scale;
 
 	int abstractedEdge[1568];
-	void updateAbstractedEdge();
 };

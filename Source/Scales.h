@@ -24,6 +24,7 @@
 
 #include <inttypes.h>
 #include <string>
+#include <JuceHeader.h>
 
  /*
   * "Intervallen" in Dutch
