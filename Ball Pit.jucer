@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="rgLfjx" name="Ball Pit" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginCharacteristicsValue="pluginIsMidiEffectPlugin,pluginProducesMidiOut,pluginWantsMidiIn"
-              pluginFormats="buildVST3" pluginVST3Category="Generator" pluginVSTCategory="kPlugCategGenerator"
-              cppLanguageStandard="latest">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut"
+              pluginFormats="buildVST3" pluginVST3Category="Generator,Instrument,Synth"
+              pluginVSTCategory="kPlugCategSynth" cppLanguageStandard="latest"
+              version="0.1.0">
   <MAINGROUP id="U9BnPz" name="Ball Pit">
     <GROUP id="{69F35049-CA00-8238-08A9-0404F25C31A4}" name="Source">
       <FILE id="DMtabk" name="Scales.cpp" compile="1" resource="0" file="Source/Scales.cpp"/>

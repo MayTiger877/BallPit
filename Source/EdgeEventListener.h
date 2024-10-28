@@ -28,7 +28,7 @@ public:
 	{
 		int noteVelocity = 100; // noteVelocity for the note
 		juce::MidiMessage noteOn = juce::MidiMessage::noteOn(1, note, (juce::uint8)noteVelocity);
-		int noteDurationSamples = static_cast<int>(0.300 * sampleRate); // 300ms
+		int noteDurationSamples = static_cast<int>(0.200 * sampleRate); // 200ms
 		juce::MidiMessage noteOff = juce::MidiMessage::noteOff(1, note);
 
 		midiBuffer.addEvent(noteOn, 0);
@@ -49,7 +49,7 @@ public:
 	void onEdgeHit(int note, double sampleRate) override
 	{
 		int noteVelocity = 100; // noteVelocity for the note
-		int noteDurationSamples = static_cast<int>(0.300 * sampleRate); // 300ms
+		int noteDurationSamples = static_cast<int>(0.200 * sampleRate); // 200ms
 		juce::MidiMessage noteOn1 = juce::MidiMessage::noteOn(1, note, (juce::uint8)noteVelocity);
 		juce::MidiMessage noteOff1 = juce::MidiMessage::noteOff(1, note);
 

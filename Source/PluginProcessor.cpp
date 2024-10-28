@@ -128,7 +128,9 @@ void BallPitAudioProcessor::changeProgramName (int index, const juce::String& ne
 //==============================================================================
 void BallPitAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-	pit.setSampleRate(this->getSampleRate());
+	m_sampleRate = sampleRate;
+	m_samplesPerBlock = samplesPerBlock;
+	pit.setSampleRate(sampleRate);
 	midiBuffer.clear();
 }
 
@@ -208,15 +210,13 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		pit.update();
 	}
 	
-	juce::MidiBuffer::Iterator reserveIt(midiBuffer);
 	juce::MidiBuffer::Iterator it(midiBuffer);
 	juce::MidiMessage message;
 	int samplePosition;
-	int samplesPerBlock = buffer.getNumSamples();
 
 	for (auto pendingIt = pendingEvents.begin(); pendingIt != pendingEvents.end();)
 	{
-		if (pendingIt->samplePosition < samplesPerBlock)
+		if (pendingIt->samplePosition < m_samplesPerBlock)
 		{
 			DBG(pendingIt->message.getDescription() << "INSIDE MIDI BUFFER");
 			midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
@@ -224,13 +224,21 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		}
 		else
 		{
+			pendingIt->samplePosition -= static_cast<int>(m_samplesPerBlock);
 			++pendingIt;
 		}
 	}
 
 	while (it.getNextEvent(message, samplePosition))
 	{
-		if (samplePosition < samplesPerBlock)
+		if (message.isNoteOn())
+		{
+			DBG(message.getDescription() << "NOTE ON");
+			midiMessages.addEvent(message, samplePosition);
+			continue;
+		}
+
+		if (samplePosition < m_samplesPerBlock)
 		{
 			DBG(message.getDescription() << "INSIDE MIDI BUFFER");
 			midiMessages.addEvent(message, samplePosition);
@@ -238,13 +246,10 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		else
 		{
 			DBG(message.getDescription() << "SENT PENDING");
-			pendingEvents.push_back({message, (samplePosition- samplesPerBlock)});
+			int newSamplePosition = samplePosition - static_cast<int>(m_samplesPerBlock);
+			pendingEvents.push_back({message, newSamplePosition});
 		}
 	}
-
-	message = juce::MidiMessage::allNotesOff(1);
-	DBG(message.getDescription());
-	midiMessages.addEvent(message, samplePosition + 1);
 
 	midiBuffer.clear();
 }
