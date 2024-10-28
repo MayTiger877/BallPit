@@ -48,26 +48,25 @@ public:
 
 	void onEdgeHit(int note, double sampleRate) override
 	{
-		DBG("BALL COLLIDE");
-		//int noteDurationSamples = static_cast<int>(0.200 * sampleRate); // 200ms;
+		int noteVelocity = 100; // noteVelocity for the note
+		int noteDurationSamples = static_cast<int>(0.300 * sampleRate); // 300ms
+		juce::MidiMessage noteOn1 = juce::MidiMessage::noteOn(1, note, (juce::uint8)noteVelocity);
+		juce::MidiMessage noteOff1 = juce::MidiMessage::noteOff(1, note);
 
-		// Define notes for a C major chord (C4, E4, G4)
-		int midiNote1 = 60;  // C4
-		//int midiNote2 = 64;  // E4
-		//int midiNote3 = 67;  // G4
-		int noteVelocity = 100;  // noteVelocity for the notes
-		int samplePosition = 0;  // Starting at sample position 0
-		int duration = 1000;//static_cast<int>(0.500 * sampleRate); // 200ms
+		juce::MidiMessage noteOn2 = juce::MidiMessage::noteOn(1, note + 3, (juce::uint8)noteVelocity);
+		juce::MidiMessage noteOff2 = juce::MidiMessage::noteOff(1, note + 3);
 
-		midiBuffer.addEvent(juce::MidiMessage::noteOn(1, midiNote1, (juce::uint8)noteVelocity), samplePosition);
-		midiBuffer.addEvent(juce::MidiMessage::noteOff(1, midiNote1), samplePosition + duration);
+		juce::MidiMessage noteOn3 = juce::MidiMessage::noteOn(1, note + 5, (juce::uint8)noteVelocity);
+		juce::MidiMessage noteOff3 = juce::MidiMessage::noteOff(1, note + 5);
 
-		/*midiBuffer.addEvent(juce::MidiMessage::noteOn(1, midiNote2, (juce::uint8)noteVelocity), samplePosition + 1);
-		midiBuffer.addEvent(juce::MidiMessage::noteOff(1, midiNote2), samplePosition + 1 + duration);
+		midiBuffer.addEvent(noteOn1, 0);
+		midiBuffer.addEvent(noteOff1, noteDurationSamples);
 
-		midiBuffer.addEvent(juce::MidiMessage::noteOn(1, midiNote3, (juce::uint8)noteVelocity), samplePosition + 2);
-		midiBuffer.addEvent(juce::MidiMessage::noteOff(1, midiNote3), samplePosition + 2 + duration);*/
+		midiBuffer.addEvent(noteOn2, 0);
+		midiBuffer.addEvent(noteOff2, noteDurationSamples);
 
+		midiBuffer.addEvent(noteOn3, 0);
+		midiBuffer.addEvent(noteOff3, noteDurationSamples);
 	}
 
 private:
