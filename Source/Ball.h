@@ -33,6 +33,9 @@ public:
     
     void updateAbstractedEdge(int* abstractedEdge);
 
+	bool isBallMoving() { return isMoving; }
+	void setBallMoving(bool isMoving) { this->isMoving = isMoving; }
+
     void draw(juce::Graphics& g) const;
 
 private:
@@ -50,7 +53,8 @@ private:
     int index;
 
     double sampleRate;
-
+    bool isMoving;
+    
     int abstractedEdgeDuplicate[1568];
 
     BallEdgeEventListener* edgeListener;

@@ -19,7 +19,14 @@ public:
 	const std::vector<std::unique_ptr<Ball>>& getBalls() const;
 	void setBallParams(int index, float x, float y, float radius, float velocity, float angle);
 	void setBallsEdgeNotes();
-	void toggleBallMovement() { isMoving = !isMoving; }
+	
+	void toggleBallMovement() {
+		isMoving = !isMoving;
+		for (auto& ball : balls)
+		{
+			ball->setBallMoving(isMoving);
+		}
+	}
 	bool isBallsMoving() const { return isMoving; }
 	
 	void setEdgeParams(int phase, int denomenator, int range);

@@ -13,8 +13,8 @@
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
 	: AudioProcessorEditor (&p), audioProcessor (p)
 {
-	auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
-	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg");
+	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
+	auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg");
 	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
 	if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
 
@@ -136,7 +136,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
 
 		ballsSlidersAndAttachments[i].velocitySlider.setBounds(656, 165, 65, 65);
-		ballsSlidersAndAttachments[i].velocitySlider.setValue(10.0f);
+		ballsSlidersAndAttachments[i].velocitySlider.setValue(1.0f);
 		ballsSlidersAndAttachments[i].velocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].velocitySlider.setDoubleClickReturnValue(true, 3.0f);
 		ballsSlidersAndAttachments[i].velocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);

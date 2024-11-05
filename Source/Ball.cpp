@@ -4,6 +4,7 @@
 Ball::Ball(int index, float x, float y, float radius, float velocity, float angle)
 	: index(index), x(x), y(y), radius(radius), velocity(0.4 * velocity), angle(angle)
 {
+	this->isMoving = false;
 	setAngledSpeed();
 }
 
@@ -158,7 +159,10 @@ void Ball::edgeBounce()
 				index = 392 + (x - 12);
 			}
 
-			this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[index], sampleRate);
+			if (this->isMoving)
+			{
+				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[index], sampleRate);
+			}
 		}
 	}
 }
@@ -195,7 +199,7 @@ void Ball::resolveCollision(Ball& other)
 	float dotProduct = dvx * nx + dvy * ny;
 
 	// If the balls are moving away from each other, no need to resolve the collision
-	if (dotProduct > 0.0f)
+	if ((this->isMoving) && (dotProduct > 0.0f))
 	{
 		return;
 	}
@@ -219,5 +223,8 @@ void Ball::resolveCollision(Ball& other)
 	other.speedX = (other.speedX / newSpeedB) * speedB;
 	other.speedY = (other.speedY / newSpeedB) * speedB;
 
-	if (this->collideListener) this->collideListener->onEdgeHit(abstractedEdgeDuplicate[0], sampleRate);
+	if (this->isMoving)
+	{
+		if (this->collideListener) this->collideListener->onEdgeHit(abstractedEdgeDuplicate[0], sampleRate);
+	}
 }

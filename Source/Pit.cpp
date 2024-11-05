@@ -54,6 +54,22 @@ void Pit::setBallParams(int index, float x, float y, float radius, float velocit
 	balls[index]->setRadius(radius);
 	balls[index]->setVelocity(velocity);
 	balls[index]->setAngle(angle);
+	
+	// add a func that sets the x,y of the other balls to not overlap
+	int otherIndex1 = (index + 1) % balls.size();
+	int otherIndex2 = (index + 2) % balls.size();
+	if (balls[index]->checkCollision(*balls[otherIndex1]))
+	{
+		balls[index]->resolveCollision(*balls[otherIndex1]);
+	}
+	if (balls[index]->checkCollision(*balls[otherIndex2]))
+	{
+		balls[index]->resolveCollision(*balls[otherIndex2]);
+	}
+	if (balls[otherIndex1]->checkCollision(*balls[otherIndex2]))
+	{
+		balls[otherIndex1]->resolveCollision(*balls[otherIndex2]);
+	}
 }
 
 void Pit::setEdgeParams(int phase, int denomenator, int range)
