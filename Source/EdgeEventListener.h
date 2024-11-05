@@ -49,7 +49,7 @@ public:
 	void onEdgeHit(int note, double sampleRate) override
 	{
 		int noteVelocity = 100; // noteVelocity for the note
-		int noteDurationSamples = static_cast<int>(0.200 * sampleRate); // 200ms
+		int noteDurationSamples = static_cast<int>(0.250 * sampleRate); // 250ms
 		juce::MidiMessage noteOn1 = juce::MidiMessage::noteOn(1, note, (juce::uint8)noteVelocity);
 		juce::MidiMessage noteOff1 = juce::MidiMessage::noteOff(1, note);
 

@@ -2,7 +2,7 @@
 #include <iostream>
 
 Ball::Ball(int index, float x, float y, float radius, float velocity, float angle)
-	: index(index), x(x), y(y), radius(radius), velocity(0.4 * velocity), angle(angle)
+	: index(index), x(x), y(y), radius(radius), velocity(0.1 * velocity), angle(angle)
 {
 	this->isMoving = false;
 	setAngledSpeed();
@@ -107,8 +107,13 @@ void Ball::edgeBounce()
 		return;
 	}
 	
-	if (x - radius <= minX || x + radius >= maxX)
+	if (x - radius <= minX || x + radius >= maxX) // TODO - make this if better to cover radius
 	{
+		if (x - radius <= minX)
+			x = minX + radius;
+		if (x + radius >= maxX)
+			x = maxX - radius;
+		
 		speedX = -speedX;
 		if (this->edgeListener)
 		{
@@ -137,6 +142,11 @@ void Ball::edgeBounce()
 
 	if (y - radius <= minY || y + radius >= maxY)
 	{
+		if (y - radius <= minY)
+			y = minY + radius;
+		if (y + radius >= maxY)
+			y = maxY - radius;
+		
 		speedY = -speedY;
 		if (this->edgeListener)
 		{

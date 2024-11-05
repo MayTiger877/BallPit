@@ -36,7 +36,7 @@ void Edge::setScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
 {
 	this->scale.SetScale(scaleKind);
 	this->scale.SetMode(mode);
-	// TODO- figure out how to set the root note
+	// TODO - figure out how to set the root note
 }
 
 void Edge::getMIDI()
@@ -73,7 +73,7 @@ void Edge::updateAbstractedEdge()
 	int numOfColors = this->range;
 	int split = 1568 / numOfSplits;
 	int remainder = 1568 % numOfSplits;
-	int index, colorIndex = 0;
+	int index, colorIndex = 0; // TODO - change colorIndex to be the root note
 
 	for (int i = 0; i < numOfSplits; i++)
 	{
@@ -84,6 +84,7 @@ void Edge::updateAbstractedEdge()
 		}
 		colorIndex = (colorIndex + 1) % numOfColors;
 	}
+	
 	for (int i = 0; i < remainder; i++)
 	{
 		abstractedEdge[1567 - i] = this->scaleNotes[colorIndex];

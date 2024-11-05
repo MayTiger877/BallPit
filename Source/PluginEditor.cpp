@@ -136,7 +136,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
 
 		ballsSlidersAndAttachments[i].velocitySlider.setBounds(656, 165, 65, 65);
-		ballsSlidersAndAttachments[i].velocitySlider.setValue(1.0f);
+		ballsSlidersAndAttachments[i].velocitySlider.setValue(5.0f);
 		ballsSlidersAndAttachments[i].velocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].velocitySlider.setDoubleClickReturnValue(true, 3.0f);
 		ballsSlidersAndAttachments[i].velocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -163,6 +163,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	startStopButton.setButtonText("Start");
 	startStopButton.onClick = [this]()
 	{
+		audioProcessor.getPit().checkBallsPositionBeforeStart();
 		audioProcessor.getPit().toggleBallMovement();
 		if (audioProcessor.getPit().isBallsMoving())
 			startStopButton.setButtonText("Stop");
