@@ -193,7 +193,8 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 void BallPitAudioProcessor::getUpdatedEdgeParams()
 {
 	int scaleChoice = valueTreeState.getRawParameterValue("scaleChoice")->load();
-	pit.setEdgeScale(static_cast<Scale::ScaleKinds>(scaleChoice), 60, 0);
+	int rootNote = valueTreeState.getRawParameterValue("rootNote")->load();
+	pit.setEdgeScale(static_cast<Scale::ScaleKinds>(scaleChoice), rootNote, 0);
 	pit.setEdgeParams(valueTreeState.getRawParameterValue("edgePhase")->load(), 
 					  valueTreeState.getRawParameterValue("edgeDenomenator")->load(),
 					  valueTreeState.getRawParameterValue("edgeRange")->load());
@@ -335,6 +336,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 
 	std::string scaleKindId = "scaleChoice";
 	params.add(std::make_unique<juce::AudioParameterChoice>(scaleKindId, "Scale", getScaleOptions(), 5));
+	
+	std::string rootNoteId = "rootNote";
+	params.add(std::make_unique<juce::AudioParameterInt>(rootNoteId, "Root Note", 0, 11, 0));
 
 	return params;
 }

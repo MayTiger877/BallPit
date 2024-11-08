@@ -107,7 +107,7 @@ void Ball::edgeBounce()
 		return;
 	}
 	
-	if (x - radius <= minX || x + radius >= maxX) // TODO - make this if better to cover radius
+	if (x - radius <= minX || x + radius >= maxX) // TODO - make this if better to cover radius when positioning balls
 	{
 		if (x - radius <= minX)
 			x = minX + radius;
@@ -117,7 +117,6 @@ void Ball::edgeBounce()
 		speedX = -speedX;
 		if (this->edgeListener)
 		{
-			// TODO- figure out how to get the not from the edge....
 			int index = 0;
 			if (x - radius <= 12)
 			{
@@ -150,7 +149,6 @@ void Ball::edgeBounce()
 		speedY = -speedY;
 		if (this->edgeListener)
 		{
-			// TODO- figure out how to get the not from the edge....
 			int index = 0;
 			if (x - radius <= 12)
 			{

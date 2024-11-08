@@ -62,6 +62,9 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	std::string scaleChoiceID = "scaleChoice";
 	scaleChoiceAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, scaleChoiceID, scaleChoiceComboBox);
 
+	std::string rootNoteID = "rootNote";
+	rootNoteAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, rootNoteID, rootNoteComboBox);
+
 	initiateComponents();
 }
 
@@ -234,6 +237,21 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	scaleChoiceComboBox.setSelectedId(5);
 	addAndMakeVisible(scaleChoiceComboBox);
 
+	rootNoteComboBox.setBounds(630, 590, 100, 30);
+	rootNoteComboBox.addItem("C", 1);
+	rootNoteComboBox.addItem("C#", 2);
+	rootNoteComboBox.addItem("D", 3);
+	rootNoteComboBox.addItem("D#", 4);
+	rootNoteComboBox.addItem("E", 5);
+	rootNoteComboBox.addItem("F", 6);
+	rootNoteComboBox.addItem("F#", 7);
+	rootNoteComboBox.addItem("G", 8);
+	rootNoteComboBox.addItem("G#", 9);
+	rootNoteComboBox.addItem("A", 10);
+	rootNoteComboBox.addItem("A#", 11);
+	rootNoteComboBox.addItem("B", 12);
+	rootNoteComboBox.setSelectedId(1);
+	addAndMakeVisible(rootNoteComboBox);
 }
 
 //==============================================================================

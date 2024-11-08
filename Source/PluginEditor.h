@@ -61,6 +61,9 @@ private:
 	juce::ComboBox scaleChoiceComboBox;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> scaleChoiceAttachment;
 
+	juce::ComboBox rootNoteComboBox;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> rootNoteAttachment;
+
 	juce::Colour edgeColors[8] = {
 		juce::Colours::red,
 		juce::Colours::limegreen,
