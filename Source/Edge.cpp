@@ -82,7 +82,10 @@ void Edge::updateAbstractedEdge()
 			index = (j + (i * split) + this->phase) % 1568;
 			abstractedEdge[index] = this->scaleNotes[colorIndex];
 		}
-		colorIndex = (colorIndex + 1) % numOfColors;
+		if (index < 1568)
+		{
+			colorIndex = (colorIndex + 1) % numOfColors;
+		}
 	}
 	
 	for (int i = 0; i < remainder; i++)

@@ -120,11 +120,11 @@ void Ball::edgeBounce()
 			int index = 0;
 			if (x - radius <= minX)
 			{
-				index = (y - 15);
+				index = (y - minY);
 			}
 			else if (x + radius >= maxX)
 			{
-				index = 1568 - (392 * 2) + (y - 15);
+				index = 1568 - 392 - (y - minY);
 			}
 
 			if (this->isMoving)
@@ -147,11 +147,11 @@ void Ball::edgeBounce()
 			int index = 0;
 			if (y - radius <= minY)
 			{
-				index = 1568 - 392 - (x - 12);
+				index = 1568 - (x - minX);
 			}
 			else if (y + radius >= maxY)
 			{
-				index = 392 + (x - 12);
+				index = 392 + (x - minX);
 			}
 
 			if (this->isMoving)
