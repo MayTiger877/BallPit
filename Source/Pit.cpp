@@ -117,22 +117,22 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const
 			if (index <= 392)
 			{
 				g.setColour(edgeColors[colorIndex]);
-				g.fillRect(8, 15 + index, 4, 2);
+				g.fillRect(8, 12 + index, 4, 2);
 			}
 			else if ((index > 392) && (index <= 784))
 			{
 				g.setColour(edgeColors[colorIndex]);
-				g.fillRect(8 + (index - 392), 402, 2, 4);
+				g.fillRect(10 + (index - 392), 402, 2, 4);
 			}
 			else if ((index > 784) && (index <= 1176))
 			{
 				g.setColour(edgeColors[colorIndex]);
-				g.fillRect(402, (15 + (1176 - index)), 4, 2);
+				g.fillRect(402, (12 + (1176 - index)), 4, 2);
 			}
 			else if ((index > 1176) && (index <= 1568))
 			{
 				g.setColour(edgeColors[colorIndex]);
-				g.fillRect(12 + (1568 - index), 12, 2, 4);
+				g.fillRect(10 + (1568 - index), 12, 2, 4);
 			}
 		}
 		colorIndex = (colorIndex + 1) % numOfColors;

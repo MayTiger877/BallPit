@@ -73,8 +73,8 @@ bool Scale::SetMode(uint8_t modeOf)
 
 bool Scale::SetScale(ScaleKinds kindOfScale) 
 {
-	int i;
-	int tmp;
+	//int i;
+	//int tmp;
 
 	// Most scales are 7 notes (heptatonic)
 	// unless specifically changed for some less common scales
@@ -83,252 +83,256 @@ bool Scale::SetScale(ScaleKinds kindOfScale)
 	//some exotic scales have just one mode.
 	modes = 0;
 
-	switch (kindOfScale) {
-	case Scale::ScaleKinds::MAJOR:
-		ptrToScale = &major_s[mode][0];
-		modes = 7;
-		scale = Scale::ScaleKinds::MAJOR;
-		scaleName = "Major";
-		switch (Scale::mode) 
-		{
-		case 0:
-			modeName = "Ionian";
+	switch (kindOfScale) 
+	{
+		case Scale::ScaleKinds::MAJOR:
+			ptrToScale = &major_s[mode][0];
+			modes = 7;
+			scale = Scale::ScaleKinds::MAJOR;
+			scaleName = "Major";
+			switch (Scale::mode) 
+			{
+				case 0:
+					modeName = "Ionian";
+					break;
+				case 1:
+					modeName = "Dorian";
+					break;
+				case 2:
+					modeName = "Phrygian";
+					break;
+				case 3:
+					modeName = "Lydian";
+					break;
+				case 4:
+					modeName = "Mixolydian";
+					break;
+				case 5:
+					modeName = "Aeolian";
+					break;
+				case 6:
+					modeName = "Locrian";
+					break;
+				default:
+					modeName = "?";
+					break;
+			}
 			break;
-		case 1:
-			modeName = "Dorian";
+		case Scale::ScaleKinds::MINOR:
+			ptrToScale = &minor_s[mode][0];
+			modes = 7;
+			scale = Scale::ScaleKinds::MINOR;
+			scaleName = "Minor";
+			switch (Scale::mode) 
+			{
+				case 0:
+					modeName = "Aeolian";
+					break;
+				case 1:
+					modeName = "Locrian";
+					break;
+				case 2:
+					modeName = "Ionian";
+					break;
+				case 3:
+					modeName = "Dorian";
+					break;
+				case 4:
+					modeName = "Phrygian";
+					break;
+				case 5:
+					modeName = "Lydian";
+					break;
+				case 6:
+					modeName = "Mixolydian";
+					break;
+				default:
+					modeName = "?";
+					break;
+			}
 			break;
-		case 2:
-			modeName = "Phrygian";
-			break;
-		case 3:
-			modeName = "Lydian";
-			break;
-		case 4:
-			modeName = "Mixolydian";
-			break;
-		case 5:
-			modeName = "Aeolian";
-			break;
-		case 6:
-			modeName = "Locrian";
-			break;
-		default:
-			modeName = "?";
-			break;
+		case Scale::ScaleKinds::MELODIC_MINOR:
+			ptrToScale = &melodic_minor[mode][0];
+			modes = 7;
+			scale = Scale::ScaleKinds::MELODIC_MINOR;
+			scaleName = "Melodic minor";
+			switch (Scale::mode) 
+			{
+				case 0:
+					modeName = "Melodic minor";
+					break;
+				case 1:
+					modeName = "Dorian b2";
+					break;
+				case 2:
+					modeName = "Lydian augmented";
+					break;
+				case 3:
+					modeName = "Mixolydian #11";
+					break;
+				case 4:
+					modeName = "Mixolydian b6";
+					break;
+				case 5:
+					modeName = "Locrian natural9";
+					break;
+				case 6:
+					modeName = "Altered Dominant";
+					break;
+				default:
+					modeName = "?";
+					break;
+			}
 
-		}
-		break;
-	case Scale::ScaleKinds::MINOR:
-		ptrToScale = &minor_s[mode][0];
-		modes = 7;
-		scale = Scale::ScaleKinds::MINOR;
-		scaleName = "Minor";
-		switch (Scale::mode) {
-		case 0:
-			modeName = "Aeolian";
 			break;
-		case 1:
-			modeName = "Locrian";
+		case Scale::ScaleKinds::HARMONIC_MINOR:
+			ptrToScale = &harmonic_minor[mode][0];
+			modes = 7;
+			scale = Scale::ScaleKinds::HARMONIC_MINOR;
+			scaleName = "Harmonic minor";
+			switch (Scale::mode) 
+			{
+				case 0:
+					modeName = "Harmonic minor";
+					break;
+				case 1:
+					modeName = "Locrian natural6";
+					break;
+				case 2:
+					modeName = "Ionian augmented";
+					break;
+				case 3:
+					modeName = "Dorian #11";
+					break;
+				case 4:
+					modeName = "Phrygian major";
+					break;
+				case 5:
+					modeName = "Lydian #9";
+					break;
+				case 6:
+					modeName = "Altered dominant bb7";
+					break;
+				default:
+					modeName = "?";
+					break;
+			}
 			break;
-		case 2:
-			modeName = "Ionian";
+			// No modes in these ones
+		case Scale::ScaleKinds::GYPSY:
+			notes = 7;
+			ptrToScale = &gypsy[0];
+			scale = Scale::ScaleKinds::GYPSY;
+			scaleName = "Gypsy";
 			break;
-		case 3:
-			modeName = "Dorian";
+		case Scale::ScaleKinds::SYMETRICAL:
+			ptrToScale = &symetrical[0];
+			scale = Scale::ScaleKinds::SYMETRICAL;
+			scaleName = "Symetrical";
 			break;
-		case 4:
-			modeName = "Phrygian";
+		case Scale::ScaleKinds::ENIGMATIC:
+			ptrToScale = &enigmatic[0];
+			scale = Scale::ScaleKinds::ENIGMATIC;
+			scaleName = "Enigmatic";
 			break;
-		case 5:
-			modeName = "Lydian";
+		case Scale::ScaleKinds::ARABIAN:
+			ptrToScale = &arabian[0];
+			scale = Scale::ScaleKinds::ARABIAN;
+			scaleName = "Arabian";
 			break;
-		case 6:
-			modeName = "Mixolydian";
+		case Scale::ScaleKinds::HUNGARIAN:
+			ptrToScale = &hungarian[0];
+			scale = Scale::ScaleKinds::HUNGARIAN;
+			scaleName = "Hungarian";
+			break;
+			// These scales have 6 notes
+		case Scale::ScaleKinds::WHOLE_TONE:
+			notes = 6;
+			ptrToScale = &whole_tone[0];
+			scale = Scale::ScaleKinds::WHOLE_TONE;
+			scaleName = "Whole tone";
+			break;
+			// Augmented has two modes not sure what to call
+			// the second one
+		case Scale::ScaleKinds::AUGMENTED:
+			notes = 6;
+			modes = 2;
+			ptrToScale = &augmented[mode][0];
+			scale = Scale::ScaleKinds::AUGMENTED;
+			scaleName = "Augmented";
+			break;
+		case Scale::ScaleKinds::BLUES_MAJOR:
+			notes = 6;
+			ptrToScale = &blues_major[0];
+			scale = Scale::ScaleKinds::BLUES_MAJOR;
+			scaleName = "Blues major";
+			break;
+			// Blues minor has modes I guess...
+		case Scale::ScaleKinds::BLUES_MINOR:
+			notes = 6;
+			modes = 6;
+			if (mode >= 6) {
+				mode = 0;
+			}
+			ptrToScale = &blues_minor[mode][0];
+			scale = Scale::ScaleKinds::BLUES_MINOR;
+			scaleName = "Blues minor";
+			break;
+			// These scales have 5 notes
+		case Scale::ScaleKinds::PENTATONIC:
+			notes = 5;
+			ptrToScale = &pentatonic[0];
+			scale = Scale::ScaleKinds::PENTATONIC;
+			scaleName = "Pentatonic";
+			break;
+		case Scale::ScaleKinds::MINOR_PENTATONIC:
+			notes = 5;
+			ptrToScale = &minor_pentatonic[0];
+			scale = Scale::ScaleKinds::MINOR_PENTATONIC;
+			scaleName = "Minor Pentatonic";
+			break;
+			// 12 Notes is the max (in our Western system)
+		case Scale::ScaleKinds::CHROMATIC:
+			notes = 12;
+			ptrToScale = &chromatic[0];
+			scale = Scale::ScaleKinds::CHROMATIC;
+			scaleName = "Chromatic";
+			break;
+			// 8 note keys
+		case Scale::ScaleKinds::OCTATONIC:
+			notes = 8;
+			modes = 2;
+			if (mode >= 2) {
+				mode = 0;
+			}
+			ptrToScale = &octatonic[mode][0];
+			scale = Scale::ScaleKinds::OCTATONIC;
+			scaleName = "Octatonic";
+			break;
+		case Scale::ScaleKinds::DOMINANT_DIMINISHED:
+			notes = 8;
+			// ptrToScale = &dominant_diminished[0];
+			// Dominant dim is the same as the first mode of the
+			// octatonic so we could also do the below
+			ptrToScale = &octatonic[0][0];
+			scale = Scale::ScaleKinds::DOMINANT_DIMINISHED;
+			scaleName = "Dominant Diminished";
+			break;
+		case Scale::ScaleKinds::DIMINISHED:
+			notes = 8;
+			// ptrToScale = &dominant_diminished[0];
+			// dim is the same as the second mode of the
+			// octatonic so we could also do the below
+			ptrToScale = &octatonic[1][0];
+			scale = Scale::ScaleKinds::DIMINISHED;
+			scaleName = "Diminished";
 			break;
 		default:
-			modeName = "?";
-			break;
-		}
-		break;
-	case Scale::ScaleKinds::MELODIC_MINOR:
-		ptrToScale = &melodic_minor[mode][0];
-		modes = 7;
-		scale = Scale::ScaleKinds::MELODIC_MINOR;
-		scaleName = "Melodic minor";
-		switch (Scale::mode) {
-		case 0:
-			modeName = "Melodic minor";
-			break;
-		case 1:
-			modeName = "Dorian b2";
-			break;
-		case 2:
-			modeName = "Lydian augmented";
-			break;
-		case 3:
-			modeName = "Mixolydian #11";
-			break;
-		case 4:
-			modeName = "Mixolydian b6";
-			break;
-		case 5:
-			modeName = "Locrian natural9";
-			break;
-		case 6:
-			modeName = "Altered Dominant";
-			break;
-		default:
-			modeName = "?";
-			break;
-		}
-
-		break;
-	case Scale::ScaleKinds::HARMONIC_MINOR:
-		ptrToScale = &harmonic_minor[mode][0];
-		modes = 7;
-		scale = Scale::ScaleKinds::HARMONIC_MINOR;
-		scaleName = "Harmonic minor";
-		switch (Scale::mode) {
-		case 0:
-			modeName = "Harmonic minor";
-			break;
-		case 1:
-			modeName = "Locrian natural6";
-			break;
-		case 2:
-			modeName = "Ionian augmented";
-			break;
-		case 3:
-			modeName = "Dorian #11";
-			break;
-		case 4:
-			modeName = "Phrygian major";
-			break;
-		case 5:
-			modeName = "Lydian #9";
-			break;
-		case 6:
-			modeName = "Altered dominant bb7";
-			break;
-		default:
-			modeName = "?";
-			break;
-		}
-		break;
-		// No modes in these ones
-	case Scale::ScaleKinds::GYPSY:
-		notes = 7;
-		ptrToScale = &gypsy[0];
-		scale = Scale::ScaleKinds::GYPSY;
-		scaleName = "Gypsy";
-		break;
-	case Scale::ScaleKinds::SYMETRICAL:
-		ptrToScale = &symetrical[0];
-		scale = Scale::ScaleKinds::SYMETRICAL;
-		scaleName = "Symetrical";
-		break;
-	case Scale::ScaleKinds::ENIGMATIC:
-		ptrToScale = &enigmatic[0];
-		scale = Scale::ScaleKinds::ENIGMATIC;
-		scaleName = "Enigmatic";
-		break;
-	case Scale::ScaleKinds::ARABIAN:
-		ptrToScale = &arabian[0];
-		scale = Scale::ScaleKinds::ARABIAN;
-		scaleName = "Arabian";
-		break;
-	case Scale::ScaleKinds::HUNGARIAN:
-		ptrToScale = &hungarian[0];
-		scale = Scale::ScaleKinds::HUNGARIAN;
-		scaleName = "Hungarian";
-		break;
-		// These scales have 6 notes
-	case Scale::ScaleKinds::WHOLE_TONE:
-		notes = 6;
-		ptrToScale = &whole_tone[0];
-		scale = Scale::ScaleKinds::WHOLE_TONE;
-		scaleName = "Whole tone";
-		break;
-		// Augmented has two modes not sure what to call
-		// the second one
-	case Scale::ScaleKinds::AUGMENTED:
-		notes = 6;
-		modes = 2;
-		ptrToScale = &augmented[mode][0];
-		scale = Scale::ScaleKinds::AUGMENTED;
-		scaleName = "Augmented";
-		break;
-	case Scale::ScaleKinds::BLUES_MAJOR:
-		notes = 6;
-		ptrToScale = &blues_major[0];
-		scale = Scale::ScaleKinds::BLUES_MAJOR;
-		scaleName = "Blues major";
-		break;
-		// Blues minor has modes I guess...
-	case Scale::ScaleKinds::BLUES_MINOR:
-		notes = 6;
-		modes = 6;
-		if (mode >= 6) {
 			mode = 0;
-		}
-		ptrToScale = &blues_minor[mode][0];
-		scale = Scale::ScaleKinds::BLUES_MINOR;
-		scaleName = "Blues minor";
-		break;
-		// These scales have 5 notes
-	case Scale::ScaleKinds::PENTATONIC:
-		notes = 5;
-		ptrToScale = &pentatonic[0];
-		scale = Scale::ScaleKinds::PENTATONIC;
-		scaleName = "Pentatonic";
-		break;
-	case Scale::ScaleKinds::MINOR_PENTATONIC:
-		notes = 5;
-		ptrToScale = &minor_pentatonic[0];
-		scale = Scale::ScaleKinds::MINOR_PENTATONIC;
-		scaleName = "Minor Pentatonic";
-		break;
-		// 12 Notes is the max (in our Western system)
-	case Scale::ScaleKinds::CHROMATIC:
-		notes = 12;
-		ptrToScale = &chromatic[0];
-		scale = Scale::ScaleKinds::CHROMATIC;
-		scaleName = "Chromatic";
-		break;
-		// 8 note keys
-	case Scale::ScaleKinds::OCTATONIC:
-		notes = 8;
-		modes = 2;
-		if (mode >= 2) {
-			mode = 0;
-		}
-		ptrToScale = &octatonic[mode][0];
-		scale = Scale::ScaleKinds::OCTATONIC;
-		scaleName = "Octatonic";
-		break;
-	case Scale::ScaleKinds::DOMINANT_DIMINISHED:
-		notes = 8;
-		// ptrToScale = &dominant_diminished[0];
-		// Dominant dim is the same as the first mode of the
-		// octatonic so we could also do the below
-		ptrToScale = &octatonic[0][0];
-		scale = Scale::ScaleKinds::DOMINANT_DIMINISHED;
-		scaleName = "Dominant Diminished";
-		break;
-	case Scale::ScaleKinds::DIMINISHED:
-		notes = 8;
-		// ptrToScale = &dominant_diminished[0];
-		// dim is the same as the second mode of the
-		// octatonic so we could also do the below
-		ptrToScale = &octatonic[1][0];
-		scale = Scale::ScaleKinds::DIMINISHED;
-		scaleName = "Diminished";
-		break;
-	default:
-		mode = 0;
-		notes = 0;
-		break;
+			notes = 0;
+			break;
 	}
+	
 	return true;
 }
 

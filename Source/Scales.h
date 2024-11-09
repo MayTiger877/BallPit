@@ -116,16 +116,9 @@ public:
 	std::string modeName;
 	uint8_t notes;
 	uint8_t mode;
-
-	// Max number of modes starting with 0 == first mode
 	uint8_t modes;
-	// These don't modify the Object
-	const std::string Text(uint8_t rootnote,
-		bool flats);
-	static const std::string NoteToText(uint8_t midinote,
-		bool flats,
-		bool showoctave);
-	//private:
+	const std::string Text(uint8_t rootnote, bool flats);
+	static const std::string NoteToText(uint8_t midinote, bool flats, bool showoctave);
 	uint8_t* ptrToScale;
 
 	/*
@@ -135,13 +128,13 @@ public:
 	   0xfa,0xca,0xde
 	};
 
-
 	/*
 	 * Scales are listed below as arrays of
 	 * uint8_t indicating the either a 1/2 step as 1
 	 * or a whole step as 2.
 	 * minor 3'rd as 3
 	 */
+	
 	 /*
 	  * CHROMATIC Scale 12 note
 	  */

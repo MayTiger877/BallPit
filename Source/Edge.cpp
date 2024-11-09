@@ -36,12 +36,12 @@ void Edge::setScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
 {
 	this->scale.SetScale(scaleKind);
 	this->scale.SetMode(mode);
-	// TODO - figure out how to set the root note
+	this->rootNote = rootNote;
 }
 
 void Edge::getMIDI()
 {
-	scale.getMIDINotesFromScale(this->scaleNotes, this->scaleNotes[0]);
+	scale.getMIDINotesFromScale(this->scaleNotes, this->rootNote);
 }
 
 int Edge::hitPositionToScalenote(float x, float y)
