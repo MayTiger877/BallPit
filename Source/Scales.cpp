@@ -73,9 +73,6 @@ bool Scale::SetMode(uint8_t modeOf)
 
 bool Scale::SetScale(ScaleKinds kindOfScale) 
 {
-	//int i;
-	//int tmp;
-
 	// Most scales are 7 notes (heptatonic)
 	// unless specifically changed for some less common scales
 	// below
@@ -519,13 +516,18 @@ void Scale::getMIDINotesFromScale(int *scaleNotes, int rootNote)
 		return;
 	}
 	
+	int octave = 12;
 	scaleNotes[0] = rootNote;
-
-	// Fill in the rest of the notes for the scale
-	//for (int i = 1; i < notes; ++i)
 	for (int i = 1; i < 8; ++i)
 	{
-		scaleNotes[i] = scaleNotes[i - 1] + ptrToScale[i - 1];
+		if (i < this->notes)
+		{
+			scaleNotes[i] = scaleNotes[i - 1] + ptrToScale[i - 1];
+		}
+		else
+		{
+			scaleNotes[i] = scaleNotes[i - this->notes] + octave;
+		}
 	}
 	
 }

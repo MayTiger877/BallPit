@@ -118,24 +118,19 @@ void Ball::edgeBounce()
 		if (this->edgeListener)
 		{
 			int index = 0;
-			if (x - radius <= 12)
+			if (x - radius <= minX)
 			{
 				index = (y - 15);
 			}
-			else if (x + radius >= 404)
+			else if (x + radius >= maxX)
 			{
 				index = 1568 - (392 * 2) + (y - 15);
 			}
-			else if (y - radius <= 15)
-			{
-				index = 1568 - 392 - (x - 12);
-			}
-			else if (y + radius >= 407)
-			{
-				index = 392 + (x - 12);
-			}
 
-			this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[index], sampleRate);
+			if (this->isMoving)
+			{
+				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[index], sampleRate);
+			}
 		}
 	}
 
@@ -150,19 +145,11 @@ void Ball::edgeBounce()
 		if (this->edgeListener)
 		{
 			int index = 0;
-			if (x - radius <= 12)
-			{
-				index = (y - 15);
-			}
-			else if (x + radius >= 404)
-			{
-				index = 1568 - (392 * 2) + (y - 15);
-			}
-			else if (y - radius <= 15)
+			if (y - radius <= minY)
 			{
 				index = 1568 - 392 - (x - 12);
 			}
-			else if (y + radius >= 407)
+			else if (y + radius >= maxY)
 			{
 				index = 392 + (x - 12);
 			}
