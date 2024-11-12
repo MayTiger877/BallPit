@@ -68,7 +68,7 @@ public:
 
 	Pit& getPit();
 
-	void updateGUIFlag() { isGUIUploaded = true; }
+	void updateGUIFlag(bool newStatus) { isGUIUploaded = newStatus; }
 	bool getIsGUIUploaded() { return isGUIUploaded; }
 
 private:

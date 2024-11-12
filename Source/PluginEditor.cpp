@@ -71,14 +71,6 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	rootNoteAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, rootNoteID, rootNoteComboBox);
 
 	initiateComponents();
-	if (audioProcessor.getIsGUIUploaded() == false)
-	{
-		audioProcessor.updateGUIFlag();
-	}
-	/*else
-	{
-		loadFromProcessorState();
-	}*/
 }
 
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
@@ -91,20 +83,21 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 		std::string ballVelocityId = "ballVelocity" + std::to_string(i);
 		std::string ballAngleId = "ballAngle" + std::to_string(i);
 
-		this->newGUIState.setProperty(juce::Identifier(ballXId), audioProcessor.valueTreeState.getParameter(ballXId)->getValue(), nullptr);
-		this->newGUIState.setProperty(juce::Identifier(ballYId), audioProcessor.valueTreeState.getParameter(ballYId)->getValue(), nullptr);
-		this->newGUIState.setProperty(juce::Identifier(ballRadiusId), audioProcessor.valueTreeState.getParameter(ballRadiusId)->getValue(), nullptr);
-		this->newGUIState.setProperty(juce::Identifier(ballVelocityId), audioProcessor.valueTreeState.getParameter(ballVelocityId)->getValue(), nullptr);
-		this->newGUIState.setProperty(juce::Identifier(ballAngleId), audioProcessor.valueTreeState.getParameter(ballAngleId)->getValue(), nullptr);
+		this->newGUIState.setProperty(juce::Identifier(ballXId), audioProcessor.valueTreeState.getRawParameterValue(ballXId)->load(), nullptr);
+		this->newGUIState.setProperty(juce::Identifier(ballYId), audioProcessor.valueTreeState.getRawParameterValue(ballYId)->load(), nullptr);
+		this->newGUIState.setProperty(juce::Identifier(ballRadiusId), audioProcessor.valueTreeState.getRawParameterValue(ballRadiusId)->load(), nullptr);
+		this->newGUIState.setProperty(juce::Identifier(ballVelocityId), audioProcessor.valueTreeState.getRawParameterValue(ballVelocityId)->load(), nullptr);
+		this->newGUIState.setProperty(juce::Identifier(ballAngleId), audioProcessor.valueTreeState.getRawParameterValue(ballAngleId)->load(), nullptr);
 	}
 
-	this->newGUIState.setProperty("edgePhase", audioProcessor.valueTreeState.getParameter("edgePhase")->getValue(), nullptr);
-	this->newGUIState.setProperty("edgeDenomenator", audioProcessor.valueTreeState.getParameter("edgeDenomenator")->getValue(), nullptr);
-	this->newGUIState.setProperty("edgeRange", audioProcessor.valueTreeState.getParameter("edgeRange")->getValue(), nullptr);
-	this->newGUIState.setProperty("scaleChoice", audioProcessor.valueTreeState.getParameter("scaleChoice")->getValue(), nullptr);
-	this->newGUIState.setProperty("rootNote", audioProcessor.valueTreeState.getParameter("rootNote")->getValue(), nullptr);
+	this->newGUIState.setProperty("edgePhase", audioProcessor.valueTreeState.getRawParameterValue("edgePhase")->load(), nullptr);
+	this->newGUIState.setProperty("edgeDenomenator", audioProcessor.valueTreeState.getRawParameterValue("edgeDenomenator")->load(), nullptr);
+	this->newGUIState.setProperty("edgeRange", audioProcessor.valueTreeState.getRawParameterValue("edgeRange")->load(), nullptr);
+	this->newGUIState.setProperty("scaleChoice", audioProcessor.valueTreeState.getRawParameterValue("scaleChoice")->load(), nullptr);
+	this->newGUIState.setProperty("rootNote", audioProcessor.valueTreeState.getRawParameterValue("rootNote")->load(), nullptr);
 
 	audioProcessor.saveGUIState(this->newGUIState);
+	audioProcessor.updateGUIFlag(false);
 }
 
 void BallPitAudioProcessorEditor::loadFromProcessorState()
@@ -326,6 +319,12 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	{
 		drawable->setBounds(getLocalBounds());
 		drawable->draw(g, 1.0f);
+	}
+	
+	if (audioProcessor.getIsGUIUploaded() == false)
+	{
+		audioProcessor.updateGUIFlag(true);
+		loadFromProcessorState();
 	}
 	
 	// draw balls
