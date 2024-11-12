@@ -22,6 +22,9 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters())
 #endif
 {
+	this->isGUIUploaded = false;
+	this->GUIState = juce::ValueTree("GUIState");
+
 	// ball 1
 	auto ball1 = std::make_unique<Ball>(0, 50.0f, 200.0f, 10.0f, 10.0f, 6.0f);
 	ball1->setActive(true);
@@ -212,7 +215,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	{
 		pit.update();
 	}
-	
+	// TODO - check this function again after all the changes
 	juce::MidiBuffer::Iterator it(midiBuffer);
 	juce::MidiMessage message;
 	int samplePosition;
@@ -346,4 +349,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	params.add(std::make_unique<juce::AudioParameterInt>(rootNoteId, "Root Note", 0, 11, 0));
 
 	return params;
+}
+
+void BallPitAudioProcessor::saveGUIState(juce::ValueTree &newGUIState)
+{
+	this->GUIState.copyPropertiesFrom(newGUIState, nullptr);
 }

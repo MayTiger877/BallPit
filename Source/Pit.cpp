@@ -90,7 +90,7 @@ void Pit::setBallsEdgeNotes()
 
 void Pit::checkBallsPositionBeforeStart()
 {
-	for (auto& ball : balls)
+	for (auto& ball : balls) // TODO - delete this kaka
 	{
 		DBG("tttttt");
 	}

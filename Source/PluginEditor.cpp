@@ -13,8 +13,10 @@
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
 	: AudioProcessorEditor (&p), audioProcessor (p)
 {
-	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg");
-	auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg");
+	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg"); //laptop
+	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
+	auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/LayOut.svg"); //haifa
+
 	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
 	if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
 
@@ -31,6 +33,8 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 
 	setSize(836, 654);
 	startTimerHz(60);
+
+	this->newGUIState = juce::ValueTree("newGUIState");
 
 	// Configure and attach parameters and sliders
 	for (int i = 0; i < 3; i++)
@@ -50,6 +54,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 		std::string ballAngleID = "ballAngle" + std::to_string(i);
 		ballsSlidersAndAttachments[i].angleAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballAngleID, ballsSlidersAndAttachments[i].angleSlider);
 	}
+
 	std::string edgePhaseID = "edgePhase";
 	edgePhaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgePhaseID, edgePhaseSlider);
 
@@ -66,10 +71,66 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	rootNoteAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, rootNoteID, rootNoteComboBox);
 
 	initiateComponents();
+	if (audioProcessor.getIsGUIUploaded() == false)
+	{
+		audioProcessor.updateGUIFlag();
+	}
+	/*else
+	{
+		loadFromProcessorState();
+	}*/
 }
 
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 {
+	for (int i = 0; i < 3; ++i)
+	{
+		std::string ballXId = "ballX" + std::to_string(i);
+		std::string ballYId = "ballY" + std::to_string(i);
+		std::string ballRadiusId = "ballRadius" + std::to_string(i);
+		std::string ballVelocityId = "ballVelocity" + std::to_string(i);
+		std::string ballAngleId = "ballAngle" + std::to_string(i);
+
+		this->newGUIState.setProperty(juce::Identifier(ballXId), audioProcessor.valueTreeState.getParameter(ballXId)->getValue(), nullptr);
+		this->newGUIState.setProperty(juce::Identifier(ballYId), audioProcessor.valueTreeState.getParameter(ballYId)->getValue(), nullptr);
+		this->newGUIState.setProperty(juce::Identifier(ballRadiusId), audioProcessor.valueTreeState.getParameter(ballRadiusId)->getValue(), nullptr);
+		this->newGUIState.setProperty(juce::Identifier(ballVelocityId), audioProcessor.valueTreeState.getParameter(ballVelocityId)->getValue(), nullptr);
+		this->newGUIState.setProperty(juce::Identifier(ballAngleId), audioProcessor.valueTreeState.getParameter(ballAngleId)->getValue(), nullptr);
+	}
+
+	this->newGUIState.setProperty("edgePhase", audioProcessor.valueTreeState.getParameter("edgePhase")->getValue(), nullptr);
+	this->newGUIState.setProperty("edgeDenomenator", audioProcessor.valueTreeState.getParameter("edgeDenomenator")->getValue(), nullptr);
+	this->newGUIState.setProperty("edgeRange", audioProcessor.valueTreeState.getParameter("edgeRange")->getValue(), nullptr);
+	this->newGUIState.setProperty("scaleChoice", audioProcessor.valueTreeState.getParameter("scaleChoice")->getValue(), nullptr);
+	this->newGUIState.setProperty("rootNote", audioProcessor.valueTreeState.getParameter("rootNote")->getValue(), nullptr);
+
+	audioProcessor.saveGUIState(this->newGUIState);
+}
+
+void BallPitAudioProcessorEditor::loadFromProcessorState()
+{
+	auto& GUIState = audioProcessor.getGUIState();
+
+	for (int i = 0; i < 3; i++)
+	{
+		std::string ballXId = "ballX" + std::to_string(i);
+		std::string ballYId = "ballY" + std::to_string(i);
+		std::string ballRadiusId = "ballRadius" + std::to_string(i);
+		std::string ballVelocityId = "ballVelocity" + std::to_string(i);
+		std::string ballAngleId = "ballAngle" + std::to_string(i);
+
+		ballsSlidersAndAttachments[i].xSlider.setValue(GUIState.getProperty(juce::Identifier(ballXId)), juce::dontSendNotification);
+		ballsSlidersAndAttachments[i].ySlider.setValue(GUIState.getProperty(juce::Identifier(ballYId)), juce::dontSendNotification);
+		ballsSlidersAndAttachments[i].radiusSlider.setValue(GUIState.getProperty(juce::Identifier(ballRadiusId)), juce::dontSendNotification);
+		ballsSlidersAndAttachments[i].velocitySlider.setValue(GUIState.getProperty(juce::Identifier(ballVelocityId)), juce::dontSendNotification);
+		ballsSlidersAndAttachments[i].angleSlider.setValue(GUIState.getProperty(juce::Identifier(ballAngleId)), juce::dontSendNotification);
+	}
+
+	edgePhaseSlider.setValue(GUIState.getProperty("edgePhase"), juce::dontSendNotification);
+	edgeDenomenatorSlider.setValue(GUIState.getProperty("edgeDenomenator"), juce::dontSendNotification);
+	edgeRangeSlider.setValue(GUIState.getProperty("edgeRange"), juce::dontSendNotification);
+	scaleChoiceComboBox.setSelectedItemIndex(GUIState.getProperty("scaleChoice"), juce::dontSendNotification);
+	rootNoteComboBox.setSelectedItemIndex(GUIState.getProperty("rootNote"), juce::dontSendNotification);
 }
 
 void BallPitAudioProcessorEditor::displayKnobsByTab()

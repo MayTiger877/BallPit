@@ -38,6 +38,7 @@ public:
 	void paint (juce::Graphics&) override;
 	void resized() override;
 	void timerCallback() override;
+	void loadFromProcessorState();
 
 private:
 	// This reference is provided as a quick way for your editor to
@@ -74,6 +75,8 @@ private:
 		juce::Colours::cyan,
 		juce::Colours::orange
 	};
+
+	juce::ValueTree newGUIState;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BallPitAudioProcessorEditor)
 };
