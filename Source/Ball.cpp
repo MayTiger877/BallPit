@@ -1,6 +1,9 @@
 #include "Ball.h"
 #include <iostream>
 
+#define PI 3.14159265
+#define NO_SPEED 0
+
 Ball::Ball(int index, float x, float y, float radius, float velocity, float angle)
 	: index(index), x(x), y(y), radius(radius), velocity(0.1 * velocity), angle(angle)
 {
@@ -60,8 +63,18 @@ float Ball::getRadius() const
 
 void Ball::setAngledSpeed()
 {
-	this->speedX = velocity * cos(angle);
-	this->speedY = velocity * sin(angle);
+	float offset = juce::MathConstants<float>::pi * (this->angle - 90) / 180;
+	this->speedX = velocity * cos(offset);
+	this->speedY = velocity * sin(offset);
+	// actually angle of the knob is (angle - 90)
+	if (angle == 90 || angle == 270) // 0 or 180
+	{
+		this->speedY = NO_SPEED;
+	}
+	if (angle == 0 || angle == 180) // 270 or 90
+	{
+		this->speedX = NO_SPEED;
+	}
 }
 
 void Ball::setAngle(float angle)
@@ -127,7 +140,7 @@ void Ball::edgeBounce()
 				index = 1568 - 392 - (y - minY);
 			}
 
-			if (this->isMoving)
+			if ((this->isMoving) && (speedX != NO_SPEED))
 			{
 				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[index], sampleRate);
 			}
@@ -154,7 +167,7 @@ void Ball::edgeBounce()
 				index = 392 + (x - minX);
 			}
 
-			if (this->isMoving)
+			if ((this->isMoving) && (speedX != NO_SPEED))
 			{
 				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[index], sampleRate);
 			}

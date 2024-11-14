@@ -186,7 +186,7 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 		float y = valueTreeState.getRawParameterValue(ballYId)->load();
 		float radius = valueTreeState.getRawParameterValue(ballRadiusId)->load();
 		float velocity = valueTreeState.getRawParameterValue(ballVelocityId)->load();
-		float angle = juce::MathConstants<float>::pi * (valueTreeState.getRawParameterValue(ballAngleId)->load()-90) / 180;
+		float angle = valueTreeState.getRawParameterValue(ballAngleId)->load();
 
 		pit.setBallParams(i, x, y, radius, velocity, angle);
 	}
@@ -205,6 +205,26 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+	if (auto* playhead = getPlayHead())
+	{
+		juce::AudioPlayHead::CurrentPositionInfo positionInfo;
+		if (playhead->getCurrentPosition(positionInfo))
+		{
+			double bpm = positionInfo.bpm;
+			double effectiveFrameRate = positionInfo.frameRate.getEffectiveRate();
+			
+			DBG("Current BPM: " << bpm);
+			DBG("Current Frame Rate: " << effectiveFrameRate);
+			
+			if (bpm > 0 && effectiveFrameRate > 0)
+			{
+				double secondsPerBeat = 60.0 / bpm;
+				const double pitWidth = 390.0;
+				double speedPerFrame = pitWidth / (effectiveFrameRate * secondsPerBeat);
+			}
+		}
+	}
+
 	buffer.clear();
 	if (this->pit.isBallsMoving() == false)
 	{
