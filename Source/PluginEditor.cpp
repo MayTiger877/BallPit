@@ -133,27 +133,62 @@ void BallPitAudioProcessorEditor::loadFromProcessorState()
 
 void BallPitAudioProcessorEditor::displayKnobsByTab()
 {
-	int currentTab = tabs->getCurrentTabIndex();
-	int otherTab1 = (currentTab + 1) % 3;
-	int otherTab2 = (currentTab + 2) % 3;
-	
-	ballsSlidersAndAttachments[currentTab].xSlider.setVisible(true);
-	ballsSlidersAndAttachments[currentTab].ySlider.setVisible(true);
-	ballsSlidersAndAttachments[currentTab].angleSlider.setVisible(true);
-	ballsSlidersAndAttachments[currentTab].radiusSlider.setVisible(true);
-	ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(true);
-	
-	ballsSlidersAndAttachments[otherTab1].xSlider.setVisible(false);
-	ballsSlidersAndAttachments[otherTab1].ySlider.setVisible(false);
-	ballsSlidersAndAttachments[otherTab1].angleSlider.setVisible(false);
-	ballsSlidersAndAttachments[otherTab1].radiusSlider.setVisible(false);
-	ballsSlidersAndAttachments[otherTab1].velocitySlider.setVisible(false);
-	
-	ballsSlidersAndAttachments[otherTab2].xSlider.setVisible(false);
-	ballsSlidersAndAttachments[otherTab2].ySlider.setVisible(false);
-	ballsSlidersAndAttachments[otherTab2].angleSlider.setVisible(false);
-	ballsSlidersAndAttachments[otherTab2].radiusSlider.setVisible(false);
-	ballsSlidersAndAttachments[otherTab2].velocitySlider.setVisible(false);
+	int ballsPosType = 1 + audioProcessor.valueTreeState.getRawParameterValue("ballsPositioningType")->load(); // 1 is offset
+	switch (ballsPosType)
+	{
+		case 1: // chaos
+		{
+			int currentTab = tabs->getCurrentTabIndex();
+			int otherTab1 = (currentTab + 1) % 3;
+			int otherTab2 = (currentTab + 2) % 3;
+
+			ballsSlidersAndAttachments[currentTab].xSlider.setVisible(true);
+			ballsSlidersAndAttachments[currentTab].ySlider.setVisible(true);
+			ballsSlidersAndAttachments[currentTab].angleSlider.setVisible(true);
+			ballsSlidersAndAttachments[currentTab].radiusSlider.setVisible(true);
+			ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(true);
+
+			ballsSlidersAndAttachments[otherTab1].xSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab1].ySlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab1].angleSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab1].radiusSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab1].velocitySlider.setVisible(false);
+
+			ballsSlidersAndAttachments[otherTab2].xSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab2].ySlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab2].angleSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab2].radiusSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab2].velocitySlider.setVisible(false);
+
+			break;
+		}
+		case 2: // by tempo
+		{
+			int currentTab = tabs->getCurrentTabIndex();
+			int otherTab1 = (currentTab + 1) % 3;
+			int otherTab2 = (currentTab + 2) % 3;
+
+			ballsSlidersAndAttachments[currentTab].xSlider.setVisible(false);
+			ballsSlidersAndAttachments[currentTab].ySlider.setVisible(false);
+			ballsSlidersAndAttachments[currentTab].angleSlider.setVisible(false);
+			ballsSlidersAndAttachments[currentTab].radiusSlider.setVisible(false);
+			ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(false);
+
+			ballsSlidersAndAttachments[otherTab1].xSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab1].ySlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab1].angleSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab1].radiusSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab1].velocitySlider.setVisible(false);
+
+			ballsSlidersAndAttachments[otherTab2].xSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab2].ySlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab2].angleSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab2].radiusSlider.setVisible(false);
+			ballsSlidersAndAttachments[otherTab2].velocitySlider.setVisible(false);
+
+			break;
+		}
+	}
 	
 	if (audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->isActive() == true)
 	{
@@ -313,8 +348,8 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	addAndMakeVisible(rootNoteComboBox);
 
 	ballsPositioningTypeComboBox.setBounds(670, 10, 100, 30);
-	ballsPositioningTypeComboBox.addItem("By Tempo", 1);
-	ballsPositioningTypeComboBox.addItem("Chaos", 2);
+	ballsPositioningTypeComboBox.addItem("Chaos", 1);
+	ballsPositioningTypeComboBox.addItem("By Tempo", 2);
 	ballsPositioningTypeComboBox.setSelectedId(1);
 	addAndMakeVisible(ballsPositioningTypeComboBox);
 	

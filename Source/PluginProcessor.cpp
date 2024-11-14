@@ -333,7 +333,7 @@ juce::StringArray getScaleOptions()
 
 juce::StringArray getBallsPositioningTypes()
 {
-	return { "By Tempo", "Chaos" };
+	return { "Chaos", "By Tempo" };
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::createParameters()
