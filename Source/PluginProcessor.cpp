@@ -213,9 +213,6 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			double bpm = positionInfo.bpm;
 			double effectiveFrameRate = positionInfo.frameRate.getEffectiveRate();
 			
-			DBG("Current BPM: " << bpm);
-			DBG("Current Frame Rate: " << effectiveFrameRate);
-			
 			if (bpm > 0 && effectiveFrameRate > 0)
 			{
 				double secondsPerBeat = 60.0 / bpm;
@@ -334,6 +331,11 @@ juce::StringArray getScaleOptions()
 			 "Pentatonic", "Minor Pentatonic" };
 }
 
+juce::StringArray getBallsPositioningTypes()
+{
+	return { "By Tempo", "Chaos" };
+}
+
 juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::createParameters()
 {
 	juce::AudioProcessorValueTreeState::ParameterLayout params;
@@ -368,6 +370,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	std::string rootNoteId = "rootNote";
 	params.add(std::make_unique<juce::AudioParameterInt>(rootNoteId, "Root Note", 0, 11, 0));
 
+	std::string ballsPositioningTypeId = "ballsPositioningType";
+	params.add(std::make_unique<juce::AudioParameterChoice>(ballsPositioningTypeId, "BallsPositioning", getBallsPositioningTypes(), 0));
+	
 	return params;
 }
 

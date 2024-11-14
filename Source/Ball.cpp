@@ -167,7 +167,7 @@ void Ball::edgeBounce()
 				index = 392 + (x - minX);
 			}
 
-			if ((this->isMoving) && (speedX != NO_SPEED))
+			if ((this->isMoving) && (speedY != NO_SPEED))
 			{
 				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[index], sampleRate);
 			}

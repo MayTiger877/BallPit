@@ -70,6 +70,9 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	std::string rootNoteID = "rootNote";
 	rootNoteAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, rootNoteID, rootNoteComboBox);
 
+	std::string ballsPositioningTypeID = "ballsPositioningType";
+	ballsPositioningTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, ballsPositioningTypeID, ballsPositioningTypeComboBox);
+
 	initiateComponents();
 }
 
@@ -95,6 +98,7 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 	this->newGUIState.setProperty("edgeRange", audioProcessor.valueTreeState.getRawParameterValue("edgeRange")->load(), nullptr);
 	this->newGUIState.setProperty("scaleChoice", audioProcessor.valueTreeState.getRawParameterValue("scaleChoice")->load(), nullptr);
 	this->newGUIState.setProperty("rootNote", audioProcessor.valueTreeState.getRawParameterValue("rootNote")->load(), nullptr);
+	this->newGUIState.setProperty("ballsPositioningType", audioProcessor.valueTreeState.getRawParameterValue("ballsPositioningType")->load(), nullptr);
 
 	audioProcessor.saveGUIState(this->newGUIState);
 	audioProcessor.updateGUIFlag(false);
@@ -124,6 +128,7 @@ void BallPitAudioProcessorEditor::loadFromProcessorState()
 	edgeRangeSlider.setValue(GUIState.getProperty("edgeRange"), juce::dontSendNotification);
 	scaleChoiceComboBox.setSelectedItemIndex(GUIState.getProperty("scaleChoice"), juce::dontSendNotification);
 	rootNoteComboBox.setSelectedItemIndex(GUIState.getProperty("rootNote"), juce::dontSendNotification);
+	ballsPositioningTypeComboBox.setSelectedItemIndex(GUIState.getProperty("ballsPositioningType"), juce::dontSendNotification);
 }
 
 void BallPitAudioProcessorEditor::displayKnobsByTab()
@@ -306,6 +311,13 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	rootNoteComboBox.addItem("B",  12);
 	rootNoteComboBox.setSelectedId(1);
 	addAndMakeVisible(rootNoteComboBox);
+
+	ballsPositioningTypeComboBox.setBounds(670, 10, 100, 30);
+	ballsPositioningTypeComboBox.addItem("By Tempo", 1);
+	ballsPositioningTypeComboBox.addItem("Chaos", 2);
+	ballsPositioningTypeComboBox.setSelectedId(1);
+	addAndMakeVisible(ballsPositioningTypeComboBox);
+	
 }
 
 //==============================================================================
