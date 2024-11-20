@@ -22,8 +22,8 @@ class BallSlidersAndAttachments : public juce::Component
 public:
 	BallSlidersAndAttachments() {}
 
-	juce::Slider xSlider, ySlider, radiusSlider, velocitySlider, angleSlider;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> xAttachment, yAttachment, radiusAttachment, velocityAttachment, angleAttachment;
+	juce::Slider xSlider, ySlider, radiusSlider, velocitySlider, angleSlider, xVelocitySlider, yVelocitySlider;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> xAttachment, yAttachment, radiusAttachment, velocityAttachment, angleAttachment, xVelocityAttachment, yVelocityAttachment;
 };
 
 //-------------------------------------------------------------------------------------------

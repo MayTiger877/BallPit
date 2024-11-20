@@ -13,8 +13,8 @@
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
 	: AudioProcessorEditor (&p), audioProcessor (p)
 {
-	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg"); //laptop
-	auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
+	auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg"); //laptop
+	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
 	//auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/LayOut.svg"); //haifa
 
 	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
@@ -53,6 +53,12 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 
 		std::string ballAngleID = "ballAngle" + std::to_string(i);
 		ballsSlidersAndAttachments[i].angleAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballAngleID, ballsSlidersAndAttachments[i].angleSlider);
+
+		std::string ballXVelocityID = "ballXVelocity" + std::to_string(i);
+		ballsSlidersAndAttachments[i].xVelocityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballXVelocityID, ballsSlidersAndAttachments[i].xVelocitySlider);
+
+		std::string ballYVelocityID = "ballYVelocity" + std::to_string(i);
+		ballsSlidersAndAttachments[i].yVelocityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballYVelocityID, ballsSlidersAndAttachments[i].yVelocitySlider);
 	}
 
 	std::string edgePhaseID = "edgePhase";
@@ -85,12 +91,16 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 		std::string ballRadiusId = "ballRadius" + std::to_string(i);
 		std::string ballVelocityId = "ballVelocity" + std::to_string(i);
 		std::string ballAngleId = "ballAngle" + std::to_string(i);
+		std::string ballXVelocityId = "ballXVelocity" + std::to_string(i);
+		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
 
 		this->newGUIState.setProperty(juce::Identifier(ballXId), audioProcessor.valueTreeState.getRawParameterValue(ballXId)->load(), nullptr);
 		this->newGUIState.setProperty(juce::Identifier(ballYId), audioProcessor.valueTreeState.getRawParameterValue(ballYId)->load(), nullptr);
 		this->newGUIState.setProperty(juce::Identifier(ballRadiusId), audioProcessor.valueTreeState.getRawParameterValue(ballRadiusId)->load(), nullptr);
 		this->newGUIState.setProperty(juce::Identifier(ballVelocityId), audioProcessor.valueTreeState.getRawParameterValue(ballVelocityId)->load(), nullptr);
 		this->newGUIState.setProperty(juce::Identifier(ballAngleId), audioProcessor.valueTreeState.getRawParameterValue(ballAngleId)->load(), nullptr);
+		this->newGUIState.setProperty(juce::Identifier(ballXVelocityId), audioProcessor.valueTreeState.getRawParameterValue(ballXVelocityId)->load(), nullptr);
+		this->newGUIState.setProperty(juce::Identifier(ballYVelocityId), audioProcessor.valueTreeState.getRawParameterValue(ballYVelocityId)->load(), nullptr);
 	}
 
 	this->newGUIState.setProperty("edgePhase", audioProcessor.valueTreeState.getRawParameterValue("edgePhase")->load(), nullptr);
@@ -115,12 +125,16 @@ void BallPitAudioProcessorEditor::loadFromProcessorState()
 		std::string ballRadiusId = "ballRadius" + std::to_string(i);
 		std::string ballVelocityId = "ballVelocity" + std::to_string(i);
 		std::string ballAngleId = "ballAngle" + std::to_string(i);
+		std::string ballXVelocityId = "ballXVelocity" + std::to_string(i);
+		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
 
 		ballsSlidersAndAttachments[i].xSlider.setValue(GUIState.getProperty(juce::Identifier(ballXId)), juce::dontSendNotification);
 		ballsSlidersAndAttachments[i].ySlider.setValue(GUIState.getProperty(juce::Identifier(ballYId)), juce::dontSendNotification);
 		ballsSlidersAndAttachments[i].radiusSlider.setValue(GUIState.getProperty(juce::Identifier(ballRadiusId)), juce::dontSendNotification);
 		ballsSlidersAndAttachments[i].velocitySlider.setValue(GUIState.getProperty(juce::Identifier(ballVelocityId)), juce::dontSendNotification);
 		ballsSlidersAndAttachments[i].angleSlider.setValue(GUIState.getProperty(juce::Identifier(ballAngleId)), juce::dontSendNotification);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setValue(GUIState.getProperty(juce::Identifier(ballXVelocityId)), juce::dontSendNotification);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setValue(GUIState.getProperty(juce::Identifier(ballYVelocityId)), juce::dontSendNotification);
 	}
 
 	edgePhaseSlider.setValue(GUIState.getProperty("edgePhase"), juce::dontSendNotification);
@@ -134,61 +148,50 @@ void BallPitAudioProcessorEditor::loadFromProcessorState()
 void BallPitAudioProcessorEditor::displayKnobsByTab()
 {
 	int ballsPosType = 1 + audioProcessor.valueTreeState.getRawParameterValue("ballsPositioningType")->load(); // 1 is offset
+	int currentTab = tabs->getCurrentTabIndex();
+	int otherTab1 = (currentTab + 1) % 3;
+	int otherTab2 = (currentTab + 2) % 3;
+
+	ballsSlidersAndAttachments[currentTab].xSlider.setVisible(true);
+	ballsSlidersAndAttachments[currentTab].ySlider.setVisible(true);
+	ballsSlidersAndAttachments[currentTab].radiusSlider.setVisible(true);
 	switch (ballsPosType)
 	{
 		case 1: // chaos
 		{
-			int currentTab = tabs->getCurrentTabIndex();
-			int otherTab1 = (currentTab + 1) % 3;
-			int otherTab2 = (currentTab + 2) % 3;
-
-			ballsSlidersAndAttachments[currentTab].xSlider.setVisible(true);
-			ballsSlidersAndAttachments[currentTab].ySlider.setVisible(true);
 			ballsSlidersAndAttachments[currentTab].angleSlider.setVisible(true);
-			ballsSlidersAndAttachments[currentTab].radiusSlider.setVisible(true);
 			ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(true);
-
-			ballsSlidersAndAttachments[otherTab1].xSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab1].ySlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab1].angleSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab1].radiusSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab1].velocitySlider.setVisible(false);
-
-			ballsSlidersAndAttachments[otherTab2].xSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab2].ySlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab2].angleSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab2].radiusSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab2].velocitySlider.setVisible(false);
-
+			ballsSlidersAndAttachments[currentTab].xVelocitySlider.setVisible(false);
+			ballsSlidersAndAttachments[currentTab].yVelocitySlider.setVisible(false);
 			break;
 		}
 		case 2: // by tempo
 		{
-			int currentTab = tabs->getCurrentTabIndex();
-			int otherTab1 = (currentTab + 1) % 3;
-			int otherTab2 = (currentTab + 2) % 3;
-
-			ballsSlidersAndAttachments[currentTab].xSlider.setVisible(false);
-			ballsSlidersAndAttachments[currentTab].ySlider.setVisible(false);
 			ballsSlidersAndAttachments[currentTab].angleSlider.setVisible(false);
-			ballsSlidersAndAttachments[currentTab].radiusSlider.setVisible(false);
 			ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(false);
-
-			ballsSlidersAndAttachments[otherTab1].xSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab1].ySlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab1].angleSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab1].radiusSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab1].velocitySlider.setVisible(false);
-
-			ballsSlidersAndAttachments[otherTab2].xSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab2].ySlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab2].angleSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab2].radiusSlider.setVisible(false);
-			ballsSlidersAndAttachments[otherTab2].velocitySlider.setVisible(false);
-
+			ballsSlidersAndAttachments[currentTab].xVelocitySlider.setVisible(true);
+			ballsSlidersAndAttachments[currentTab].yVelocitySlider.setVisible(true);
 			break;
 		}
+		default:
+			break;
 	}
+
+	ballsSlidersAndAttachments[otherTab1].xSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].ySlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].angleSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].radiusSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].velocitySlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].xVelocitySlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].yVelocitySlider.setVisible(false);
+
+	ballsSlidersAndAttachments[otherTab2].xSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].ySlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].angleSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].radiusSlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].velocitySlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].xVelocitySlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].yVelocitySlider.setVisible(false);
 	
 	if (audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->isActive() == true)
 	{
@@ -232,7 +235,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].angleSlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
 
-		ballsSlidersAndAttachments[i].velocitySlider.setBounds(656, 165, 65, 65);
+		ballsSlidersAndAttachments[i].velocitySlider.setBounds(744, 115, 65, 65);
 		ballsSlidersAndAttachments[i].velocitySlider.setValue(5.0f);
 		ballsSlidersAndAttachments[i].velocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].velocitySlider.setDoubleClickReturnValue(true, 3.0f);
@@ -241,7 +244,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].velocitySlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].velocitySlider);
 
-		ballsSlidersAndAttachments[i].radiusSlider.setBounds(656, 215, 65, 65);
+		ballsSlidersAndAttachments[i].radiusSlider.setBounds(656, 165, 65, 65);
 		ballsSlidersAndAttachments[i].radiusSlider.setValue(10.0f);
 		ballsSlidersAndAttachments[i].radiusSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].radiusSlider.setDoubleClickReturnValue(true, 10.0f);
@@ -249,6 +252,38 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].radiusSlider.setRange(5.0f, 25.0f, 0.5f);
 		ballsSlidersAndAttachments[i].radiusSlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].radiusSlider);
+
+		ballsSlidersAndAttachments[i].xVelocitySlider.setBounds(656, 115, 65, 65);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setValue(1.0f);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setDoubleClickReturnValue(true, 1.0f);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setRange(1.0f, 10.0f, 1.0f);
+		ballsSlidersAndAttachments[i].xVelocitySlider.toFront(false);
+		ballsSlidersAndAttachments[i].xVelocitySlider.onValueChange = [this, i]()
+		{
+			ballsSlidersAndAttachments[i].xVelocitySlider.setValue(
+				static_cast<int>(ballsSlidersAndAttachments[i].xVelocitySlider.getValue() + 0.5),
+				juce::dontSendNotification
+			);
+		};
+		addChildComponent(ballsSlidersAndAttachments[i].xVelocitySlider);
+
+		ballsSlidersAndAttachments[i].yVelocitySlider.setBounds(744, 115, 65, 65);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setValue(1.0f);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setDoubleClickReturnValue(true, 1.0f);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setRange(1.0f, 10.0f, 1.0f);
+		ballsSlidersAndAttachments[i].yVelocitySlider.toFront(false);
+		ballsSlidersAndAttachments[i].yVelocitySlider.onValueChange = [this, i]()
+		{
+			ballsSlidersAndAttachments[i].yVelocitySlider.setValue(
+				static_cast<int>(ballsSlidersAndAttachments[i].yVelocitySlider.getValue() + 0.5),
+				juce::dontSendNotification
+			);
+		};
+		addChildComponent(ballsSlidersAndAttachments[i].yVelocitySlider);
 	}
 	
 	ballsSlidersAndAttachments[0].xSlider.setVisible(true);
@@ -256,6 +291,8 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	ballsSlidersAndAttachments[0].angleSlider.setVisible(true);
 	ballsSlidersAndAttachments[0].radiusSlider.setVisible(true);
 	ballsSlidersAndAttachments[0].velocitySlider.setVisible(true);
+	ballsSlidersAndAttachments[0].xVelocitySlider.setVisible(false);
+	ballsSlidersAndAttachments[0].yVelocitySlider.setVisible(false);
 	
 	startStopButton.setButtonText("Start");
 	startStopButton.onClick = [this]()
@@ -352,7 +389,6 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	ballsPositioningTypeComboBox.addItem("By Tempo", 2);
 	ballsPositioningTypeComboBox.setSelectedId(1);
 	addAndMakeVisible(ballsPositioningTypeComboBox);
-	
 }
 
 //==============================================================================

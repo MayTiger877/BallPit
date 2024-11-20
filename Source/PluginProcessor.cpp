@@ -347,12 +347,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		std::string ballRadiusId = "ballRadius" + std::to_string(i);
 		std::string ballVelocityId = "ballVelocity" + std::to_string(i);
 		std::string ballAngleId = "ballAngle" + std::to_string(i);
+		std::string ballXVelocityId = "ballXVelocity" + std::to_string(i);
+		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
 
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", 0.0f, 390.0f, 10.0f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", 0.0f, 390.0f, 10.0f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", 5.0f, 25.0f, 0.5f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Velocity", 0.0f, 10.0f, 0.5f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", 0.0f, 360.0f, 1.0f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballXVelocityId, "XVelocity", 0.0f, 10.0f, 1.0f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballYVelocityId, "YVelocity", 0.0f, 10.0f, 1.0f));
 	}
 
 	std::string edgePhaseId = "edgePhase";
