@@ -55,7 +55,7 @@ void Pit::setBallParams(int index, float x, float y, float radius, float velocit
 	balls[index]->setVelocity(velocity);
 	balls[index]->setAngle(angle);
 	
-	// add a func that sets the x,y of the other balls to not overlap
+	// TODO - add a func that sets the x,y of the other balls to not overlap
 	int otherIndex1 = (index + 1) % balls.size();
 	int otherIndex2 = (index + 2) % balls.size();
 	if (balls[index]->checkCollision(*balls[otherIndex1]))

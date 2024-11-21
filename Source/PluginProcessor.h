@@ -82,7 +82,7 @@ private:
 	std::vector<std::unique_ptr<EdgeEventListener>> listeners;
 	std::vector<PendingMidiEvent> pendingEvents;
 
-	void getUpdatedBallParams();
+	void getUpdatedBallParams(double bpm, double effectiveFrameRate);
 	void getUpdatedEdgeParams();
 
 	bool isGUIUploaded;
