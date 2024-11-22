@@ -237,6 +237,11 @@ void BallPitAudioProcessor::getUpdatedBallParams(double bpm, double effectiveFra
 
 		float x = valueTreeState.getRawParameterValue(ballXId)->load();
 		float y = valueTreeState.getRawParameterValue(ballYId)->load();
+		if (valueTreeState.getRawParameterValue("snapToGrid")->load() == true)
+		{
+			x = x + 12;
+			y = y + 12;
+		}
 		float radius = valueTreeState.getRawParameterValue(ballRadiusId)->load();
 		float velocity = valueTreeState.getRawParameterValue(ballVelocityId)->load();
 		float angle = valueTreeState.getRawParameterValue(ballAngleId)->load();

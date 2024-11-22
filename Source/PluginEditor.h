@@ -51,6 +51,9 @@ private:
 	void initiateComponents();
 	void displayKnobsByTab();
 
+	void changeXAndYToSnapToGrid();
+	void changeXAndYToFree();
+
 	juce::TextButton startStopButton;
 	juce::TextButton addRemoveBallButton;
 

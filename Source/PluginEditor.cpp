@@ -403,6 +403,17 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	snapToGridButton.setBounds(670, 45, 100, 30);
 	snapToGridButton.setToggleState(false, juce::dontSendNotification);
 	snapToGridButton.setButtonText("Snap To Grid");
+	snapToGridButton.onClick = [this]()
+		{
+			if (snapToGridButton.getToggleState() == true)
+			{
+				changeXAndYToSnapToGrid();
+			}
+			else
+			{
+				changeXAndYToFree();
+			}
+		};
 	addAndMakeVisible(snapToGridButton);
 
 	collisionButton.setBounds(550, 45, 100, 30);
@@ -447,7 +458,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 						  ball->getRadius() * 2.0f);
 		}
 	}
-	
+
 	displayKnobsByTab();
 	audioProcessor.getPit().drawPitEdge(g, edgeColors);
 }
@@ -459,4 +470,51 @@ void BallPitAudioProcessorEditor::resized()
 void BallPitAudioProcessorEditor::timerCallback() 
 {
 	repaint();
+}
+
+void BallPitAudioProcessorEditor::changeXAndYToSnapToGrid()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		// Get parameter IDs for ball X and Y
+		std::string ballXId = "ballX" + std::to_string(i);
+		std::string ballYId = "ballY" + std::to_string(i);
+
+		// Get current values from parameters
+		float x = audioProcessor.valueTreeState.getRawParameterValue(ballXId)->load();
+		float y = audioProcessor.valueTreeState.getRawParameterValue(ballYId)->load();
+
+		// Snap the values to the grid (adjust scaling factor if necessary)
+		float snappedX = std::round(x / 48.75f);
+		float snappedY = std::round(y / 48.75f);
+
+		// Change the sliders to snap-to-grid range
+		ballsSlidersAndAttachments[i].xSlider.setRange(0.0f, 390.0f, 48.75f);
+		ballsSlidersAndAttachments[i].ySlider.setRange(0.0f, 390.0f, 48.75f);
+
+		// Update the sliders
+		ballsSlidersAndAttachments[i].xSlider.setValue(snappedX, juce::sendNotification);
+		ballsSlidersAndAttachments[i].ySlider.setValue(snappedY, juce::sendNotification);
+
+		// Update the parameter values and notify the host
+		if (auto* xParam = audioProcessor.valueTreeState.getParameter(ballXId))
+		{
+			xParam->setValueNotifyingHost(12 + snappedX * 48.75f);
+		}
+
+		if (auto* yParam = audioProcessor.valueTreeState.getParameter(ballYId))
+		{
+			yParam->setValueNotifyingHost(12 + snappedY * 48.75f);
+		}
+	}
+}
+
+void BallPitAudioProcessorEditor::changeXAndYToFree()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		// change the balls x y sliders
+		ballsSlidersAndAttachments[i].xSlider.setRange(0.0f, 390.0f, 10.0f);
+		ballsSlidersAndAttachments[i].ySlider.setRange(0.0f, 390.0f, 10.0f);
+	}
 }
