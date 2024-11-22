@@ -199,12 +199,12 @@ double velocityToInterval(int velocity)
 	}
 }
 
-static void setXYVelocityByTempo(double bpm, double effectiveFrameRate, int& xVelocity, int& yVelocity)
+static void setXYVelocityByTempo(double bpm, double effectiveFrameRate, int& xVelocity, int& yVelocity, float ballRadius)
 {
 	if (bpm > 0 && effectiveFrameRate > 0)
 	{
 		double secondsPerBeat = 60.0 / bpm;
-		const double pitWidth = 390.0; // TODO - consider the ball radius
+		const double pitWidth = 390.0 - (ballRadius * 2); // TODO - check if this is goood
 
 		float timePerNoteDivision = secondsPerBeat * velocityToInterval(xVelocity);
 		xVelocity = pitWidth / (timePerNoteDivision * effectiveFrameRate);
@@ -253,7 +253,7 @@ void BallPitAudioProcessor::getUpdatedBallParams(double bpm, double effectiveFra
 			}
 			case 2: // by tempo
 			{
-				setXYVelocityByTempo(bpm, effectiveFrameRate, xVelocity, yVelocity);
+				setXYVelocityByTempo(bpm, effectiveFrameRate, xVelocity, yVelocity, radius);
 				getAngleAndVelocity(angle, velocity, xVelocity, yVelocity);
 				break;
 			}
