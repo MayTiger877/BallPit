@@ -70,6 +70,12 @@ private:
 	juce::ComboBox ballsPositioningTypeComboBox;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> ballsPositioningTypeAttachment;
 
+	juce::ToggleButton snapToGridButton; // TODO - finish
+	std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> snapToGridAttachment;
+
+	juce::ToggleButton collisionButton;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> collisionAttachment;
+
 	juce::Colour edgeColors[8] = {
 		juce::Colours::red,
 		juce::Colours::limegreen,

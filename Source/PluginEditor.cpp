@@ -79,6 +79,12 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	std::string ballsPositioningTypeID = "ballsPositioningType";
 	ballsPositioningTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, ballsPositioningTypeID, ballsPositioningTypeComboBox);
 
+	std::string snapToGridID = "snapToGrid";
+	snapToGridAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, snapToGridID, snapToGridButton);
+
+	std::string collisionID = "collision";
+	collisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, collisionID, collisionButton);
+
 	initiateComponents();
 }
 
@@ -109,6 +115,8 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 	this->newGUIState.setProperty("scaleChoice", audioProcessor.valueTreeState.getRawParameterValue("scaleChoice")->load(), nullptr);
 	this->newGUIState.setProperty("rootNote", audioProcessor.valueTreeState.getRawParameterValue("rootNote")->load(), nullptr);
 	this->newGUIState.setProperty("ballsPositioningType", audioProcessor.valueTreeState.getRawParameterValue("ballsPositioningType")->load(), nullptr);
+	this->newGUIState.setProperty("snapToGrid", audioProcessor.valueTreeState.getRawParameterValue("snapToGrid")->load(), nullptr);
+	this->newGUIState.setProperty("collision", audioProcessor.valueTreeState.getRawParameterValue("collision")->load(), nullptr);
 
 	audioProcessor.saveGUIState(this->newGUIState);
 	audioProcessor.updateGUIFlag(false);
@@ -143,6 +151,8 @@ void BallPitAudioProcessorEditor::loadFromProcessorState()
 	scaleChoiceComboBox.setSelectedItemIndex(GUIState.getProperty("scaleChoice"), juce::dontSendNotification);
 	rootNoteComboBox.setSelectedItemIndex(GUIState.getProperty("rootNote"), juce::dontSendNotification);
 	ballsPositioningTypeComboBox.setSelectedItemIndex(GUIState.getProperty("ballsPositioningType"), juce::dontSendNotification);
+	snapToGridButton.setToggleState(GUIState.getProperty("snapToGrid"), juce::dontSendNotification);
+	collisionButton.setToggleState(GUIState.getProperty("collision"), juce::dontSendNotification);
 }
 
 void BallPitAudioProcessorEditor::displayKnobsByTab()
@@ -389,6 +399,16 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	ballsPositioningTypeComboBox.addItem("By Tempo", 2);
 	ballsPositioningTypeComboBox.setSelectedId(1);
 	addAndMakeVisible(ballsPositioningTypeComboBox);
+
+	snapToGridButton.setBounds(670, 45, 100, 30);
+	snapToGridButton.setToggleState(false, juce::dontSendNotification);
+	snapToGridButton.setButtonText("Snap To Grid");
+	addAndMakeVisible(snapToGridButton);
+
+	collisionButton.setBounds(550, 45, 100, 30);
+	collisionButton.setToggleState(true, juce::dontSendNotification);
+	collisionButton.setButtonText("Collision");
+	addAndMakeVisible(collisionButton);
 }
 
 //==============================================================================

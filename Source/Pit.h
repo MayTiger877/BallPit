@@ -29,6 +29,8 @@ public:
 		}
 	}
 	bool isBallsMoving() const { return isMoving; }
+
+	void setCollision(bool newcollisionState) { isCollisionOn = newcollisionState; }
 	
 	void setEdgeParams(int phase, int denomenator, int range);
 	void setEdgeScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode);
@@ -48,4 +50,5 @@ private:
 	std::vector<std::unique_ptr<Ball>> balls;
 
 	bool isMoving;
+	bool isCollisionOn;
 };

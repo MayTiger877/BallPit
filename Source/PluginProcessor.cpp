@@ -169,17 +169,47 @@ bool BallPitAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 }
 #endif
 
-static void setXYVelocityByTempo(double bpm, double effectiveFrameRate, float& xVelocity, float& yVelocity)
+
+double velocityToInterval(int velocity)
+{
+	switch (velocity)
+	{
+	case 1:
+		return 4.0;
+	case 2:
+		return 2.0;
+	case 3:
+		return 1.25;
+	case 4:
+		return 1.0;
+	case 5:
+		return 0.75;
+	case 6:
+		return 0.5;
+	case 7:
+		return 0.33;
+	case 8:
+		return 0.25;
+	case 9:
+		return 0.166;
+	case 10:
+		return 0.125;
+	default:
+		break;
+	}
+}
+
+static void setXYVelocityByTempo(double bpm, double effectiveFrameRate, int& xVelocity, int& yVelocity)
 {
 	if (bpm > 0 && effectiveFrameRate > 0)
 	{
 		double secondsPerBeat = 60.0 / bpm;
-		const double pitWidth = 390.0;
+		const double pitWidth = 390.0; // TODO - consider the ball radius
 
-		float timePerNoteDivision = secondsPerBeat * xVelocity;
+		float timePerNoteDivision = secondsPerBeat * velocityToInterval(xVelocity);
 		xVelocity = pitWidth / (timePerNoteDivision * effectiveFrameRate);
 
-		timePerNoteDivision = secondsPerBeat * yVelocity;
+		timePerNoteDivision = secondsPerBeat * velocityToInterval(yVelocity);
 		yVelocity = pitWidth / (timePerNoteDivision * effectiveFrameRate);		
 	}
 }
@@ -210,8 +240,8 @@ void BallPitAudioProcessor::getUpdatedBallParams(double bpm, double effectiveFra
 		float radius = valueTreeState.getRawParameterValue(ballRadiusId)->load();
 		float velocity = valueTreeState.getRawParameterValue(ballVelocityId)->load();
 		float angle = valueTreeState.getRawParameterValue(ballAngleId)->load();
-		float xVelocity = valueTreeState.getRawParameterValue(ballXVelocityId)->load();
-		float yVelocity = valueTreeState.getRawParameterValue(ballYVelocityId)->load();
+		int xVelocity = static_cast<int>(valueTreeState.getRawParameterValue(ballXVelocityId)->load());
+		int yVelocity = static_cast<int>(valueTreeState.getRawParameterValue(ballYVelocityId)->load());
 
 		int ballsPosType = 1 + this->valueTreeState.getRawParameterValue("ballsPositioningType")->load(); // 1 is offset
 		switch (ballsPosType)
@@ -230,6 +260,7 @@ void BallPitAudioProcessor::getUpdatedBallParams(double bpm, double effectiveFra
 		}
 		pit.setBallParams(i, x, y, radius, velocity, angle);
 	}
+	pit.setCollision(static_cast<bool>(valueTreeState.getRawParameterValue("collision")->load()));
 	pit.setBallsEdgeNotes();
 }
 
@@ -245,8 +276,8 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-	double bpm;
-	double effectiveFrameRate;
+	double bpm = 120.0;
+	double effectiveFrameRate = 60.0;
 	if (auto* playhead = getPlayHead())
 	{
 		juce::AudioPlayHead::CurrentPositionInfo positionInfo;
@@ -411,6 +442,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 
 	std::string ballsPositioningTypeId = "ballsPositioningType";
 	params.add(std::make_unique<juce::AudioParameterChoice>(ballsPositioningTypeId, "BallsPositioning", getBallsPositioningTypes(), 0));
+
+	std::string snapToGridId = "snapToGrid";
+	params.add(std::make_unique<juce::AudioParameterBool>(snapToGridId, "Snap To Grid", false));
+
+	std::string collisionId = "collision";
+	params.add(std::make_unique<juce::AudioParameterBool>(collisionId, "Collision", true));
 	
 	return params;
 }

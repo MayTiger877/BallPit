@@ -6,6 +6,7 @@
 Pit::Pit() : edge()
 {	
 	this->isMoving = false;
+	this->isCollisionOn = true;
 }
 
 void Pit::addBall(std::unique_ptr<Ball> ball)
@@ -35,7 +36,7 @@ void Pit::update()
 	{
 		for (size_t j = i + 1; j < balls.size(); ++j) 
 		{
-			if (balls[i]->checkCollision(*balls[j])) 
+			if ((balls[i]->checkCollision(*balls[j])) && (this->isCollisionOn == true))
 			{
 				balls[i]->resolveCollision(*balls[j]);
 			}
