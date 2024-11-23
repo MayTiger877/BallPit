@@ -24,7 +24,8 @@ typedef struct
 //==============================================================================
 /**
 */
-class BallPitAudioProcessor  : public juce::AudioProcessor
+class BallPitAudioProcessor  :  public juce::AudioProcessor, 
+								public juce::ChangeBroadcaster
 {
 public:
 	//==============================================================================
@@ -62,6 +63,8 @@ public:
 	juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
 	juce::AudioProcessorValueTreeState& getValueTreeState() { return valueTreeState; }
 
+	juce::Atomic<bool> isPlaying;
+
 	juce::ValueTree GUIState;
 	juce::ValueTree& getGUIState() { return GUIState; }
 	void saveGUIState(juce::ValueTree &newGUIState);
@@ -70,6 +73,8 @@ public:
 
 	void updateGUIFlag(bool newStatus) { isGUIUploaded = newStatus; }
 	bool getIsGUIUploaded() { return isGUIUploaded; }
+
+	bool isHostPlaying() const { return positionInfo.isPlaying; }
 
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
@@ -81,6 +86,8 @@ private:
 	juce::MidiBuffer midiBuffer;
 	std::vector<std::unique_ptr<EdgeEventListener>> listeners;
 	std::vector<PendingMidiEvent> pendingEvents;
+
+	juce::AudioPlayHead::CurrentPositionInfo positionInfo;
 
 	void getUpdatedBallParams(double bpm, double effectiveFrameRate);
 	void getUpdatedEdgeParams();

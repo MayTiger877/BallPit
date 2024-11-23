@@ -28,7 +28,9 @@ public:
 
 //-------------------------------------------------------------------------------------------
 
-class BallPitAudioProcessorEditor  : public juce::AudioProcessorEditor, public juce::Timer
+class BallPitAudioProcessorEditor  : public juce::AudioProcessorEditor, 
+									 public juce::Timer, 
+									 private juce::ChangeListener
 {
 public:
 	BallPitAudioProcessorEditor (BallPitAudioProcessor&);
@@ -39,6 +41,8 @@ public:
 	void resized() override;
 	void timerCallback() override;
 	void loadFromProcessorState();
+	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+
 
 private:
 	// This reference is provided as a quick way for your editor to

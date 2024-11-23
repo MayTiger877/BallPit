@@ -285,11 +285,17 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	double effectiveFrameRate = 60.0;
 	if (auto* playhead = getPlayHead())
 	{
-		juce::AudioPlayHead::CurrentPositionInfo positionInfo;
-		if (playhead->getCurrentPosition(positionInfo))
+		juce::AudioPlayHead::CurrentPositionInfo newPositionInfo;
+		if (playhead->getCurrentPosition(newPositionInfo))
 		{
-			bpm = positionInfo.bpm;
-			effectiveFrameRate = positionInfo.frameRate.getEffectiveRate();
+			bpm = newPositionInfo.bpm;
+			effectiveFrameRate = newPositionInfo.frameRate.getEffectiveRate();
+			this->positionInfo = newPositionInfo;
+			bool newIsPlaying = newPositionInfo.isPlaying;
+			if (isPlaying.exchange(newIsPlaying) != newIsPlaying)
+			{
+				sendChangeMessage(); // Notify the editor of a state change
+			}
 		}
 	}
 

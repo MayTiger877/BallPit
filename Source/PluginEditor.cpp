@@ -86,6 +86,8 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	collisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, collisionID, collisionButton);
 
 	initiateComponents();
+
+	audioProcessor.addChangeListener(this); // Register as listener
 }
 
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
@@ -120,6 +122,7 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 
 	audioProcessor.saveGUIState(this->newGUIState);
 	audioProcessor.updateGUIFlag(false);
+	audioProcessor.removeChangeListener(this);
 }
 
 void BallPitAudioProcessorEditor::loadFromProcessorState()
@@ -472,29 +475,15 @@ void BallPitAudioProcessorEditor::timerCallback()
 	repaint();
 }
 
-/*void BallPitAudioProcessorEditor::changeXAndYToSnapToGrid()
+void BallPitAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-	for (int i = 0; i < 3; i++)
+	if (source == &audioProcessor)
 	{
-		std::string ballXId = "ballX" + std::to_string(i);
-		std::string ballYId = "ballY" + std::to_string(i);
-
-		float x = audioProcessor.valueTreeState.getRawParameterValue(ballXId)->load();
-		float y = audioProcessor.valueTreeState.getRawParameterValue(ballYId)->load();
-
-		float snappedX = std::round(x / 48.75f);
-		float snappedY = std::round(y / 48.75f);
-
-		ballsSlidersAndAttachments[i].xSlider.setRange(0.0f, 390.0f, 48.75f);
-		ballsSlidersAndAttachments[i].ySlider.setRange(0.0f, 390.0f, 48.75f);
-
-		ballsSlidersAndAttachments[i].xSlider.setValue(snappedX, juce::sendNotification);
-		ballsSlidersAndAttachments[i].ySlider.setValue(snappedY, juce::sendNotification);
-
-		audioProcessor.valueTreeState.getParameter(ballXId)->setValueNotifyingHost(snappedX * 48.75f);
-		audioProcessor.valueTreeState.getParameter(ballYId)->setValueNotifyingHost(snappedY * 48.75f);
+		juce::Atomic<bool> isPlaying = audioProcessor.isPlaying.get(); // Access the atomic variable
+		this->startStopButton.setToggleState(isPlaying.get(), juce::dontSendNotification);
+		this->startStopButton.onClick();
 	}
-}*/
+}
 
 void BallPitAudioProcessorEditor::changeXAndYToSnapToGrid()
 {
