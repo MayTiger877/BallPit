@@ -174,24 +174,26 @@ double velocityToInterval(int velocity)
 {
 	switch (velocity)
 	{
-	case 1:
+	case 0:
 		return 0.0;
-	case 2:
+	case 1:
 		return 4.0;
-	case 3:
+	case 2:
 		return 2.0;
-	case 4:
+	case 3:
 		return 1.25;
-	case 5:
+	case 4:
 		return 1.0;
-	case 6:
+	case 5:
 		return 0.75;
-	case 7:
+	case 6:
 		return 0.5;
-	case 8:
+	case 7:
 		return 0.33;
-	case 9:
+	case 8:
 		return 0.25;
+	case 9:
+		return 0.166;
 	case 10:
 		return 0.125;
 	default:
@@ -205,13 +207,13 @@ static void setXYVelocityByTempo(double bpm, double effectiveFrameRate, int& xVe
 	{
 		bpm = 60.0; // TODO delete after debugging
 		double secondsPerBeat = 60.0 / bpm;
-		const double pitWidth = 390.0 - (ballRadius * 2); // TODO - check if this is goood
+		const double pitWidth = 390.0 - ballRadius; // TODO - check if this is goood
 
 		float timePerNoteDivision = secondsPerBeat * velocityToInterval(xVelocity);
 		xVelocity = (timePerNoteDivision != 0) ? (pitWidth / (timePerNoteDivision * effectiveFrameRate)) : 0;
 
 		timePerNoteDivision = secondsPerBeat * velocityToInterval(yVelocity);
-		yVelocity = (timePerNoteDivision != 0) ? (pitWidth / (timePerNoteDivision * effectiveFrameRate)) : 0;
+		yVelocity =  (timePerNoteDivision != 0) ? (pitWidth / (timePerNoteDivision * effectiveFrameRate)) : 0;
 	}
 }
 
