@@ -270,7 +270,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].xVelocitySlider.setValue(1.0f);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setDoubleClickReturnValue(true, 1.0f);
-		ballsSlidersAndAttachments[i].xVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setTextBoxStyle(juce::Slider::TextBoxLeft, false, 50, 50);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setRange(1.0f, 10.0f, 1.0f);
 		ballsSlidersAndAttachments[i].xVelocitySlider.toFront(false);
 		ballsSlidersAndAttachments[i].xVelocitySlider.onValueChange = [this, i]()
@@ -286,7 +286,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].yVelocitySlider.setValue(1.0f);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setDoubleClickReturnValue(true, 1.0f);
-		ballsSlidersAndAttachments[i].yVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 50, 50);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setRange(1.0f, 10.0f, 1.0f);
 		ballsSlidersAndAttachments[i].yVelocitySlider.toFront(false);
 		ballsSlidersAndAttachments[i].yVelocitySlider.onValueChange = [this, i]()
