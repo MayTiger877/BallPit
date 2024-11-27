@@ -84,7 +84,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 
 	std::string collisionID = "collision";
 	collisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, collisionID, collisionButton);
-
+	
 	initiateComponents();
 
 	audioProcessor.addChangeListener(this); // Register as listener
@@ -423,6 +423,9 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	collisionButton.setToggleState(true, juce::dontSendNotification);
 	collisionButton.setButtonText("Collision");
 	addAndMakeVisible(collisionButton);
+
+	BPM.setBounds(550, 100, 100, 30);
+	addAndMakeVisible(BPM);
 }
 
 //==============================================================================
@@ -463,6 +466,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	}
 
 	displayKnobsByTab();
+	this->BPM.setText("BPM: " + std::to_string(audioProcessor.BPM), juce::dontSendNotification);
 	audioProcessor.getPit().drawPitEdge(g, edgeColors);
 }
 

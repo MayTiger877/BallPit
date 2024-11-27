@@ -292,6 +292,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		if (playhead->getCurrentPosition(newPositionInfo))
 		{
 			bpm = newPositionInfo.bpm;
+			this->BPM = bpm; //Debug
 			effectiveFrameRate = newPositionInfo.frameRate.getEffectiveRate();
 			this->positionInfo = newPositionInfo;
 			bool newIsPlaying = newPositionInfo.isPlaying;

@@ -43,6 +43,8 @@ public:
 	void loadFromProcessorState();
 	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
+	// debug
+	juce::Label BPM;
 
 private:
 	// This reference is provided as a quick way for your editor to
@@ -82,6 +84,7 @@ private:
 
 	juce::ToggleButton collisionButton;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> collisionAttachment;
+
 
 	juce::Colour edgeColors[8] = {
 		juce::Colours::red,

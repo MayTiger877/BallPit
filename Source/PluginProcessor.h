@@ -76,6 +76,8 @@ public:
 
 	bool isHostPlaying() const { return positionInfo.isPlaying; }
 
+	double BPM;
+
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
 
