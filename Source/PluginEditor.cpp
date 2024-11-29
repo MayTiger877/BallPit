@@ -13,8 +13,8 @@
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
 	: AudioProcessorEditor (&p), audioProcessor (p)
 {
-	auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg"); //laptop
-	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
+	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg"); //laptop
+	auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
 	//auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/LayOut.svg"); //haifa
 
 	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
@@ -84,7 +84,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 
 	std::string collisionID = "collision";
 	collisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, collisionID, collisionButton);
-
+	
 	initiateComponents();
 
 	audioProcessor.addChangeListener(this); // Register as listener
@@ -423,6 +423,9 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	collisionButton.setToggleState(true, juce::dontSendNotification);
 	collisionButton.setButtonText("Collision");
 	addAndMakeVisible(collisionButton);
+
+	BPM.setBounds(550, 100, 100, 30);
+	addAndMakeVisible(BPM);
 }
 
 //==============================================================================
@@ -463,6 +466,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	}
 
 	displayKnobsByTab();
+	this->BPM.setText("BPM: " + std::to_string(audioProcessor.BPM), juce::dontSendNotification);
 	audioProcessor.getPit().drawPitEdge(g, edgeColors);
 }
 

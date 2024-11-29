@@ -201,19 +201,19 @@ double velocityToInterval(int velocity)
 	}
 }
 
-static void setXYVelocityByTempo(double bpm, double effectiveFrameRate, int& xVelocity, int& yVelocity, float ballRadius)
+static void setXYVelocityByTempo(double bpm, double effectiveFrameRate, float& xVelocity, float& yVelocity, float ballRadius)
 {
 	if (bpm > 0 && effectiveFrameRate > 0)
 	{
-		bpm = 60.0; // TODO delete after debugging
-		double secondsPerBeat = 60.0 / bpm;
-		const double pitWidth = 390.0 - ballRadius; // TODO - check if this is goood
-
-		float timePerNoteDivision = secondsPerBeat * velocityToInterval(xVelocity);
-		xVelocity = (timePerNoteDivision != 0) ? (pitWidth / (timePerNoteDivision * effectiveFrameRate)) : 0;
-
-		timePerNoteDivision = secondsPerBeat * velocityToInterval(yVelocity);
-		yVelocity =  (timePerNoteDivision != 0) ? (pitWidth / (timePerNoteDivision * effectiveFrameRate)) : 0;
+		float beatsPerSecond = bpm / 60.0f;
+		float framesPerBeat = effectiveFrameRate * beatsPerSecond;
+		const double pitWidth = 390.0 - (2.5 * ballRadius); // TODO - check if this is goood
+		
+		double diviation = velocityToInterval(static_cast<int>(xVelocity));
+		xVelocity = (diviation != 0) ? ((pitWidth / framesPerBeat) / diviation) : 0;
+		
+		diviation = velocityToInterval(static_cast<int>(yVelocity));
+		yVelocity = (diviation != 0) ? ((pitWidth / framesPerBeat) / diviation) : 0;
 	}
 }
 
@@ -248,8 +248,8 @@ void BallPitAudioProcessor::getUpdatedBallParams(double bpm, double effectiveFra
 		float radius = valueTreeState.getRawParameterValue(ballRadiusId)->load();
 		float velocity = valueTreeState.getRawParameterValue(ballVelocityId)->load();
 		float angle = valueTreeState.getRawParameterValue(ballAngleId)->load();
-		int xVelocity = static_cast<int>(valueTreeState.getRawParameterValue(ballXVelocityId)->load());
-		int yVelocity = static_cast<int>(valueTreeState.getRawParameterValue(ballYVelocityId)->load());
+		float xVelocity = valueTreeState.getRawParameterValue(ballXVelocityId)->load();
+		float yVelocity = valueTreeState.getRawParameterValue(ballYVelocityId)->load();
 
 		int ballsPosType = 1 + this->valueTreeState.getRawParameterValue("ballsPositioningType")->load(); // 1 is offset
 		switch (ballsPosType)
@@ -292,6 +292,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		if (playhead->getCurrentPosition(newPositionInfo))
 		{
 			bpm = newPositionInfo.bpm;
+			this->BPM = bpm; //Debug
 			effectiveFrameRate = newPositionInfo.frameRate.getEffectiveRate();
 			this->positionInfo = newPositionInfo;
 			bool newIsPlaying = newPositionInfo.isPlaying;
