@@ -169,7 +169,6 @@ bool BallPitAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 }
 #endif
 
-
 double velocityToInterval(int velocity)
 {
 	switch (velocity)
@@ -292,8 +291,9 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		if (playhead->getCurrentPosition(newPositionInfo))
 		{
 			bpm = newPositionInfo.bpm;
-			this->BPM = bpm; //Debug
 			effectiveFrameRate = newPositionInfo.frameRate.getEffectiveRate();
+			this->BPM = bpm; // debug
+			this->FrameRate = effectiveFrameRate; // debug
 			this->positionInfo = newPositionInfo;
 			bool newIsPlaying = newPositionInfo.isPlaying;
 			if (isPlaying.exchange(newIsPlaying) != newIsPlaying)

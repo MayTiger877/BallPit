@@ -14,6 +14,7 @@
 #include "EdgeEventListener.h"
 #include "Scales.h"
 
+double velocityToInterval(int velocity);
 
 typedef struct
 {
@@ -76,7 +77,8 @@ public:
 
 	bool isHostPlaying() const { return positionInfo.isPlaying; }
 
-	double BPM;
+	double BPM; // debug
+	double FrameRate; // debug
 
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)

@@ -164,7 +164,9 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 	int currentTab = tabs->getCurrentTabIndex();
 	int otherTab1 = (currentTab + 1) % 3;
 	int otherTab2 = (currentTab + 2) % 3;
-
+	std::string ballXVelocityID = "ballXVelocity" + std::to_string(currentTab);
+	std::string ballYVelocityID = "ballYVelocity" + std::to_string(currentTab);
+	
 	ballsSlidersAndAttachments[currentTab].xSlider.setVisible(true);
 	ballsSlidersAndAttachments[currentTab].ySlider.setVisible(true);
 	ballsSlidersAndAttachments[currentTab].radiusSlider.setVisible(true);
@@ -176,6 +178,8 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 			ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(true);
 			ballsSlidersAndAttachments[currentTab].xVelocitySlider.setVisible(false);
 			ballsSlidersAndAttachments[currentTab].yVelocitySlider.setVisible(false);
+			this->xVelocityLabel.setText("", juce::dontSendNotification);
+			this->yVelocityLabel.setText("", juce::dontSendNotification);
 			break;
 		}
 		case 2: // by tempo
@@ -184,6 +188,8 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 			ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(false);
 			ballsSlidersAndAttachments[currentTab].xVelocitySlider.setVisible(true);
 			ballsSlidersAndAttachments[currentTab].yVelocitySlider.setVisible(true);
+			this->xVelocityLabel.setText("xVel " + std::to_string(audioProcessor.valueTreeState.getRawParameterValue(ballXVelocityID)->load()), juce::dontSendNotification);
+			this->yVelocityLabel.setText("yVel " + std::to_string(audioProcessor.valueTreeState.getRawParameterValue(ballYVelocityID)->load()), juce::dontSendNotification);
 			break;
 		}
 		default:
@@ -270,7 +276,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].xVelocitySlider.setValue(1.0f);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setDoubleClickReturnValue(true, 1.0f);
-		ballsSlidersAndAttachments[i].xVelocitySlider.setTextBoxStyle(juce::Slider::TextBoxLeft, false, 30, 30);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setRange(0.0f, 10.0f, 1.0f);
 		ballsSlidersAndAttachments[i].xVelocitySlider.toFront(false);
 		ballsSlidersAndAttachments[i].xVelocitySlider.onValueChange = [this, i]()
@@ -286,7 +292,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].yVelocitySlider.setValue(1.0f);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setDoubleClickReturnValue(true, 1.0f);
-		ballsSlidersAndAttachments[i].yVelocitySlider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 30, 30);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setRange(0.0f, 10.0f, 1.0f);
 		ballsSlidersAndAttachments[i].yVelocitySlider.toFront(false);
 		ballsSlidersAndAttachments[i].yVelocitySlider.onValueChange = [this, i]()
@@ -426,6 +432,15 @@ void BallPitAudioProcessorEditor::initiateComponents()
 
 	BPM.setBounds(550, 100, 100, 30);
 	addAndMakeVisible(BPM);
+
+	FrameRate.setBounds(550, 150, 100, 30);
+	addAndMakeVisible(FrameRate);
+
+	xVelocityLabel.setBounds(550, 200, 100, 30);
+	addAndMakeVisible(xVelocityLabel);
+
+	yVelocityLabel.setBounds(550, 250, 100, 30);
+	addAndMakeVisible(yVelocityLabel);
 }
 
 //==============================================================================
@@ -467,6 +482,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 
 	displayKnobsByTab();
 	this->BPM.setText("BPM: " + std::to_string(audioProcessor.BPM), juce::dontSendNotification);
+	this->FrameRate.setText("Frame Rate: " + std::to_string(audioProcessor.FrameRate), juce::dontSendNotification);
 	audioProcessor.getPit().drawPitEdge(g, edgeColors);
 }
 
