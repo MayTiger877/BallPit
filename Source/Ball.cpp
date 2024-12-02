@@ -4,8 +4,8 @@
 #define PI 3.14159265
 #define NO_SPEED 0
 
-Ball::Ball(int index, float x, float y, float radius, float velocity, float angle)
-	: index(index), x(x), y(y), radius(radius), velocity(0.1 * velocity), angle(angle)
+Ball::Ball(int ballndex, float x, float y, float radius, float velocity, float angle)
+	: ballndex(ballndex), x(x), y(y), radius(radius), velocity(0.1 * velocity), angle(angle)
 {
 	this->isMoving = false;
 	setAngledSpeed();
@@ -31,7 +31,7 @@ void Ball::update()
 	else
 	{
 		speedX = speedY = 0;
-		x = 440 + index * 50;
+		x = 440 + ballndex * 50;
 		y = 380;
 	}
 
@@ -89,28 +89,28 @@ void Ball::setVelocity(float velocity)
 	setAngledSpeed();
 }
 
-void Ball::setPosition(float x, float y)
+void Ball::setPosition(float newX, float newY)
 {
-	if (x < minX + radius)
+	if (newX < minX + radius)
 	{
-		x = minX + radius;
+		newX = minX + radius;
 	}
-	else if (x > maxX - radius)
+	else if (newX > maxX - radius)
 	{
-		x = maxX - radius;
+		newX = maxX - radius;
 	}
 	
-	if (y < minY + radius)
+	if (newY < minY + radius)
 	{
-		y = minY + radius;
+		newY = minY + radius;
 	}
-	else if (y > maxY - radius)
+	else if (newY > maxY - radius)
 	{
-		y = maxY - radius;
+		newY = maxY - radius;
 	}
 		
-	this->x = x;
-	this->y = y;
+	this->x = newX;
+	this->y = newY;
 }
 
 void Ball::edgeBounce()
@@ -130,19 +130,19 @@ void Ball::edgeBounce()
 		speedX = -speedX;
 		if (this->edgeListener)
 		{
-			int index = 0;
+			int edgeIndex = 0;
 			if (x - radius <= minX)
 			{
-				index = (y - minY);
+				edgeIndex = (y - minY);
 			}
 			else if (x + radius >= maxX)
 			{
-				index = 1568 - 392 - (y - minY);
+				edgeIndex = 1568 - 392 - (y - minY);
 			}
 
 			if ((this->isMoving) && (speedX != NO_SPEED))
 			{
-				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[index], sampleRate);
+				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], sampleRate);
 			}
 		}
 	}
@@ -157,19 +157,19 @@ void Ball::edgeBounce()
 		speedY = -speedY;
 		if (this->edgeListener)
 		{
-			int index = 0;
+			int edgeIndex = 0;
 			if (y - radius <= minY)
 			{
-				index = 1568 - (x - minX);
+				edgeIndex = 1568 - (x - minX);
 			}
 			else if (y + radius >= maxY)
 			{
-				index = 392 + (x - minX);
+				edgeIndex = 392 + (x - minX);
 			}
 
 			if ((this->isMoving) && (speedY != NO_SPEED))
 			{
-				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[index], sampleRate);
+				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], sampleRate);
 			}
 		}
 	}

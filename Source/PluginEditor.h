@@ -43,8 +43,9 @@ public:
 	void loadFromProcessorState();
 	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
-	// debug
-	juce::Label BPM;
+	juce::Label xVelocityLabel, yVelocityLabel;
+	juce::Label BPM; // debug
+	juce::Label FrameRate; // debug
 
 private:
 	// This reference is provided as a quick way for your editor to
