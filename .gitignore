@@ -1,5 +1,4 @@
 *.db
-Builds
 Builds/
 ./Builds/
 ./Builds/VisualStudio2022
