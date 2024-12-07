@@ -79,6 +79,7 @@ public:
 
 	double BPM; // debug
 	double FrameRate; // debug
+	std::chrono::high_resolution_clock::time_point lastProcessTime;
 
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)

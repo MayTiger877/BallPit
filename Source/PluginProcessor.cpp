@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include <chrono>
 
 //==============================================================================
 BallPitAudioProcessor::BallPitAudioProcessor()
@@ -19,7 +20,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					  #endif
 					   .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
 					 #endif
-					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters())
+					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters()), lastProcessTime(std::chrono::high_resolution_clock::now())
 #endif
 {
 	this->isGUIUploaded = false;
@@ -288,16 +289,24 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	// extract bpm and audio play status
-	this->FrameRate = (this->m_sampleRate / this->m_samplesPerBlock); // debug
+	this->FrameRate = (getSampleRate() / buffer.getNumSamples()); // debug
 	this->BPM = 120.00; // debug
 	if (auto* playhead = getPlayHead())
 	{
 		juce::Optional<juce::AudioPlayHead::PositionInfo> newPositionInfo = playhead->getPosition();
 		if (newPositionInfo.hasValue())
 		{
-			
 			auto bpm = newPositionInfo->getBpm();
-			this->BPM = bpm.hasValue() ? *bpm : 120.00; // debug
+			//this->BPM = bpm.hasValue() ? (*bpm) : 120.00; // debug
+			
+			// DEBUG
+			auto now = std::chrono::high_resolution_clock::now();
+			double elapsedTimeInSeconds = std::chrono::duration<double>(now - lastProcessTime).count();
+			this->BPM = elapsedTimeInSeconds;
+			DBG("Elapsed Time (Seconds): " << elapsedTimeInSeconds);
+
+			// Update the last process time
+			lastProcessTime = now;
 			
 			this->isDAWPlaying = newPositionInfo->getIsPlaying();
 			if (this->isPlaying.exchange(this->isDAWPlaying) != this->isDAWPlaying)
@@ -317,6 +326,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	{
 		pit.update();
 	}
+	
 	// TODO - check this function again after all the changes
 	juce::MidiBuffer::Iterator it(midiBuffer);
 	juce::MidiMessage message;
