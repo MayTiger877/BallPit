@@ -75,7 +75,7 @@ public:
 	void updateGUIFlag(bool newStatus) { isGUIUploaded = newStatus; }
 	bool getIsGUIUploaded() { return isGUIUploaded; }
 
-	bool isHostPlaying() const { return positionInfo.isPlaying; }
+	bool isHostPlaying() const { return isDAWPlaying; }
 
 	double BPM; // debug
 	double FrameRate; // debug
@@ -91,9 +91,9 @@ private:
 	std::vector<std::unique_ptr<EdgeEventListener>> listeners;
 	std::vector<PendingMidiEvent> pendingEvents;
 
-	juce::AudioPlayHead::CurrentPositionInfo positionInfo;
+	bool isDAWPlaying;
 
-	void getUpdatedBallParams(double bpm, double effectiveFrameRate);
+	void getUpdatedBallParams();
 	void getUpdatedEdgeParams();
 
 	bool isGUIUploaded;

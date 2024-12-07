@@ -24,6 +24,9 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 {
 	this->isGUIUploaded = false;
 	this->GUIState = juce::ValueTree("GUIState");
+	
+	this->BPM = 120.0;
+	this->FrameRate = 60.0;
 
 	// ball 1
 	auto ball1 = std::make_unique<Ball>(0, 50.0f, 200.0f, 10.0f, 10.0f, 6.0f);
@@ -58,8 +61,8 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	listeners.push_back(std::move(midiListener3));
 	listeners.push_back(std::move(collisionListener3));
 	
-	getUpdatedBallParams(120, 60);
-	
+	getUpdatedBallParams();
+	this->isDAWPlaying = false; // TODO - need this?
 }
 
 BallPitAudioProcessor::~BallPitAudioProcessor()
@@ -205,14 +208,15 @@ static void setXYVelocityByTempo(double bpm, double effectiveFrameRate, float& x
 	if (bpm > 0 && effectiveFrameRate > 0)
 	{
 		float beatsPerSecond = bpm / 60.0f;
-		float framesPerBeat = effectiveFrameRate * beatsPerSecond;
-		const double pitWidth = 390.0 - (2.5 * ballRadius); // TODO - check if this is goood
+		const double pitWidth = 390.0 - (2.0 * ballRadius); // TODO - check if this is goood
+		float distancePerSecond = pitWidth * beatsPerSecond;
+		float effectiveVelocity = distancePerSecond / effectiveFrameRate;
 		
 		double diviation = velocityToInterval(static_cast<int>(xVelocity));
-		xVelocity = (diviation != 0) ? ((pitWidth / framesPerBeat) / diviation) : 0;
+		xVelocity = (diviation != 0) ? (effectiveVelocity / diviation) : 0.0f;
 		
 		diviation = velocityToInterval(static_cast<int>(yVelocity));
-		yVelocity = (diviation != 0) ? ((pitWidth / framesPerBeat) / diviation) : 0;
+		yVelocity = (diviation != 0) ? (effectiveVelocity / diviation) : 0.0f;
 	}
 }
 
@@ -222,7 +226,7 @@ static void getAngleAndVelocity(float& angle, float& velocity, float xVelocity, 
 	angle = atan2(yVelocity, xVelocity) * 180 / juce::MathConstants<float>::pi;
 }
 
-void BallPitAudioProcessor::getUpdatedBallParams(double bpm, double effectiveFrameRate)
+void BallPitAudioProcessor::getUpdatedBallParams()
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -260,7 +264,7 @@ void BallPitAudioProcessor::getUpdatedBallParams(double bpm, double effectiveFra
 			}
 			case 2: // by tempo
 			{
-				setXYVelocityByTempo(bpm, effectiveFrameRate, xVelocity, yVelocity, radius);
+				setXYVelocityByTempo(this->BPM, this->FrameRate, xVelocity, yVelocity, radius);
 				getAngleAndVelocity(angle, velocity, xVelocity, yVelocity);
 				break;
 			}
@@ -283,20 +287,20 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-	double bpm = 120.0;
-	double effectiveFrameRate = 60.0;
+	// extract bpm and audio play status
+	this->FrameRate = (this->m_sampleRate / this->m_samplesPerBlock); // debug
+	this->BPM = 120.00; // debug
 	if (auto* playhead = getPlayHead())
 	{
-		juce::AudioPlayHead::CurrentPositionInfo newPositionInfo;
-		if (playhead->getCurrentPosition(newPositionInfo))
+		juce::Optional<juce::AudioPlayHead::PositionInfo> newPositionInfo = playhead->getPosition();
+		if (newPositionInfo.hasValue())
 		{
-			bpm = newPositionInfo.bpm;
-			effectiveFrameRate = newPositionInfo.frameRate.getEffectiveRate();
-			this->BPM = bpm; // debug
-			this->FrameRate = effectiveFrameRate; // debug
-			this->positionInfo = newPositionInfo;
-			bool newIsPlaying = newPositionInfo.isPlaying;
-			if (isPlaying.exchange(newIsPlaying) != newIsPlaying)
+			
+			auto bpm = newPositionInfo->getBpm();
+			this->BPM = bpm.hasValue() ? *bpm : 120.00; // debug
+			
+			this->isDAWPlaying = newPositionInfo->getIsPlaying();
+			if (this->isPlaying.exchange(this->isDAWPlaying) != this->isDAWPlaying)
 			{
 				sendChangeMessage(); // Notify the editor of a state change
 			}
@@ -306,7 +310,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	buffer.clear();
 	if (this->pit.isBallsMoving() == false)
 	{
-		getUpdatedBallParams(bpm, effectiveFrameRate);
+		getUpdatedBallParams();
 		getUpdatedEdgeParams();
 	}
 	else
@@ -322,7 +326,6 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	{
 		if (pendingIt->samplePosition < m_samplesPerBlock)
 		{
-			DBG(pendingIt->message.getDescription() << "INSIDE MIDI BUFFER");
 			midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
 			pendingIt = pendingEvents.erase(pendingIt);
 		}
@@ -337,19 +340,16 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	{
 		if (message.isNoteOn())
 		{
-			DBG(message.getDescription() << "NOTE ON");
 			midiMessages.addEvent(message, samplePosition);
 			continue;
 		}
 
 		if (samplePosition < m_samplesPerBlock)
 		{
-			DBG(message.getDescription() << "INSIDE MIDI BUFFER");
 			midiMessages.addEvent(message, samplePosition);
 		}
 		else
 		{
-			DBG(message.getDescription() << "SENT PENDING");
 			int newSamplePosition = samplePosition - static_cast<int>(m_samplesPerBlock);
 			pendingEvents.push_back({message, newSamplePosition});
 		}
