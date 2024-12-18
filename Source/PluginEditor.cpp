@@ -14,8 +14,8 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	: AudioProcessorEditor (&p), audioProcessor (p)
 {
 	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg"); //laptop
-	auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
-	//auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/LayOut.svg"); //haifa
+	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
+	auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/LayOut.svg"); //haifa
 
 	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
 	if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
@@ -323,7 +323,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		else
 			startStopButton.setButtonText("Start");
 	};
-	startStopButton.setBounds(420, 290, 140, 40);
+	startStopButton.setBounds(420, 350, 140, 40);
 	addAndMakeVisible(startStopButton);
 
 	addRemoveBallButton.setButtonText("Add");
@@ -340,7 +340,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 			audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->setActive(true);
 		}
 	};
-	addRemoveBallButton.setBounds(580, 290, 140, 40);
+	addRemoveBallButton.setBounds(580, 350, 140, 40);
 	addAndMakeVisible(addRemoveBallButton);
 
 	edgePhaseSlider.setBounds(200, 475, 100, 30);
@@ -430,17 +430,20 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	collisionButton.setButtonText("Collision");
 	addAndMakeVisible(collisionButton);
 
-	BPM.setBounds(550, 100, 100, 30);
+	BPM.setBounds(520, 100, 100, 50);
 	addAndMakeVisible(BPM);
 
-	FrameRate.setBounds(550, 150, 100, 30);
+	FrameRate.setBounds(520, 150, 100, 50);
 	addAndMakeVisible(FrameRate);
 
-	xVelocityLabel.setBounds(550, 200, 100, 30);
+	xVelocityLabel.setBounds(520, 200, 100, 50);
 	addAndMakeVisible(xVelocityLabel);
 
-	yVelocityLabel.setBounds(550, 250, 100, 30);
+	yVelocityLabel.setBounds(520, 250, 100, 50);
 	addAndMakeVisible(yVelocityLabel);
+
+	ElapsedTime.setBounds(520, 280, 120, 50);
+	addAndMakeVisible(ElapsedTime);
 }
 
 //==============================================================================
@@ -483,6 +486,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	displayKnobsByTab();
 	this->BPM.setText("BPM: " + std::to_string(audioProcessor.BPM), juce::dontSendNotification);
 	this->FrameRate.setText("Frame Rate: " + std::to_string(audioProcessor.FrameRate), juce::dontSendNotification);
+	this->ElapsedTime.setText("Frame Rate: " + std::to_string(audioProcessor.elapsedTime), juce::dontSendNotification);
 	audioProcessor.getPit().drawPitEdge(g, edgeColors);
 }
 

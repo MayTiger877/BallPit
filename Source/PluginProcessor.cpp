@@ -28,6 +28,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	
 	this->BPM = 120.0;
 	this->FrameRate = 60.0;
+	this->elapsedTime = 0.1;
 
 	// ball 1
 	auto ball1 = std::make_unique<Ball>(0, 50.0f, 200.0f, 10.0f, 10.0f, 6.0f);
@@ -204,20 +205,33 @@ double velocityToInterval(int velocity)
 	}
 }
 
-static void setXYVelocityByTempo(double bpm, double effectiveFrameRate, float& xVelocity, float& yVelocity, float ballRadius)
+static void setXYVelocityByTempo(double bpm, double effectiveFrameRate, double elapsedTime, float& xVelocity, float& yVelocity, float ballRadius)
 {
-	if (bpm > 0 && effectiveFrameRate > 0)
+	//if (bpm > 0 && effectiveFrameRate > 0)
+	//{
+	//	float beatsPerSecond = bpm / 60.0f;
+	//	const double pitWidth = 390.0 - (2.0 * ballRadius); // TODO - check if this is goood
+	//	float distancePerSecond = pitWidth * beatsPerSecond;
+	//	float effectiveVelocity = distancePerSecond / effectiveFrameRate;
+	//	
+	//	double diviation = velocityToInterval(static_cast<int>(xVelocity));
+	//	xVelocity = (diviation != 0) ? (effectiveVelocity / diviation) : 0.0f;
+	//	
+	//	diviation = velocityToInterval(static_cast<int>(yVelocity));
+	//	yVelocity = (diviation != 0) ? (effectiveVelocity / diviation) : 0.0f;
+	//}
+	if (bpm > 0 && elapsedTime > 0)
 	{
 		float beatsPerSecond = bpm / 60.0f;
-		const double pitWidth = 390.0 - (2.0 * ballRadius); // TODO - check if this is goood
+		const double pitWidth = 390.0 - (2.0 * ballRadius); // Adjust pit width for ball radius
 		float distancePerSecond = pitWidth * beatsPerSecond;
-		float effectiveVelocity = distancePerSecond / effectiveFrameRate;
-		
-		double diviation = velocityToInterval(static_cast<int>(xVelocity));
-		xVelocity = (diviation != 0) ? (effectiveVelocity / diviation) : 0.0f;
-		
-		diviation = velocityToInterval(static_cast<int>(yVelocity));
-		yVelocity = (diviation != 0) ? (effectiveVelocity / diviation) : 0.0f;
+		float effectiveVelocity = distancePerSecond * elapsedTime; // Use elapsed time to calculate distance traveled in the interval
+
+		double deviation = velocityToInterval(static_cast<int>(xVelocity));
+		xVelocity = (deviation != 0) ? (effectiveVelocity / deviation) : 0.0f;
+
+		deviation = velocityToInterval(static_cast<int>(yVelocity));
+		yVelocity = (deviation != 0) ? (effectiveVelocity / deviation) : 0.0f;
 	}
 }
 
@@ -265,7 +279,7 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 			}
 			case 2: // by tempo
 			{
-				setXYVelocityByTempo(this->BPM, this->FrameRate, xVelocity, yVelocity, radius);
+				setXYVelocityByTempo(this->BPM, this->FrameRate, this->elapsedTime, xVelocity, yVelocity, radius);
 				getAngleAndVelocity(angle, velocity, xVelocity, yVelocity);
 				break;
 			}
@@ -291,23 +305,19 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	// extract bpm and audio play status
 	this->FrameRate = (getSampleRate() / buffer.getNumSamples()); // debug
 	this->BPM = 120.00; // debug
+
+	std::chrono::steady_clock::time_point now;
 	if (auto* playhead = getPlayHead())
 	{
 		juce::Optional<juce::AudioPlayHead::PositionInfo> newPositionInfo = playhead->getPosition();
 		if (newPositionInfo.hasValue())
 		{
 			auto bpm = newPositionInfo->getBpm();
-			//this->BPM = bpm.hasValue() ? (*bpm) : 120.00; // debug
+			this->BPM = bpm.hasValue() ? (*bpm) : 120.00; // debug
 			
 			// DEBUG
-			auto now = std::chrono::high_resolution_clock::now();
-			double elapsedTimeInSeconds = std::chrono::duration<double>(now - lastProcessTime).count();
-			this->BPM = elapsedTimeInSeconds;
-			DBG("Elapsed Time (Seconds): " << elapsedTimeInSeconds);
-
-			// Update the last process time
-			lastProcessTime = now;
-			
+			now = std::chrono::steady_clock::now();
+			this->elapsedTime = std::chrono::duration<double>(now - lastProcessTime).count();
 			this->isDAWPlaying = newPositionInfo->getIsPlaying();
 			if (this->isPlaying.exchange(this->isDAWPlaying) != this->isDAWPlaying)
 			{
@@ -319,11 +329,14 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	buffer.clear();
 	if (this->pit.isBallsMoving() == false)
 	{
+		lastProcessTime = now;
 		getUpdatedBallParams();
 		getUpdatedEdgeParams();
 	}
-	else
+	else if (this->elapsedTime > 0.5)
 	{
+		// Update the last process time
+		lastProcessTime = now;
 		pit.update();
 	}
 	

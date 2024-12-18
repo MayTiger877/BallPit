@@ -46,6 +46,7 @@ public:
 	juce::Label xVelocityLabel, yVelocityLabel;
 	juce::Label BPM; // debug
 	juce::Label FrameRate; // debug
+	juce::Label ElapsedTime; // debug
 
 private:
 	// This reference is provided as a quick way for your editor to

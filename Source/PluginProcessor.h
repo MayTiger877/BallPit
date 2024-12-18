@@ -77,9 +77,10 @@ public:
 
 	bool isHostPlaying() const { return isDAWPlaying; }
 
-	double BPM; // debug
-	double FrameRate; // debug
-	std::chrono::high_resolution_clock::time_point lastProcessTime;
+	std::atomic<double> BPM {0.0}; // debug
+	std::atomic<double> FrameRate { 0.0 }; // debug
+	std::atomic<double> elapsedTime { 0.0 }; // debug
+	std::chrono::steady_clock::time_point lastProcessTime;
 
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
