@@ -10,6 +10,8 @@
 #include "PluginEditor.h"
 #include <chrono>
 
+using namespace juce;
+
 //==============================================================================
 BallPitAudioProcessor::BallPitAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -21,6 +23,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					   .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
 					 #endif
 					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters()), lastProcessTime(std::chrono::high_resolution_clock::now())
+						, settings(ticks)
 #endif
 {
 	this->isGUIUploaded = false;
@@ -29,6 +32,13 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	this->BPM = 120.0;
 	this->FrameRate = 60.0;
 	this->elapsedTime = 0.1;
+
+	ticks.clear();
+	settings.useHostTransport.setValue(true, nullptr);
+	playheadPosition_ = juce::AudioPlayHead::PositionInfo();
+	settings.isDirty = false;
+
+	// TODO - load default preset
 
 	// ball 1
 	auto ball1 = std::make_unique<Ball>(0, 50.0f, 200.0f, 10.0f, 10.0f, 6.0f);
@@ -69,6 +79,8 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 
 BallPitAudioProcessor::~BallPitAudioProcessor()
 {
+	tickState.clear();
+	ticks.clear();
 }
 
 //==============================================================================
@@ -140,6 +152,10 @@ void BallPitAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 	m_samplesPerBlock = samplesPerBlock;
 	pit.setSampleRate(sampleRate);
 	midiBuffer.clear();
+
+	getState().samplerate = sampleRate;
+	ticks.setSampleRate(sampleRate);
+	tickState.clear();
 }
 
 void BallPitAudioProcessor::releaseResources()
@@ -300,6 +316,22 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 					  valueTreeState.getRawParameterValue("edgeRange")->load());
 }
 
+
+void BallPitAudioProcessor::handlePreCount(const double inputPPQ)
+{
+	const int preCount = getState().transport.preCount.get();
+	if (preCount <= 0 || getState().useHostTransport.get()) 
+	{ return; }
+	// auto stop
+	const auto ts = playheadPosition_.getTimeSignature().orFallback(juce::AudioPlayHead::TimeSignature({ 4 / 4 }));
+	const auto ttq = (4.0 / ts.denominator); // tick to quarter
+	const auto expectedBar = std::floor(inputPPQ / ttq / ts.numerator);
+	if ((int)expectedBar == preCount)
+		getState().transport.isPlaying.setValue(false, nullptr);
+}
+
+
+
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	// extract bpm and audio play status
@@ -327,6 +359,94 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	}
 
 	buffer.clear();
+
+	//--------------------------------------------------------------------------------
+
+	if (getPlayHead())
+	{
+		playheadPosition_ = getPlayHead()->getPosition().orFallback(juce::AudioPlayHead::PositionInfo());
+	}
+
+	// setValue only triggers if value is different
+	if (playheadPosition_.getBpm().hasValue())
+	{
+		settings.transport.bpm.setValue((float)*playheadPosition_.getBpm(), nullptr);
+	}
+
+	if (playheadPosition_.getTimeSignature().hasValue())
+	{
+		const auto ts = *playheadPosition_.getTimeSignature();
+		settings.transport.numerator.setValue(ts.numerator, nullptr);
+		settings.transport.denumerator.setValue(ts.denominator, nullptr);
+	}
+
+	if (playheadPosition_.getIsPlaying())
+	{
+		if (!ticks.getLock().try_lock())
+			return;
+
+		const auto ppqPosition = playheadPosition_.getPpqPosition().orFallback(0);
+		const auto lastBarStart = playheadPosition_.getPpqPositionOfLastBarStart().orFallback(0);
+		const auto bpm = playheadPosition_.getBpm().orFallback(120.0f);
+		const auto ts = playheadPosition_.getTimeSignature().orFallback(juce::AudioPlayHead::TimeSignature({ 4, 4 }));
+
+		// calculate where tick starts in samples...
+		jassert((int)lastBarStart == 0 || ppqPosition >= lastBarStart);
+		const auto pos = ppqPosition - lastBarStart;
+		const auto bps = bpm / 60.0;
+		const auto bpSmp = getSampleRate() / bps;
+		const auto ttq = (4.0 / ts.denominator); // tick to quarter
+		const auto tickAt = ttq / 1.0f; // tick every (1.0 = 1/4, 0.5 = 1/8, ...)
+		const auto tickLengthInSamples = (int)std::ceil(tickAt * bpSmp);
+
+		const auto ppqFromBufStart = fmod(pos, tickAt);
+		const double ppqOffset = tickAt - ppqFromBufStart;
+		const auto bufStartInSecs = playheadPosition_.getTimeInSeconds().orFallback(0);
+		const auto bufEndInSecs = bufStartInSecs + (buffer.getNumSamples() / getSampleRate());
+		ppqEndVal = pos + ((bufEndInSecs - bufStartInSecs) * bps);
+		const auto bufLengthInPPQ = bps * (buffer.getNumSamples() / getSampleRate());
+
+		// stop if precount is on and counted enough bars
+		handlePreCount(ppqEndVal + bufLengthInPPQ);
+
+		auto ppqToBufEnd = bufLengthInPPQ;
+		auto ppqPosInBuf = ppqOffset;
+		auto currentSampleToTick = 0;
+
+		// reset tick state
+		tickState.tickStartPosition = 0;
+
+		if (ppqFromBufStart == 0.0)
+		{
+			ppqPosInBuf = 0.0;
+		}
+
+		if (ticks.getNumOfTicks() == 0)
+		{
+			tickState.clear();
+			return;
+		}
+		
+		while (ppqToBufEnd > ppqPosInBuf)
+		{
+			jassert(ppqToBufEnd >= ppqPosInBuf);
+			// add tick(s) to current buffer
+			currentSampleToTick = juce::roundToInt(ppqPosInBuf * bpSmp);
+			ppqPosInBuf += tickAt; // next sample
+			tickState.beat = juce::roundToInt(floor(fmod((pos + ppqPosInBuf) / ttq, ts.numerator))); // + 1;
+			if (tickState.beat == 0)
+				tickState.beat = ts.numerator;
+			const auto& beatAssign = settings.beatAssignments[juce::jlimit(1, TickSettings::kMaxBeatAssignments, tickState.beat) - 1];
+			const auto tickIdx = (size_t)juce::jlimit(0, juce::jmax((int)ticks.getNumOfTicks() - 1, 0), beatAssign.tickIdx.get());
+			tickState.refer[0] = ticks[tickIdx].getTickAudioBuffer();
+			tickState.addTickSample(buffer, currentSampleToTick, tickLengthInSamples);
+		}
+
+		tickState.fillTickSample(buffer);
+		ticks.getLock().unlock();
+	}
+	//---------------------------------------------------------------------------------
+
 	if (this->pit.isBallsMoving() == false)
 	{
 		lastProcessTime = now;
@@ -493,4 +613,52 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 void BallPitAudioProcessor::saveGUIState(juce::ValueTree &newGUIState)
 {
 	this->GUIState.copyPropertiesFrom(newGUIState, nullptr);
+}
+
+double BallPitAudioProcessor::getCurrentBeatPos()
+{
+	const auto ppq = playheadPosition_.getPpqPosition().orFallback(0);
+	const auto ts = playheadPosition_.getTimeSignature().orFallback(AudioPlayHead::TimeSignature({ 4 / 4 }));
+	const auto ttq = (4.0 / ts.denominator); // tick to quarter
+	auto subDiv = fmod(ppq, ttq) / ttq;
+	return tickState.beat + subDiv;
+}
+
+void BallPitAudioProcessor::TickState::addTickSample(MidiBuffer& bufferToFill, int startPos, int length)
+{
+	isClear = false;
+	currentSample = 0;
+	tickStartPosition = startPos;
+	tickLengthInSamples = length;
+	fillTickSample(bufferToFill);
+	tickStartPosition = -1;
+}
+
+void BallPitAudioProcessor::TickState::fillTickSample(MidiBuffer& bufferToFill)
+{
+	if (tickStartPosition < 0)
+		return; // fillTick was consumed
+
+	if (currentSample < 0)
+		return; // not active tick.
+
+	auto constrainedLength = jmin(tickLengthInSamples - currentSample, sample.getNumSamples() - currentSample, bufferToFill.getNumSamples() - tickStartPosition);
+	const auto maxSampleChannelIndex = sample.getNumChannels() - 1;
+	for (auto ch = 0; ch < bufferToFill.getNumChannels(); ch++)
+	{
+		bufferToFill.copyFrom(ch, tickStartPosition, sample, jlimit(0, maxSampleChannelIndex, ch), currentSample, constrainedLength);
+	}
+
+	currentSample += constrainedLength;
+	if (currentSample == sample.getNumSamples())
+	{
+		currentSample = -1; // mark as not valid.
+	}
+}
+
+void BallPitAudioProcessor::TickState::clear()
+{
+	isClear = true;
+	currentSample = -1;
+	tickLengthInSamples = tickStartPosition = beat = 0;
 }

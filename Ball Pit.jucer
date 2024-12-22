@@ -24,6 +24,9 @@
       <FILE id="sFgfp2" name="Pit.cpp" compile="1" resource="0" file="Source/Pit.cpp"/>
       <FILE id="xD9Gqd" name="Pit.h" compile="0" resource="0" file="Source/Pit.h"/>
       <FILE id="lfa31n" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="PU3Wtu" name="TempoManager.cpp" compile="1" resource="0"
+            file="Source/TempoManager.cpp"/>
+      <FILE id="Yk2gZW" name="TempoManager.h" compile="0" resource="0" file="Source/TempoManager.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>

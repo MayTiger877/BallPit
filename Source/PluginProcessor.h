@@ -13,6 +13,7 @@
 #include "Pit.h"
 #include "EdgeEventListener.h"
 #include "Scales.h"
+#include "TempoManager.h"
 
 double velocityToInterval(int velocity);
 
@@ -82,9 +83,15 @@ public:
 	std::atomic<double> elapsedTime { 0.0 }; // debug
 	std::chrono::steady_clock::time_point lastProcessTime;
 
-private:
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
+	//--------------------------------------------------------------
+	juce::AudioPlayHead::PositionInfo playheadPosition_;
+	double getCurrentBeatPos();
+	int getBeat() { return tickState.beat; }
 
+	TicksHolder& getTicks() { return ticks; }
+	TickSettings& getState() { return settings; }
+
+private:
 	double m_sampleRate;
 	double m_samplesPerBlock;
 	
@@ -99,4 +106,34 @@ private:
 	void getUpdatedEdgeParams();
 
 	bool isGUIUploaded;
+
+	//--------------------------------------------------------------------------------
+
+	void handlePreCount(double inputPPQ);
+	double ppqEndVal;
+
+	// audio samples bank
+	TicksHolder ticks;
+
+	// programmable assignment of samples per beat.
+	// hard-coded to support upto 64.
+	TickSettings settings;
+
+	struct TickState
+	{
+		int currentSample = -1;
+		int tickLengthInSamples = 0;
+		int tickStartPosition = 0;
+		int beat = 0;
+		double beatPos = 0;
+		juce::AudioSampleBuffer sample;
+		float* refer[1];
+		bool isClear = true;
+
+		void fillTickSample(juce::MidiBuffer& bufferToFill);
+		void addTickSample(juce::MidiBuffer& bufferToFill, int startPos, int endPos);
+		void clear();
+	} tickState;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
 };
