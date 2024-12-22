@@ -433,8 +433,8 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	BPM.setBounds(520, 100, 100, 50);
 	addAndMakeVisible(BPM);
 
-	FrameRate.setBounds(520, 150, 100, 50);
-	addAndMakeVisible(FrameRate);
+	ppqPos.setBounds(520, 150, 100, 50);
+	addAndMakeVisible(ppqPos);
 
 	xVelocityLabel.setBounds(520, 200, 100, 50);
 	addAndMakeVisible(xVelocityLabel);
@@ -442,8 +442,6 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	yVelocityLabel.setBounds(520, 250, 100, 50);
 	addAndMakeVisible(yVelocityLabel);
 
-	ElapsedTime.setBounds(520, 280, 120, 50);
-	addAndMakeVisible(ElapsedTime);
 }
 
 //==============================================================================
@@ -485,8 +483,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 
 	displayKnobsByTab();
 	this->BPM.setText("BPM: " + std::to_string(audioProcessor.BPM), juce::dontSendNotification);
-	this->FrameRate.setText("Frame Rate: " + std::to_string(audioProcessor.FrameRate), juce::dontSendNotification);
-	this->ElapsedTime.setText("Frame Rate: " + std::to_string(audioProcessor.elapsedTime), juce::dontSendNotification);
+	this->ppqPos.setText("ppq position: " + std::to_string(audioProcessor.ppqPos), juce::dontSendNotification);
 	audioProcessor.getPit().drawPitEdge(g, edgeColors);
 }
 

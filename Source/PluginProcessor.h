@@ -78,9 +78,7 @@ public:
 	bool isHostPlaying() const { return isDAWPlaying; }
 
 	std::atomic<double> BPM {0.0}; // debug
-	std::atomic<double> FrameRate { 0.0 }; // debug
-	std::atomic<double> elapsedTime { 0.0 }; // debug
-	std::chrono::steady_clock::time_point lastProcessTime;
+	double ppqPos = 0.0;
 
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
@@ -94,6 +92,11 @@ private:
 	std::vector<PendingMidiEvent> pendingEvents;
 
 	bool isDAWPlaying;
+
+	double lastPPQPosition = 0.0;
+	double stepPPQIncrement = 0.0;
+	int samplesPerStep = 0;
+	int sampleCounter = 0;
 
 	void getUpdatedBallParams();
 	void getUpdatedEdgeParams();

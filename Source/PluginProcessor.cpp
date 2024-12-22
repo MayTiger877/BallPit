@@ -20,15 +20,13 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					  #endif
 					   .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
 					 #endif
-					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters()), lastProcessTime(std::chrono::high_resolution_clock::now())
+					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters())
 #endif
 {
 	this->isGUIUploaded = false;
 	this->GUIState = juce::ValueTree("GUIState");
 	
 	this->BPM = 120.0;
-	this->FrameRate = 60.0;
-	this->elapsedTime = 0.1;
 
 	// ball 1
 	auto ball1 = std::make_unique<Ball>(0, 50.0f, 200.0f, 10.0f, 10.0f, 6.0f);
@@ -140,6 +138,11 @@ void BallPitAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 	m_samplesPerBlock = samplesPerBlock;
 	pit.setSampleRate(sampleRate);
 	midiBuffer.clear();
+
+	lastPPQPosition = 0.0;
+	stepPPQIncrement = 0.0;
+	samplesPerStep = static_cast<int>(sampleRate / 60.0);
+	sampleCounter = 0;
 }
 
 void BallPitAudioProcessor::releaseResources()
@@ -205,27 +208,14 @@ double velocityToInterval(int velocity)
 	}
 }
 
-static void setXYVelocityByTempo(double bpm, double effectiveFrameRate, double elapsedTime, float& xVelocity, float& yVelocity, float ballRadius)
+static void setXYVelocityByTempo(double bpm, float& xVelocity, float& yVelocity, float ballRadius)
 {
-	//if (bpm > 0 && effectiveFrameRate > 0)
-	//{
-	//	float beatsPerSecond = bpm / 60.0f;
-	//	const double pitWidth = 390.0 - (2.0 * ballRadius); // TODO - check if this is goood
-	//	float distancePerSecond = pitWidth * beatsPerSecond;
-	//	float effectiveVelocity = distancePerSecond / effectiveFrameRate;
-	//	
-	//	double diviation = velocityToInterval(static_cast<int>(xVelocity));
-	//	xVelocity = (diviation != 0) ? (effectiveVelocity / diviation) : 0.0f;
-	//	
-	//	diviation = velocityToInterval(static_cast<int>(yVelocity));
-	//	yVelocity = (diviation != 0) ? (effectiveVelocity / diviation) : 0.0f;
-	//}
-	if (bpm > 0 && elapsedTime > 0)
+	if (bpm > 0)
 	{
 		float beatsPerSecond = bpm / 60.0f;
-		const double pitWidth = 390.0 - (2.0 * ballRadius); // Adjust pit width for ball radius
-		float distancePerSecond = pitWidth * beatsPerSecond;
-		float effectiveVelocity = distancePerSecond * elapsedTime; // Use elapsed time to calculate distance traveled in the interval
+		const double pitWidth = 390.0 - (2.0 * ballRadius); // TODO - Adjust pit width for ball radius
+		float distancePerUpdate = pitWidth * beatsPerSecond;
+		float effectiveVelocity = distancePerUpdate / 60;
 
 		double deviation = velocityToInterval(static_cast<int>(xVelocity));
 		xVelocity = (deviation != 0) ? (effectiveVelocity / deviation) : 0.0f;
@@ -279,7 +269,7 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 			}
 			case 2: // by tempo
 			{
-				setXYVelocityByTempo(this->BPM, this->FrameRate, this->elapsedTime, xVelocity, yVelocity, radius);
+				setXYVelocityByTempo(this->BPM, xVelocity, yVelocity, radius);
 				getAngleAndVelocity(angle, velocity, xVelocity, yVelocity);
 				break;
 			}
@@ -302,11 +292,8 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-	// extract bpm and audio play status
-	this->FrameRate = (getSampleRate() / buffer.getNumSamples()); // debug
-	this->BPM = 120.00; // debug
+	bool tickPassed = false;
 
-	std::chrono::steady_clock::time_point now;
 	if (auto* playhead = getPlayHead())
 	{
 		juce::Optional<juce::AudioPlayHead::PositionInfo> newPositionInfo = playhead->getPosition();
@@ -314,14 +301,35 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		{
 			auto bpm = newPositionInfo->getBpm();
 			this->BPM = bpm.hasValue() ? (*bpm) : 120.00; // debug
-			
-			// DEBUG
-			now = std::chrono::steady_clock::now();
-			this->elapsedTime = std::chrono::duration<double>(now - lastProcessTime).count();
+
 			this->isDAWPlaying = newPositionInfo->getIsPlaying();
 			if (this->isPlaying.exchange(this->isDAWPlaying) != this->isDAWPlaying)
 			{
 				sendChangeMessage(); // Notify the editor of a state change
+			}
+
+			auto ppqPosition = newPositionInfo->getPpqPosition();
+			this->ppqPos = ppqPosition.hasValue() ? (*ppqPosition) : 0.0;
+			if (this->BPM <= 0.0 || this->ppqPos < 0.0)
+				return;
+
+			// Calculate the PPQ increment for 1/60 seconds if BPM changes
+			const double secondsPerBeat = 60.0 / this->BPM;
+			stepPPQIncrement = 1.0 / secondsPerBeat / 60.0;
+
+			// Accumulate samples
+			sampleCounter += buffer.getNumSamples();
+			if (sampleCounter >= samplesPerStep)
+			{
+				sampleCounter -= samplesPerStep;
+
+				if (std::floor(this->ppqPos) != std::floor(lastPPQPosition))
+				{
+					tickPassed = true;
+
+				}
+
+				lastPPQPosition += stepPPQIncrement;
 			}
 		}
 	}
@@ -329,14 +337,12 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	buffer.clear();
 	if (this->pit.isBallsMoving() == false)
 	{
-		lastProcessTime = now;
 		getUpdatedBallParams();
 		getUpdatedEdgeParams();
 	}
-	else if (this->elapsedTime > 0.5)
+	else if (tickPassed == true)
 	{
-		// Update the last process time
-		lastProcessTime = now;
+		tickPassed = false;
 		pit.update();
 	}
 	
