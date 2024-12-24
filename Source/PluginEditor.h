@@ -43,10 +43,6 @@ public:
 	void loadFromProcessorState();
 	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
-	juce::Label xVelocityLabel, yVelocityLabel;
-	juce::Label BPM; // debug
-	juce::Label ppqPos; // debug
-
 private:
 	// This reference is provided as a quick way for your editor to
 	// access the processor object that created it.
@@ -100,5 +96,7 @@ private:
 
 	juce::ValueTree newGUIState;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BallPitAudioProcessorEditor)
+	juce::TextEditor logBox;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessorEditor)
 };

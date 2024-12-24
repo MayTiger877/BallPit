@@ -13,6 +13,7 @@
 #include "Pit.h"
 #include "EdgeEventListener.h"
 #include "Scales.h"
+#include "CostumeLogger.h"
 
 double velocityToInterval(int velocity);
 
@@ -77,8 +78,20 @@ public:
 
 	bool isHostPlaying() const { return isDAWPlaying; }
 
-	std::atomic<double> BPM {0.0}; // debug
-	double ppqPos = 0.0;
+	std::atomic<double> m_bpm {0.0};
+	double m_ppqPos = 0.0;
+
+	juce::AudioPlayHead::TimeSignature m_timeSignatureDEBUG;
+
+	CostumeLogger* getLogger() const { return m_logger.get(); }
+
+	void printLoggedEvent(std::string toPrint)
+	{
+		if (m_logger)
+			m_logger->logMessage(toPrint);
+	}
+
+	void setXYVelocityByTempo(double bpm, juce::AudioPlayHead::TimeSignature timeSignature, float& xVelocity, float& yVelocity, float ballRadius); // debug
 
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
@@ -97,9 +110,12 @@ private:
 	double stepPPQIncrement = 0.0;
 	int samplesPerStep = 0;
 	int sampleCounter = 0;
+	juce::AudioPlayHead::TimeSignature m_timeSignature;
 
 	void getUpdatedBallParams();
 	void getUpdatedEdgeParams();
 
 	bool isGUIUploaded;
+
+	std::unique_ptr<CostumeLogger> m_logger;
 };

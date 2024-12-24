@@ -20,13 +20,13 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					  #endif
 					   .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
 					 #endif
-					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters())
+					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters()), m_logger(new CostumeLogger())
 #endif
 {
 	this->isGUIUploaded = false;
 	this->GUIState = juce::ValueTree("GUIState");
 	
-	this->BPM = 120.0;
+	m_bpm = 120.0;
 
 	// ball 1
 	auto ball1 = std::make_unique<Ball>(0, 50.0f, 200.0f, 10.0f, 10.0f, 6.0f);
@@ -143,6 +143,8 @@ void BallPitAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 	stepPPQIncrement = 0.0;
 	samplesPerStep = static_cast<int>(sampleRate / 60.0);
 	sampleCounter = 0;
+	m_timeSignature.numerator = 4;
+	m_timeSignature.denominator = 4;
 }
 
 void BallPitAudioProcessor::releaseResources()
@@ -208,14 +210,21 @@ double velocityToInterval(int velocity)
 	}
 }
 
-static void setXYVelocityByTempo(double bpm, float& xVelocity, float& yVelocity, float ballRadius)
+// enterd every 1/60 seconds (60Hz)
+void BallPitAudioProcessor::setXYVelocityByTempo(double bpm, juce::AudioPlayHead::TimeSignature timeSignature, float& xVelocity, float& yVelocity, float ballRadius)
 {
 	if (bpm > 0)
 	{
 		float beatsPerSecond = bpm / 60.0f;
-		const double pitWidth = 390.0 - (2.0 * ballRadius); // TODO - Adjust pit width for ball radius
+		double pitWidth = (390.0 - (2.0 * ballRadius)); // TODO - Adjust pit width for ball radius
 		float distancePerUpdate = pitWidth * beatsPerSecond;
-		float effectiveVelocity = distancePerUpdate / 60;
+		double denomeratorRatio = 4.0 / static_cast<double>(timeSignature.denominator);
+		float effectiveVelocity = (distancePerUpdate / 60.0) / denomeratorRatio;
+
+		printLoggedEvent("  denominator = " + std::to_string(timeSignature.denominator) +
+						 "  distancePerUpdate = " + std::to_string(distancePerUpdate) +
+						 "  denomeratorRatio = " + std::to_string(denomeratorRatio) +
+						 "  effectiveVelocity = " + std::to_string(effectiveVelocity));
 
 		double deviation = velocityToInterval(static_cast<int>(xVelocity));
 		xVelocity = (deviation != 0) ? (effectiveVelocity / deviation) : 0.0f;
@@ -269,7 +278,7 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 			}
 			case 2: // by tempo
 			{
-				setXYVelocityByTempo(this->BPM, xVelocity, yVelocity, radius);
+				setXYVelocityByTempo(m_bpm, m_timeSignature, xVelocity, yVelocity, radius);
 				getAngleAndVelocity(angle, velocity, xVelocity, yVelocity);
 				break;
 			}
@@ -300,7 +309,11 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		if (newPositionInfo.hasValue())
 		{
 			auto bpm = newPositionInfo->getBpm();
-			this->BPM = bpm.hasValue() ? (*bpm) : 120.00; // debug
+			m_bpm = bpm.hasValue() ? (*bpm) : 120.00;
+
+			auto timeSig = newPositionInfo->getTimeSignature();
+			m_timeSignature.numerator = timeSig.hasValue() ? (*timeSig).numerator : 4;
+			m_timeSignature.denominator = timeSig.hasValue() ? (*timeSig).denominator : 4;
 
 			this->isDAWPlaying = newPositionInfo->getIsPlaying();
 			if (this->isPlaying.exchange(this->isDAWPlaying) != this->isDAWPlaying)
@@ -309,27 +322,24 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			}
 
 			auto ppqPosition = newPositionInfo->getPpqPosition();
-			this->ppqPos = ppqPosition.hasValue() ? (*ppqPosition) : 0.0;
-			if (this->BPM <= 0.0 || this->ppqPos < 0.0)
-				return;
-
-			// Calculate the PPQ increment for 1/60 seconds if BPM changes
-			const double secondsPerBeat = 60.0 / this->BPM;
-			stepPPQIncrement = 1.0 / secondsPerBeat / 60.0;
-
-			// Accumulate samples
-			sampleCounter += buffer.getNumSamples();
-			if (sampleCounter >= samplesPerStep)
+			m_ppqPos = ppqPosition.hasValue() ? (*ppqPosition) : 0.0;
+			if (m_bpm > 0.0 && m_ppqPos > 0.0)
 			{
-				sampleCounter -= samplesPerStep;
+				const double secondsPerBeat = 60.0 / m_bpm;
+				stepPPQIncrement = 1.0 / secondsPerBeat / 60.0;
 
-				if (std::floor(this->ppqPos) != std::floor(lastPPQPosition))
+				sampleCounter += buffer.getNumSamples();
+				if (sampleCounter >= samplesPerStep)
 				{
-					tickPassed = true;
+					sampleCounter -= samplesPerStep;
 
+					if (std::floor(m_ppqPos) != std::floor(lastPPQPosition))
+					{
+						tickPassed = true;
+					}
+
+					lastPPQPosition += stepPPQIncrement;
 				}
-
-				lastPPQPosition += stepPPQIncrement;
 			}
 		}
 	}

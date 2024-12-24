@@ -31,7 +31,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	addAndMakeVisible(tabs.get());
 	
 
-	setSize(836, 654);
+	setSize(836, 754); // TODO - set back to original (836, 654) after removing logger
 	startTimerHz(60);
 
 	this->newGUIState = juce::ValueTree("newGUIState");
@@ -85,9 +85,18 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	std::string collisionID = "collision";
 	collisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, collisionID, collisionButton);
 	
-	initiateComponents();
-
 	audioProcessor.addChangeListener(this); // Register as listener
+
+	logBox.setMultiLine(true);
+	logBox.setReadOnly(true);
+	logBox.setScrollbarsShown(true);
+	logBox.setFont(juce::Font(16.0f));
+	logBox.setColour(juce::TextEditor::backgroundColourId, juce::Colours::black);
+	logBox.setColour(juce::TextEditor::textColourId, juce::Colours::white);
+	logBox.setColour(juce::TextEditor::highlightColourId, juce::Colours::yellow);
+	addAndMakeVisible(logBox);
+
+	initiateComponents();
 }
 
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
@@ -178,8 +187,6 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 			ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(true);
 			ballsSlidersAndAttachments[currentTab].xVelocitySlider.setVisible(false);
 			ballsSlidersAndAttachments[currentTab].yVelocitySlider.setVisible(false);
-			this->xVelocityLabel.setText("", juce::dontSendNotification);
-			this->yVelocityLabel.setText("", juce::dontSendNotification);
 			break;
 		}
 		case 2: // by tempo
@@ -188,8 +195,6 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 			ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(false);
 			ballsSlidersAndAttachments[currentTab].xVelocitySlider.setVisible(true);
 			ballsSlidersAndAttachments[currentTab].yVelocitySlider.setVisible(true);
-			this->xVelocityLabel.setText("xVel " + std::to_string(audioProcessor.valueTreeState.getRawParameterValue(ballXVelocityID)->load()), juce::dontSendNotification);
-			this->yVelocityLabel.setText("yVel " + std::to_string(audioProcessor.valueTreeState.getRawParameterValue(ballYVelocityID)->load()), juce::dontSendNotification);
 			break;
 		}
 		default:
@@ -429,19 +434,6 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	collisionButton.setToggleState(true, juce::dontSendNotification);
 	collisionButton.setButtonText("Collision");
 	addAndMakeVisible(collisionButton);
-
-	BPM.setBounds(520, 100, 100, 50);
-	addAndMakeVisible(BPM);
-
-	ppqPos.setBounds(520, 150, 100, 50);
-	addAndMakeVisible(ppqPos);
-
-	xVelocityLabel.setBounds(520, 200, 100, 50);
-	addAndMakeVisible(xVelocityLabel);
-
-	yVelocityLabel.setBounds(520, 250, 100, 50);
-	addAndMakeVisible(yVelocityLabel);
-
 }
 
 //==============================================================================
@@ -482,17 +474,28 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	}
 
 	displayKnobsByTab();
-	this->BPM.setText("BPM: " + std::to_string(audioProcessor.BPM), juce::dontSendNotification);
-	this->ppqPos.setText("ppq position: " + std::to_string(audioProcessor.ppqPos), juce::dontSendNotification);
 	audioProcessor.getPit().drawPitEdge(g, edgeColors);
 }
 
 void BallPitAudioProcessorEditor::resized()
 {
+	logBox.setBounds(0, 654, 836, 100);
 }
 
 void BallPitAudioProcessorEditor::timerCallback() 
 {
+	if (auto* logger = audioProcessor.getLogger())
+	{
+		auto messages = logger->getMessages();
+		juce::String allMessages;
+
+		for (const auto& message : messages)
+		{
+			allMessages += message + "\n";
+		}
+
+		logBox.setText(allMessages, juce::dontSendNotification);
+	}
 	repaint();
 }
 
@@ -500,7 +503,7 @@ void BallPitAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster
 {
 	if (source == &audioProcessor)
 	{
-		juce::Atomic<bool> isPlaying = audioProcessor.isPlaying.get(); // Access the atomic variable
+		juce::Atomic<bool> isPlaying = audioProcessor.isPlaying.get();
 		this->startStopButton.setToggleState(isPlaying.get(), juce::dontSendNotification);
 		this->startStopButton.onClick();
 	}
