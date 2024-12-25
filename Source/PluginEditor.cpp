@@ -323,7 +323,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	{
 		audioProcessor.getPit().checkBallsPositionBeforeStart();
 		audioProcessor.getPit().toggleBallMovement();
-		if (audioProcessor.getPit().isBallsMoving())
+		if (audioProcessor.getPit().areBallsMoving())
 			startStopButton.setButtonText("Stop");
 		else
 			startStopButton.setButtonText("Start");

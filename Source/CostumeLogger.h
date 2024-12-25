@@ -19,9 +19,7 @@ public:
     {
         const juce::ScopedLock lock(writeLock);
         messages.add(message);
-
-        // Optional: Keep only the last 100 messages to avoid excessive memory usage
-        if (messages.size() > 100)
+        if (messages.size() > 5)
             messages.remove(0);
     }
 

@@ -28,7 +28,8 @@ public:
 			ball->setBallMoving(isMoving);
 		}
 	}
-	bool isBallsMoving() const { return isMoving; }
+
+	bool areBallsMoving() const { return isMoving; }
 
 	void setCollision(bool newcollisionState) { isCollisionOn = newcollisionState; }
 	

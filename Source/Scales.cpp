@@ -64,7 +64,10 @@ Scale::Scale(ScaleKinds kindOfScale, uint8_t modeOf)
 
 bool Scale::SetMode(uint8_t modeOf) 
 {
-	// TODO: check if the argument is in range
+	if (modeOf > 6)
+	{
+		modeOf = modeOf % 6;
+	}
 	Scale::mode = modeOf;
 	SetScale(Scale::scale);
 	return true;

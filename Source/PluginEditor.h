@@ -76,7 +76,7 @@ private:
 	juce::ComboBox ballsPositioningTypeComboBox;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> ballsPositioningTypeAttachment;
 
-	juce::ToggleButton snapToGridButton; // TODO - finish
+	juce::ToggleButton snapToGridButton;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> snapToGridAttachment;
 
 	juce::ToggleButton collisionButton;
