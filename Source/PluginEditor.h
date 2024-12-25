@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "Pit.h"
 #include "Scales.h"
+#include "PresetManagerGUI.h"
 
 //==============================================================================
 /**
@@ -97,6 +98,8 @@ private:
 	juce::ValueTree newGUIState;
 
 	juce::TextEditor logBox;
+
+	PresetPanel presetPanel;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessorEditor)
 };

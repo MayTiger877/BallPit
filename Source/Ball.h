@@ -59,4 +59,6 @@ private:
 
     BallEdgeEventListener* edgeListener;
 	BallCollideEventListener* collideListener;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Ball)
 };

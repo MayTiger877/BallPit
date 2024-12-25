@@ -11,7 +11,7 @@
 
 //==============================================================================
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
-	: AudioProcessorEditor (&p), audioProcessor (p)
+	: AudioProcessorEditor (&p), presetPanel(p.getPresetManager()), audioProcessor (p)
 {
 	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg"); //laptop
 	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
@@ -97,6 +97,8 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	addAndMakeVisible(logBox);
 
 	initiateComponents();
+
+	addAndMakeVisible(presetPanel);
 }
 
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
@@ -480,6 +482,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 void BallPitAudioProcessorEditor::resized()
 {
 	logBox.setBounds(0, 654, 836, 100);
+	presetPanel.setBounds(getLocalBounds().removeFromTop(proportionOfHeight(0.1f)));
 }
 
 void BallPitAudioProcessorEditor::timerCallback() 

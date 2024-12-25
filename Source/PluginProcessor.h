@@ -15,6 +15,7 @@
 #include "Scales.h"
 #include "CostumeLogger.h"
 #include "Configs.h"
+#include "PresetManagerBackend.h"
 
 double velocityToInterval(int velocity);
 
@@ -96,6 +97,8 @@ public:
 	void getUpdatedEdgeParams();
 	void setXYVelocityByTempo(float& xVelocity, float& yVelocity, float ballRadius);
 
+	Service::PresetManager& getPresetManager() { return *presetManager; }
+
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
 
@@ -119,4 +122,6 @@ private:
 	bool isGUIUploaded;
 
 	std::unique_ptr<CostumeLogger> m_logger;
+
+	std::unique_ptr<Service::PresetManager> presetManager;
 };

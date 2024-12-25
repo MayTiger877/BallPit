@@ -52,4 +52,6 @@ private:
 
 	bool isMoving;
 	bool isCollisionOn;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Pit)
 };

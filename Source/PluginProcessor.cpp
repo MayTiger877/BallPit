@@ -61,6 +61,11 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	
 	getUpdatedBallParams();
 	this->isDAWPlaying = false;
+
+	valueTreeState.state.setProperty(Service::PresetManager::presetNameProperty, "", nullptr);
+	valueTreeState.state.setProperty("version", ProjectInfo::versionString, nullptr);
+
+	presetManager = std::make_unique<Service::PresetManager>(valueTreeState);
 }
 
 BallPitAudioProcessor::~BallPitAudioProcessor()
