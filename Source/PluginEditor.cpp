@@ -96,9 +96,9 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	logBox.setColour(juce::TextEditor::highlightColourId, juce::Colours::yellow);
 	addAndMakeVisible(logBox);
 
-	initiateComponents();
+	addChildComponent(&presetPanel);
 
-	addAndMakeVisible(presetPanel);
+	initiateComponents();
 }
 
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
@@ -410,7 +410,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	rootNoteComboBox.setSelectedId(1);
 	addAndMakeVisible(rootNoteComboBox);
 
-	ballsPositioningTypeComboBox.setBounds(670, 10, 100, 30);
+	ballsPositioningTypeComboBox.setBounds(550, 120, 100, 30);
 	ballsPositioningTypeComboBox.addItem("Chaos", 1);
 	ballsPositioningTypeComboBox.addItem("By Tempo", 2);
 	ballsPositioningTypeComboBox.setSelectedId(1);
@@ -436,6 +436,22 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	collisionButton.setToggleState(true, juce::dontSendNotification);
 	collisionButton.setButtonText("Collision");
 	addAndMakeVisible(collisionButton);
+
+	openPresetManager.setButtonText("Presets");
+	openPresetManager.setBounds(670, 10, 100, 30);
+	openPresetManager.onClick = [this]()
+		{
+			if (presetPanel.isVisible())
+			{
+				presetPanel.setVisible(false);
+			}
+			else
+			{
+				presetPanel.setVisible(true);
+				presetPanel.toFront(true); // Bring the presetPanel to the front
+			}
+		};
+	addAndMakeVisible(openPresetManager);
 }
 
 //==============================================================================
@@ -456,7 +472,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 		audioProcessor.updateGUIFlag(true);
 		loadFromProcessorState();
 	}
-	
+
 	// draw balls
 	const auto& balls = audioProcessor.getPit().getBalls();
 	int color = 0;
@@ -476,13 +492,13 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	}
 
 	displayKnobsByTab();
+	presetPanel.setPluginBounds(getLocalBounds());
 	audioProcessor.getPit().drawPitEdge(g, edgeColors);
 }
 
 void BallPitAudioProcessorEditor::resized()
 {
 	logBox.setBounds(0, 654, 836, 100);
-	presetPanel.setBounds(getLocalBounds().removeFromTop(proportionOfHeight(0.1f)));
 }
 
 void BallPitAudioProcessorEditor::timerCallback() 

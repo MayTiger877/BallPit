@@ -3,7 +3,7 @@
 
     PresetManagerBackend.cpp
     Created: 25 Dec 2024 5:45:38pm
-    Author:  MayTigerStation
+    Author:  Akash Murthy (TheAudioProgrammer channel)
 
   ==============================================================================
 */
@@ -20,8 +20,7 @@ namespace Service
 	const String PresetManager::extension{ "preset" };
 	const String PresetManager::presetNameProperty{ "presetName" };
 
-	PresetManager::PresetManager(AudioProcessorValueTreeState& apvts) :
-		valueTreeState(apvts)
+	PresetManager::PresetManager(AudioProcessorValueTreeState& apvts) : valueTreeState(apvts)
 	{
 		// Create a default Preset Directory, if it doesn't exist
 		if (!defaultDirectory.exists())

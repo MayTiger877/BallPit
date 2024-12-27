@@ -3,7 +3,7 @@
 
     PresetManagerBackend.h
     Created: 25 Dec 2024 5:45:38pm
-    Author:  MayTigerStation
+	Author:  Akash Murthy (TheAudioProgrammer channel)
 
   ==============================================================================
 */

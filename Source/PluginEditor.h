@@ -99,6 +99,7 @@ private:
 
 	juce::TextEditor logBox;
 
+	juce::TextButton openPresetManager;
 	PresetPanel presetPanel;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessorEditor)
