@@ -32,6 +32,7 @@ public:
 	void setActive(bool active) { this->active = active; }
     
     void updateAbstractedEdge(int* abstractedEdge);
+    void updateScaleNotes(int* scaleNotes);
 
 	bool isBallMoving() { return isMoving; }
 	void setBallMoving(bool isMoving) { this->isMoving = isMoving; }
@@ -56,6 +57,7 @@ private:
     bool isMoving;
     
     int abstractedEdgeDuplicate[1568];
+    int scaleNotes[3];
 
     BallEdgeEventListener* edgeListener;
 	BallCollideEventListener* collideListener;

@@ -45,6 +45,13 @@ void Ball::updateAbstractedEdge(int* abstractedEdge)
 	}
 }
 
+void Ball::updateScaleNotes(int* newScaleNotes)
+{
+	this->scaleNotes[0] = newScaleNotes[0];
+	this->scaleNotes[1] = newScaleNotes[1];
+	this->scaleNotes[2] = newScaleNotes[2];
+}
+
 void Ball::draw(juce::Graphics& g) const
 {
 	g.setColour(juce::Colours::honeydew);
@@ -246,6 +253,6 @@ void Ball::resolveCollision(Ball& other)
 
 	if (this->isMoving)
 	{
-		if (this->collideListener) this->collideListener->onEdgeHit(abstractedEdgeDuplicate[0], sampleRate);
+		if (this->collideListener) this->collideListener->onBallsColide(scaleNotes, sampleRate);
 	}
 }

@@ -16,6 +16,7 @@ class EdgeEventListener
 {
 public:
 	virtual void onEdgeHit(int note, double sampleRate) = 0;
+	virtual void onBallsColide(int notes[3], double sampleRate) = 0;
 };
 
 
@@ -35,6 +36,11 @@ public:
 		midiBuffer.addEvent(noteOff, noteDurationSamples);
 	}
 
+	void onBallsColide(int notes[3], double sampleRate) override
+	{
+		return;
+	}
+
 private:
 	juce::MidiBuffer& midiBuffer;
 };
@@ -48,16 +54,24 @@ public:
 
 	void onEdgeHit(int note, double sampleRate) override
 	{
+		return;
+	}
+
+	void onBallsColide(int notes[3], double sampleRate) override
+	{
 		int noteVelocity = 100; // noteVelocity for the note
 		int noteDurationSamples = static_cast<int>(0.250 * sampleRate); // 250ms
-		juce::MidiMessage noteOn1 = juce::MidiMessage::noteOn(1, note, (juce::uint8)noteVelocity);
-		juce::MidiMessage noteOff1 = juce::MidiMessage::noteOff(1, note);
 
-		juce::MidiMessage noteOn2 = juce::MidiMessage::noteOn(1, note + 3, (juce::uint8)noteVelocity);
-		juce::MidiMessage noteOff2 = juce::MidiMessage::noteOff(1, note + 3);
+		DBG("The notes on colide are: " << notes[0] << ", " << notes[1] << ", " << notes[2]);
 
-		juce::MidiMessage noteOn3 = juce::MidiMessage::noteOn(1, note + 5, (juce::uint8)noteVelocity);
-		juce::MidiMessage noteOff3 = juce::MidiMessage::noteOff(1, note + 5);
+		juce::MidiMessage noteOn1 = juce::MidiMessage::noteOn(1, notes[0], (juce::uint8)noteVelocity);
+		juce::MidiMessage noteOff1 = juce::MidiMessage::noteOff(1, notes[0]);
+
+		juce::MidiMessage noteOn2 = juce::MidiMessage::noteOn(1, notes[1], (juce::uint8)noteVelocity);
+		juce::MidiMessage noteOff2 = juce::MidiMessage::noteOff(1, notes[1]);
+
+		juce::MidiMessage noteOn3 = juce::MidiMessage::noteOn(1, notes[2], (juce::uint8)noteVelocity);
+		juce::MidiMessage noteOff3 = juce::MidiMessage::noteOff(1, notes[2]);
 
 		midiBuffer.addEvent(noteOn1, 0);
 		midiBuffer.addEvent(noteOff1, noteDurationSamples);

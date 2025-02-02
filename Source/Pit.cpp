@@ -86,6 +86,8 @@ void Pit::setBallsEdgeNotes()
 	for (auto& ball : balls)
 	{
 		ball->updateAbstractedEdge(this->edge.getAbstractedEdge());
+		int scaleNotes[3] = { this->edge.getScaleNotes(0), this->edge.getScaleNotes(1), this->edge.getScaleNotes(2) };
+		ball->updateScaleNotes(scaleNotes);
 	}
 }
 
