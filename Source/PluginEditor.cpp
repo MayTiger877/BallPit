@@ -275,7 +275,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].radiusSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].radiusSlider.setDoubleClickReturnValue(true, 10.0f);
 		ballsSlidersAndAttachments[i].radiusSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballsSlidersAndAttachments[i].radiusSlider.setRange(5.0f, 25.0f, 0.5f);
+		ballsSlidersAndAttachments[i].radiusSlider.setRange(10.0f, 25.0f, 0.5f);
 		ballsSlidersAndAttachments[i].radiusSlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].radiusSlider);
 

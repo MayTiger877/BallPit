@@ -129,6 +129,11 @@ void Ball::edgeBounce()
 	
 	if (x - radius <= minX || x + radius >= maxX) // TODO - make this if better to cover radius when positioning balls
 	{
+		if (speedX == 0)
+		{
+			return;
+		}
+
 		if (x - radius <= minX)
 		{
 			float distPassed = minX - (x - radius);
@@ -156,13 +161,19 @@ void Ball::edgeBounce()
 
 			if ((this->isMoving) && (speedX != NO_SPEED))
 			{
-				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], sampleRate);
+				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));
+				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate);
 			}
 		}
 	}
 
 	if (y - radius <= minY || y + radius >= maxY)
 	{
+		if (speedY == 0)
+		{
+			return;
+		}
+
 		if (y - radius <= minY)
 		{
 			float distPassed = minY - (y - radius);
@@ -189,7 +200,8 @@ void Ball::edgeBounce()
 
 			if ((this->isMoving) && (speedY != NO_SPEED))
 			{
-				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], sampleRate);
+				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));
+				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate);
 			}
 		}
 	}

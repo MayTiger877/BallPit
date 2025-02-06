@@ -15,7 +15,7 @@
 class EdgeEventListener 
 {
 public:
-	virtual void onEdgeHit(int note, double sampleRate) = 0;
+	virtual void onEdgeHit(int note, int noteVelocity, double sampleRate) = 0;
 	virtual void onBallsColide(int notes[3], double sampleRate) = 0;
 };
 
@@ -25,9 +25,8 @@ class BallEdgeEventListener : public EdgeEventListener
 public:
 	BallEdgeEventListener(juce::MidiBuffer& midiBuffer) : midiBuffer(midiBuffer) {}
 
-	void onEdgeHit(int note, double sampleRate) override
+	void onEdgeHit(int note, int noteVelocity, double sampleRate) override
 	{
-		int noteVelocity = 100; // noteVelocity for the note
 		juce::MidiMessage noteOn = juce::MidiMessage::noteOn(1, note, (juce::uint8)noteVelocity);
 		int noteDurationSamples = static_cast<int>(0.200 * sampleRate); // 200ms
 		juce::MidiMessage noteOff = juce::MidiMessage::noteOff(1, note);
@@ -52,7 +51,7 @@ class BallCollideEventListener : public EdgeEventListener
 public:
 	BallCollideEventListener(juce::MidiBuffer& midiBuffer) : midiBuffer(midiBuffer) {}
 
-	void onEdgeHit(int note, double sampleRate) override
+	void onEdgeHit(int note, int noteVelocity, double sampleRate) override
 	{
 		return;
 	}
