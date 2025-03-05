@@ -105,6 +105,32 @@ void Pit::setEdgeScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
 	this->edge.getMIDI();
 }
 
+static int isRectNeedsToBeDivided(int currentIndex, int rectSize)
+{
+	jassert((rectSize >0) && (currentIndex > (-1)));
+
+	int endOfRect = currentIndex + rectSize;
+
+	if ((currentIndex < 392) && (endOfRect > 392))
+	{
+		return 392 - currentIndex;
+	}
+	else if ((currentIndex < 784) && (endOfRect > 784))
+	{
+		return 784 - currentIndex;
+	}
+	else if ((currentIndex < 1176) && (endOfRect > 1176))
+	{
+		return 1176 - currentIndex;
+	}
+	else if ((currentIndex < 1568) && (endOfRect > 1568))
+	{
+		return 1568 - currentIndex;
+	}
+
+	return -1; // no need
+}
+
 void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const
 {
 	int numOfSplits = this->edge.getDenomenator();
@@ -114,32 +140,58 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const
 	int index, colorIndex = 0;
 	for (int i = 0; i < numOfSplits; i++)
 	{
-		for (int j = 0; j < split; j++)
+		index = ((i * split) + this->edge.getPhase()) % 1568;
+		g.setColour(edgeColors[colorIndex]);
+		int divideIndex = isRectNeedsToBeDivided(index, split);
+
+		if (divideIndex == -1)
 		{
-			index = (j + (i * split) + this->edge.getPhase()) % 1568;
 			if (index <= 392)
 			{
-				g.setColour(edgeColors[colorIndex]);
-				g.fillRect(8, 10 + index, 4, 2);
+				g.fillRect(8, 10 + (index % 392), 4, split);
 			}
 			else if ((index > 392) && (index <= 784))
 			{
-				g.setColour(edgeColors[colorIndex]);
-				g.fillRect(10 + (index - 392), 404, 2, 4);
+				g.fillRect(10 + (index % 392), 8, split, 4);
 			}
 			else if ((index > 784) && (index <= 1176))
 			{
-				g.setColour(edgeColors[colorIndex]);
-				g.fillRect(402, (12 + (1176 - index)), 4, 2);
+				g.fillRect(404, 404 - (index % 392), 4, split);
 			}
 			else if ((index > 1176) && (index <= 1568))
 			{
-				g.setColour(edgeColors[colorIndex]);
-				g.fillRect(10 + (1568 - index), 11, 2, 4);
+				g.fillRect(404 - (index % 392), 11, split, 4);
 			}
 		}
+		else
+		{
+			int rectReminder = split - divideIndex;
+			if (index <= 392)
+			{
+				g.fillRect(8, 10 + index, 4, divideIndex);
+				g.fillRect(10, 404, rectReminder, 4);
+			}
+			else if ((index > 392) && (index <= 784))
+			{
+				g.fillRect(10 + index, 404, divideIndex, 4);
+				g.fillRect(404, (12 + 1176 - rectReminder), 4, rectReminder);
+			}
+			else if ((index > 784) && (index <= 1176))
+			{
+				g.fillRect(204, (12 + 1176 - divideIndex), 4, divideIndex);
+				g.fillRect(10 + 1568 - rectReminder, 11, rectReminder, 4);
+			}
+			else if ((index > 1176) && (index <= 1568))
+			{
+				g.fillRect(10 + 1568 - divideIndex, 11, divideIndex, 4);
+				g.fillRect(8, 10, 4, rectReminder);
+			}
+		}
+
+		index += split;
 		colorIndex = (colorIndex + 1) % numOfColors;
 	}
+
 	for (int i = 0; i < remainder; i++)
 	{
 		g.fillRect(12 + i, 12, 2, 4);
