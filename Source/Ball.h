@@ -41,10 +41,10 @@ public:
 
 private:
     // pit coordinates- stupid simple
-    const int minX = 12;
-    const int minY = 15;
-    const int maxX = 402;
-    const int maxY = 405;
+    const float minX = 12;
+    const float minY = 15;
+    const float maxX = 402;
+    const float maxY = 405;
     
     float x, y;
     float radius;

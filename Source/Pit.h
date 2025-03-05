@@ -40,10 +40,10 @@ public:
 private:
 	// pit coordinates
 	// size is 390x390
-	const int minX = 12;
-	const int minY = 15;
-	const int maxX = 402;
-	const int maxY = 405;
+	const float minX = 12;
+	const float minY = 15;
+	const float maxX = 402;
+	const float maxY = 405;
 	
 	Edge edge;
 	
