@@ -107,7 +107,7 @@ void Pit::setEdgeScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
 
 static int getCurrentRectSize(int currentIndex, int noteRectSize)
 {
-	jassert((noteRectSize >0) && (currentIndex > (-1)));
+	jassert((noteRectSize > 0) && (currentIndex > (-1)));
 
 	int endOfColor = currentIndex + noteRectSize;
 
@@ -135,19 +135,19 @@ static void drawSingleRect(juce::Graphics& g, int index, int rectSizeToDraw)
 {
 	if (index < 392)
 	{
-		g.fillRect(8, 10 + (index % 392), 4, rectSizeToDraw);
+		g.fillRect(7, 12 + (index % 392), 5, rectSizeToDraw);
 	}
 	else if ((index >= 392) && (index < 784))
 	{
-		g.fillRect(10 + (index % 392), 404, rectSizeToDraw, 4);
+		g.fillRect(12 + (index % 392), 404, rectSizeToDraw, 5);
 	}
 	else if ((index >= 784) && (index < 1176))
 	{
-		g.fillRect(404, 404 - (index % 392) - rectSizeToDraw, 4, rectSizeToDraw);
+		g.fillRect(403, 404 - (index % 392) - rectSizeToDraw, 5, rectSizeToDraw);
 	}
 	else if ((index >= 1176) && (index < 1568))
 	{
-		g.fillRect(8 + (index % 392), 11, rectSizeToDraw, 4);
+		g.fillRect(12 + (index % 392), 10, rectSizeToDraw, 5);
 	}
 }
 
@@ -160,35 +160,32 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const
 	int colorIndex = 0;
 	int index = this->edge.getPhase() % 1568;
 	int currentRectSize = -1;
+	g.setColour(edgeColors[colorIndex]);
 
 	for (int i = 0; i < numOfSplits;)
 	{
-		g.setColour(edgeColors[colorIndex]);
-		currentRectSize = getCurrentRectSize(index, noteRectSize);
-		
-		if (currentRectSize == -1)
+		do
 		{
-			drawSingleRect(g, index, noteRectSize);
-			index += noteRectSize % 1568;
-			i++
-		}
-		else
-		{
-			drawSingleRect(g, index, currentRectSize);
-			index += noteRectSize % 1568;
-		}
-	}
-
-	int currentFullRectSize = (noteRectSize < ) ? noteRectSize : 392 - index;
-
-	/*for (int i = 0; i < numOfSplits; i++)
-	{
-
-		
-		index += noteRectSize % 1568;
+			currentRectSize = getCurrentRectSize(index, noteRectSize);
+			
+			if (currentRectSize == -1)
+			{
+				drawSingleRect(g, index, noteRectSize);
+				index += noteRectSize % 1568;
+				i++;
+			}
+			else
+			{
+				drawSingleRect(g, index, currentRectSize);
+				index += currentRectSize % 1568;
+				noteRectSize -= currentRectSize;
+			}
+		} while (currentRectSize > 0);
 
 		colorIndex = (colorIndex + 1) % numOfColors;
-	}*/
+		g.setColour(edgeColors[colorIndex]);
+		noteRectSize = 1568 / numOfSplits;
+	}
 
 	if (reminder != 0) 
 	{
