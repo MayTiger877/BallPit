@@ -124,4 +124,6 @@ private:
 	std::unique_ptr<CostumeLogger> m_logger;
 
 	std::unique_ptr<Service::PresetManager> presetManager;
+
+	double getQuantizedPPQ(double ppqPosition, int noteDivision);
 };

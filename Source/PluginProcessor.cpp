@@ -297,6 +297,122 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 					  valueTreeState.getRawParameterValue("edgeRange")->load());
 }
 
+//void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+//{
+//	buffer.clear();
+//	bool tickPassed = false;
+//
+//	if (auto* playhead = getPlayHead())
+//	{
+//		juce::Optional<juce::AudioPlayHead::PositionInfo> newPositionInfo = playhead->getPosition();
+//		if (newPositionInfo.hasValue())
+//		{
+//			auto bpm = newPositionInfo->getBpm();
+//			m_bpm = bpm.hasValue() ? (*bpm) : DEFAULT_BPM;
+//
+//			auto timeSig = newPositionInfo->getTimeSignature();
+//			if (timeSig.hasValue())
+//			{
+//				m_timeSignature.numerator = (*timeSig).numerator;
+//				m_timeSignature.denominator = (*timeSig).denominator;
+//			}
+//
+//			this->isDAWPlaying = newPositionInfo->getIsPlaying();
+//			if (this->isPlaying.exchange(this->isDAWPlaying) != this->isDAWPlaying)
+//			{
+//				sendChangeMessage(); // Notify the editor of a state change
+//			}
+//
+//			auto ppqPosition = newPositionInfo->getPpqPosition();
+//			m_ppqPos = ppqPosition.hasValue() ? (*ppqPosition) : 0.0;
+//			if (m_bpm > 0.0 && m_ppqPos > 0.0)
+//			{
+//				const double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm;
+//				stepPPQIncrement = 1.0 / secondsPerBeat / SECONDS_IN_MINUTE;
+//
+//				sampleCounter += buffer.getNumSamples();
+//				if (sampleCounter >= samplesPerStep)
+//				{
+//					sampleCounter -= samplesPerStep;
+//
+//					if (std::floor(m_ppqPos) != std::floor(lastPPQPosition))
+//					{
+//						tickPassed = true;
+//					}
+//
+//					lastPPQPosition += stepPPQIncrement;
+//				}
+//			}
+//		}
+//	}
+//
+//	if ((this->isDAWPlaying == false) && (this->pit.areBallsMoving() == false))
+//	{
+//		getUpdatedBallParams();
+//		getUpdatedEdgeParams();
+//	}
+//	else 
+//	{
+//		if (this->isDAWPlaying == true)
+//		{
+//			// TODO : figure out if need the START button and how to sync it with the DAW
+//			/*if (pit.areBallsMoving())
+//			{
+//				pit.toggleBallMovement();
+//			}*/
+//
+//			if (tickPassed == true)
+//			{
+//				tickPassed = false;
+//				pit.update();
+//			}
+//		}
+//		else if (this->pit.areBallsMoving() == true)
+//		{
+//			pit.update();
+//		}
+//	}
+//	
+//	juce::MidiBuffer::Iterator it(midiBuffer);
+//	juce::MidiMessage message;
+//	int samplePosition;
+//
+//	for (auto pendingIt = pendingEvents.begin(); pendingIt != pendingEvents.end();)
+//	{
+//		if (pendingIt->samplePosition < m_samplesPerBlock)
+//		{
+//			midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
+//			pendingIt = pendingEvents.erase(pendingIt);
+//		}
+//		else
+//		{
+//			pendingIt->samplePosition -= static_cast<int>(m_samplesPerBlock);
+//			++pendingIt;
+//		}
+//	}
+//
+//	while (it.getNextEvent(message, samplePosition))
+//	{
+//		if (message.isNoteOn())
+//		{
+//			midiMessages.addEvent(message, samplePosition);
+//			continue;
+//		}
+//
+//		if (samplePosition < m_samplesPerBlock)
+//		{
+//			midiMessages.addEvent(message, samplePosition);
+//		}
+//		else
+//		{
+//			int newSamplePosition = samplePosition - static_cast<int>(m_samplesPerBlock);
+//			pendingEvents.push_back({message, newSamplePosition});
+//		}
+//	}
+//
+//	midiBuffer.clear();
+//}
+
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	buffer.clear();
@@ -325,6 +441,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 
 			auto ppqPosition = newPositionInfo->getPpqPosition();
 			m_ppqPos = ppqPosition.hasValue() ? (*ppqPosition) : 0.0;
+
 			if (m_bpm > 0.0 && m_ppqPos > 0.0)
 			{
 				const double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm;
@@ -351,16 +468,10 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		getUpdatedBallParams();
 		getUpdatedEdgeParams();
 	}
-	else 
+	else
 	{
 		if (this->isDAWPlaying == true)
 		{
-			// TODO : figure out if need the START button and how to sync it with the DAW
-			/*if (pit.areBallsMoving())
-			{
-				pit.toggleBallMovement();
-			}*/
-
 			if (tickPassed == true)
 			{
 				tickPassed = false;
@@ -372,8 +483,9 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			pit.update();
 		}
 	}
-	
-	juce::MidiBuffer::Iterator it(midiBuffer);
+
+	// Process MIDI events with quantization
+	juce::MidiBuffer::Iterator it(midiMessages);
 	juce::MidiMessage message;
 	int samplePosition;
 
@@ -391,11 +503,17 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		}
 	}
 
+	// Quantization step: Adjust MIDI note-on positions
 	while (it.getNextEvent(message, samplePosition))
 	{
 		if (message.isNoteOn())
 		{
-			midiMessages.addEvent(message, samplePosition);
+			// Get quantized PPQ position
+			double quantizedPPQ = getQuantizedPPQ(m_ppqPos, selectedQuantization);
+			double secondsPerQuarter = SECONDS_IN_MINUTE / m_bpm;
+			int quantizedSamplePosition = static_cast<int>((quantizedPPQ * secondsPerQuarter) * sampleRate);
+
+			midiMessages.addEvent(message, quantizedSamplePosition);
 			continue;
 		}
 
@@ -406,12 +524,19 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		else
 		{
 			int newSamplePosition = samplePosition - static_cast<int>(m_samplesPerBlock);
-			pendingEvents.push_back({message, newSamplePosition});
+			pendingEvents.push_back({ message, newSamplePosition });
 		}
 	}
 
 	midiBuffer.clear();
 }
+
+// Function to quantize PPQ positions
+double BallPitAudioProcessor::getQuantizedPPQ(double ppqPosition, int noteDivision)
+{
+	return round(ppqPosition * noteDivision) / noteDivision;
+}
+
 
 //==============================================================================
 bool BallPitAudioProcessor::hasEditor() const
