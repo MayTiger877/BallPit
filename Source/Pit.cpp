@@ -105,25 +105,25 @@ void Pit::setEdgeScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
 	this->edge.getMIDI();
 }
 
-static int isRectNeedsToBeDivided(int currentIndex, int rectSize)
+static int getCurrentRectSize(int currentIndex, int noteRectSize)
 {
-	jassert((rectSize >0) && (currentIndex > (-1)));
+	jassert((noteRectSize >0) && (currentIndex > (-1)));
 
-	int endOfRect = currentIndex + rectSize;
+	int endOfColor = currentIndex + noteRectSize;
 
-	if ((currentIndex < 392) && (endOfRect > 392))
+	if ((currentIndex < 392) && (endOfColor > 392))
 	{
 		return 392 - currentIndex;
 	}
-	else if ((currentIndex < 784) && (endOfRect > 784))
+	else if ((currentIndex < 784) && (endOfColor > 784))
 	{
 		return 784 - currentIndex;
 	}
-	else if ((currentIndex < 1176) && (endOfRect > 1176))
+	else if ((currentIndex < 1176) && (endOfColor > 1176))
 	{
 		return 1176 - currentIndex;
 	}
-	else if ((currentIndex < 1568) && (endOfRect > 1568))
+	else if ((currentIndex < 1568) && (endOfColor > 1568))
 	{
 		return 1568 - currentIndex;
 	}
@@ -131,69 +131,67 @@ static int isRectNeedsToBeDivided(int currentIndex, int rectSize)
 	return -1; // no need
 }
 
+static void drawSingleRect(juce::Graphics& g, int index, int rectSizeToDraw)
+{
+	if (index < 392)
+	{
+		g.fillRect(8, 10 + (index % 392), 4, rectSizeToDraw);
+	}
+	else if ((index >= 392) && (index < 784))
+	{
+		g.fillRect(10 + (index % 392), 404, rectSizeToDraw, 4);
+	}
+	else if ((index >= 784) && (index < 1176))
+	{
+		g.fillRect(404, 404 - (index % 392) - rectSizeToDraw, 4, rectSizeToDraw);
+	}
+	else if ((index >= 1176) && (index < 1568))
+	{
+		g.fillRect(8 + (index % 392), 11, rectSizeToDraw, 4);
+	}
+}
+
 void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const
 {
 	int numOfSplits = this->edge.getDenomenator();
 	int numOfColors = this->edge.getRange();
-	int split = 1568 / numOfSplits;
-	int remainder = 1568 % numOfSplits;
-	int index, colorIndex = 0;
-	for (int i = 0; i < numOfSplits; i++)
-	{
-		index = ((i * split) + this->edge.getPhase()) % 1568;
-		g.setColour(edgeColors[colorIndex]);
-		int divideIndex = isRectNeedsToBeDivided(index, split);
+	int noteRectSize = 1568 / numOfSplits;
+	int reminder = 1568 % numOfSplits;
+	int colorIndex = 0;
+	int index = this->edge.getPhase() % 1568;
+	int currentRectSize = -1;
 
-		if (divideIndex == -1)
+	for (int i = 0; i < numOfSplits;)
+	{
+		g.setColour(edgeColors[colorIndex]);
+		currentRectSize = getCurrentRectSize(index, noteRectSize);
+		
+		if (currentRectSize == -1)
 		{
-			if (index <= 392)
-			{
-				g.fillRect(8, 10 + (index % 392), 4, split);
-			}
-			else if ((index > 392) && (index <= 784))
-			{
-				g.fillRect(10 + (index % 392), 8, split, 4);
-			}
-			else if ((index > 784) && (index <= 1176))
-			{
-				g.fillRect(404, 404 - (index % 392), 4, split);
-			}
-			else if ((index > 1176) && (index <= 1568))
-			{
-				g.fillRect(404 - (index % 392), 11, split, 4);
-			}
+			drawSingleRect(g, index, noteRectSize);
+			index += noteRectSize % 1568;
+			i++
 		}
 		else
 		{
-			int rectReminder = split - divideIndex;
-			if (index <= 392)
-			{
-				g.fillRect(8, 10 + index, 4, divideIndex);
-				g.fillRect(10, 404, rectReminder, 4);
-			}
-			else if ((index > 392) && (index <= 784))
-			{
-				g.fillRect(10 + index, 404, divideIndex, 4);
-				g.fillRect(404, (12 + 1176 - rectReminder), 4, rectReminder);
-			}
-			else if ((index > 784) && (index <= 1176))
-			{
-				g.fillRect(204, (12 + 1176 - divideIndex), 4, divideIndex);
-				g.fillRect(10 + 1568 - rectReminder, 11, rectReminder, 4);
-			}
-			else if ((index > 1176) && (index <= 1568))
-			{
-				g.fillRect(10 + 1568 - divideIndex, 11, divideIndex, 4);
-				g.fillRect(8, 10, 4, rectReminder);
-			}
+			drawSingleRect(g, index, currentRectSize);
+			index += noteRectSize % 1568;
 		}
-
-		index += split;
-		colorIndex = (colorIndex + 1) % numOfColors;
 	}
 
-	for (int i = 0; i < remainder; i++)
+	int currentFullRectSize = (noteRectSize < ) ? noteRectSize : 392 - index;
+
+	/*for (int i = 0; i < numOfSplits; i++)
 	{
-		g.fillRect(12 + i, 12, 2, 4);
+
+		
+		index += noteRectSize % 1568;
+
+		colorIndex = (colorIndex + 1) % numOfColors;
+	}*/
+
+	if (reminder != 0) 
+	{
+		g.fillRect(10, 12, reminder, 4);
 	}
 }
