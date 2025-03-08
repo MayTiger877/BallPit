@@ -4,6 +4,13 @@
 #define PI 3.14159265
 #define NO_SPEED 0
 
+typedef enum {
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+}HitPossition;
+
 Ball::Ball(int ballndex, float x, float y, float radius, float velocity, float angle)
 	: ballndex(ballndex), x(x), y(y), radius(radius), velocity(0.1 * velocity), angle(angle)
 {
@@ -126,6 +133,8 @@ void Ball::edgeBounce()
 	{
 		return;
 	}
+
+	HitPossition currentHitPos = LEFT;
 	
 	if (x - radius <= minX || x + radius >= maxX) // TODO - make this if better to cover radius when positioning balls
 	{
@@ -138,23 +147,25 @@ void Ball::edgeBounce()
 		{
 			float distPassed = minX - (x - radius);
 			x = minX + distPassed + fabs(speedX) + radius;
+			currentHitPos = LEFT;
 		}
 
 		if (x + radius >= maxX)
 		{
 			float distPassed = (x + radius) - maxX;
 			x = maxX - distPassed - fabs(speedX) - radius;
+			currentHitPos = RIGHT;
 		}
 		
 		speedX = -speedX;
 		if (this->edgeListener)
 		{
 			int edgeIndex = 0;
-			if (x - radius <= minX)
+			if (currentHitPos == LEFT)
 			{
 				edgeIndex = (y - minY);
 			}
-			else if (x + radius >= maxX)
+			else if (currentHitPos == RIGHT)
 			{
 				edgeIndex = 1568 - 392 - (y - minY);
 			}
@@ -178,22 +189,24 @@ void Ball::edgeBounce()
 		{
 			float distPassed = minY - (y - radius);
 			y = minY + distPassed + fabs(speedY) + radius;
+			currentHitPos = UP;
 		}
 		if (y + radius >= maxY)
 		{
 			float distPassed = (y + radius) - maxY;
 			y = maxY - distPassed - fabs(speedY) - radius;
+			currentHitPos = DOWN;
 		}
 		
 		speedY = -speedY;
 		if (this->edgeListener)
 		{
 			int edgeIndex = 0;
-			if (y - radius <= minY)
+			if (currentHitPos == UP)
 			{
 				edgeIndex = 1568 - (x - minX);
 			}
-			else if (y + radius >= maxY)
+			else if (currentHitPos == DOWN)
 			{
 				edgeIndex = 392 + (x - minX);
 			}
