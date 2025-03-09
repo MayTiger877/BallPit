@@ -23,7 +23,20 @@ public:
 class BallEdgeEventListener : public EdgeEventListener 
 {
 public:
-	BallEdgeEventListener(juce::MidiBuffer& midiBuffer) : midiBuffer(midiBuffer) {}
+	//BallEdgeEventListener(juce::MidiBuffer& midiBuffer) : midiBuffer(midiBuffer) {}
+
+	//void onEdgeHit(int note, int noteVelocity, double sampleRate) override
+	//{
+	//	juce::MidiMessage noteOn = juce::MidiMessage::noteOn(1, note, (juce::uint8)noteVelocity);
+	//	int noteDurationSamples = static_cast<int>(0.200 * sampleRate); // 200ms
+	//	juce::MidiMessage noteOff = juce::MidiMessage::noteOff(1, note);
+
+	//	midiBuffer.addEvent(noteOn, 0);
+	//	midiBuffer.addEvent(noteOff, noteDurationSamples);
+	//}
+
+	BallEdgeEventListener(juce::MidiBuffer& midiBuffer, int& sampleCounter)
+							: midiBuffer(midiBuffer), sampleCounter(sampleCounter) {}
 
 	void onEdgeHit(int note, int noteVelocity, double sampleRate) override
 	{
@@ -31,8 +44,11 @@ public:
 		int noteDurationSamples = static_cast<int>(0.200 * sampleRate); // 200ms
 		juce::MidiMessage noteOff = juce::MidiMessage::noteOff(1, note);
 
-		midiBuffer.addEvent(noteOn, 0);
-		midiBuffer.addEvent(noteOff, noteDurationSamples);
+		// Use the sampleCounter to store an approximate timing position
+		int eventSamplePosition = sampleCounter % static_cast<int>(sampleRate);
+
+		midiBuffer.addEvent(noteOn, eventSamplePosition);
+		midiBuffer.addEvent(noteOff, eventSamplePosition + noteDurationSamples);
 	}
 
 	void onBallsColide(int notes[3], double sampleRate) override
@@ -42,6 +58,7 @@ public:
 
 private:
 	juce::MidiBuffer& midiBuffer;
+	int& sampleCounter; // Keep track of time within the block
 };
 
 // -----------------------------------------------------------------------------------------

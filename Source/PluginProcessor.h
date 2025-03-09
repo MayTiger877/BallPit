@@ -118,6 +118,7 @@ private:
 	int sampleCounter = 0;
 	juce::AudioPlayHead::TimeSignature m_timeSignature;
 
+	int m_noteDivision = 4; // TODO: make this a parameter
 
 	bool isGUIUploaded;
 
