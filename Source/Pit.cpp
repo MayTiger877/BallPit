@@ -147,7 +147,7 @@ static void drawSingleRect(juce::Graphics& g, int index, int rectSizeToDraw)
 	}
 	else if ((index >= 1176) && (index < 1568))
 	{
-		g.fillRect(12 + (index % 392), 10, rectSizeToDraw, 5);
+		g.fillRect(404 - rectSizeToDraw - (index % 392), 10, rectSizeToDraw, 5);
 	}
 }
 
@@ -189,6 +189,8 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const
 
 	if (reminder != 0) 
 	{
+		colorIndex = (colorIndex - 1) % numOfColors;
+		g.setColour(edgeColors[colorIndex]);
 		g.fillRect(10, 12, reminder, 4);
 	}
 }

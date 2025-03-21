@@ -383,6 +383,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		{
 			midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
 			pendingIt = pendingEvents.erase(pendingIt);
+			m_logger->logMessage("Event added");
 		}
 		else
 		{
