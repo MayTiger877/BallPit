@@ -135,15 +135,15 @@ static void drawSingleRect(juce::Graphics& g, int index, int rectSizeToDraw)
 {
 	if (index < 392)
 	{
-		g.fillRect(7, 12 + (index % 392), 5, rectSizeToDraw);
+		g.fillRect(7, 13 + (index % 392), 5, rectSizeToDraw);
 	}
 	else if ((index >= 392) && (index < 784))
 	{
-		g.fillRect(12 + (index % 392), 404, rectSizeToDraw, 5);
+		g.fillRect(11 + (index % 392), 404, rectSizeToDraw, 5);
 	}
 	else if ((index >= 784) && (index < 1176))
 	{
-		g.fillRect(403, 404 - (index % 392) - rectSizeToDraw, 5, rectSizeToDraw);
+		g.fillRect(403, 405 - (index % 392) - rectSizeToDraw, 5, rectSizeToDraw);
 	}
 	else if ((index >= 1176) && (index < 1568))
 	{

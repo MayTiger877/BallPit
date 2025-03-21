@@ -95,6 +95,8 @@ private:
 		juce::Colours::orange
 	};
 
+	juce::Point<double> lastBall1Position, lastBall2Position, lastBall3Position = { 0.0, 0.0 };
+
 	juce::ValueTree newGUIState;
 
 	juce::TextEditor logBox;

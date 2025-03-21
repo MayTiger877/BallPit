@@ -494,6 +494,13 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	displayKnobsByTab();
 	presetPanel.setPluginBounds(getLocalBounds());
 	audioProcessor.getPit().drawPitEdge(g, edgeColors);
+
+	// draw pit corner "polls"
+	g.setColour(juce::Colours::silver);
+	g.fillEllipse(6, 9, 9, 9);
+	g.fillEllipse(401, 9, 9, 9);
+	g.fillEllipse(6, 401, 9, 9);
+	g.fillEllipse(401, 401, 9, 9);
 }
 
 void BallPitAudioProcessorEditor::resized()
@@ -530,6 +537,10 @@ void BallPitAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster
 
 void BallPitAudioProcessorEditor::changeXAndYToSnapToGrid()
 {
+	lastBall1Position = { ballsSlidersAndAttachments[0].xSlider.getValue(), ballsSlidersAndAttachments[0].ySlider.getValue() };
+	lastBall2Position = { ballsSlidersAndAttachments[1].xSlider.getValue(), ballsSlidersAndAttachments[1].ySlider.getValue() };
+	lastBall3Position = { ballsSlidersAndAttachments[2].xSlider.getValue(), ballsSlidersAndAttachments[2].ySlider.getValue() };
+
 	// Define the snapping factor
 	constexpr float gridFactor = 48.75f; // Scaling factor for snapping
 
@@ -614,5 +625,22 @@ void BallPitAudioProcessorEditor::changeXAndYToFree()
 		{
 			yParam->setValueNotifyingHost((snappedY * gridFactor) / 390.0f); // Scale to normalized 0-1 range
 		}
+
+		// --------------------------------- TODO - decide what is right- return to last or snap to closest?
+		//---------------------------------------------------------------------------------------------------------------------------
+		// Update the sliders
+		ballsSlidersAndAttachments[i].xSlider.setValue(lastBall1Position.getX(), juce::sendNotification);
+		ballsSlidersAndAttachments[i].ySlider.setValue(lastBall1Position.getY(), juce::sendNotification);
+
+		if (auto* xParam = audioProcessor.valueTreeState.getParameter(ballXId))
+		{
+			xParam->setValueNotifyingHost(lastBall1Position.getX() / 390.0f); // Scale to normalized 0-1 range
+		}
+
+		if (auto* yParam = audioProcessor.valueTreeState.getParameter(ballYId))
+		{
+			yParam->setValueNotifyingHost(lastBall1Position.getY() / 390.0f); // Scale to normalized 0-1 range
+		}
+		//------------------------------ ----------------------------------------------------------------------------------------------
 	}
 }
