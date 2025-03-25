@@ -2,6 +2,17 @@
 #include <JuceHeader.h>
 #include "EdgeEventListener.h"
 
+#define PI 3.14159265
+#define NO_SPEED 0
+
+typedef enum {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+}HitPossition;
+
+
 class Ball
 {
 public:
@@ -61,6 +72,8 @@ private:
 
     BallEdgeEventListener* edgeListener;
 	BallCollideEventListener* collideListener;
+
+    int getEdgeHitIndex(HitPossition currentPosition);
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Ball)
 };

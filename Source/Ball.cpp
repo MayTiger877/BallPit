@@ -1,16 +1,6 @@
 #include "Ball.h"
 #include <iostream>
 
-#define PI 3.14159265
-#define NO_SPEED 0
-
-typedef enum {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-}HitPossition;
-
 Ball::Ball(int ballndex, float x, float y, float radius, float velocity, float angle)
 	: ballndex(ballndex), x(x), y(y), radius(radius), velocity(0.1 * velocity), angle(angle)
 {
@@ -127,6 +117,25 @@ void Ball::setPosition(float newX, float newY)
 	this->y = newY;
 }
 
+int Ball::getEdgeHitIndex(HitPossition currentHitPosition)
+{
+	switch (currentHitPosition)
+	{
+		case LEFT:
+			return (y - minY);
+		case RIGHT:
+			return (1568 - 392 - (y - minY));
+		case UP:
+			return (1568 - (x - minX));
+		case DOWN:
+			return (392 + (x - minX));
+		default:
+			break;
+	}
+
+	return 0;
+}
+
 void Ball::edgeBounce()
 {
 	if (this->active == false)
@@ -136,13 +145,8 @@ void Ball::edgeBounce()
 
 	HitPossition currentHitPos = LEFT;
 	
-	if (x - radius <= minX || x + radius >= maxX) // TODO - make this if better to cover radius when positioning balls
+	if ((x - radius <= minX || x + radius >= maxX) && (speedX != 0))// TODO - make this if better to cover radius when positioning balls
 	{
-		if (speedX == 0)
-		{
-			return;
-		}
-
 		if (x - radius <= minX)
 		{
 			float distPassed = minX - (x - radius);
@@ -160,15 +164,7 @@ void Ball::edgeBounce()
 		speedX = -speedX;
 		if (this->edgeListener)
 		{
-			int edgeIndex = 0;
-			if (currentHitPos == LEFT)
-			{
-				edgeIndex = (y - minY);
-			}
-			else if (currentHitPos == RIGHT)
-			{
-				edgeIndex = 1568 - 392 - (y - minY);
-			}
+			int edgeIndex = getEdgeHitIndex(currentHitPos);
 
 			if ((this->isMoving) && (speedX != NO_SPEED))
 			{
@@ -178,13 +174,8 @@ void Ball::edgeBounce()
 		}
 	}
 
-	if (y - radius <= minY || y + radius >= maxY)
+	if ((y - radius <= minY || y + radius >= maxY) && (speedY != 0))
 	{
-		if (speedY == 0)
-		{
-			return;
-		}
-
 		if (y - radius <= minY)
 		{
 			float distPassed = minY - (y - radius);
@@ -201,15 +192,7 @@ void Ball::edgeBounce()
 		speedY = -speedY;
 		if (this->edgeListener)
 		{
-			int edgeIndex = 0;
-			if (currentHitPos == UP)
-			{
-				edgeIndex = 1568 - (x - minX);
-			}
-			else if (currentHitPos == DOWN)
-			{
-				edgeIndex = 392 + (x - minX);
-			}
+			int edgeIndex = getEdgeHitIndex(currentHitPos);
 
 			if ((this->isMoving) && (speedY != NO_SPEED))
 			{
