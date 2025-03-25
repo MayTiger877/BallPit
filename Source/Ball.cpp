@@ -150,14 +150,14 @@ void Ball::edgeBounce()
 		if (x - radius <= minX)
 		{
 			float distPassed = minX - (x - radius);
-			x = minX + distPassed + fabs(speedX) + radius;
+			x = minX + distPassed + radius;
 			currentHitPos = LEFT;
 		}
 
 		if (x + radius >= maxX)
 		{
 			float distPassed = (x + radius) - maxX;
-			x = maxX - distPassed - fabs(speedX) - radius;
+			x = maxX - distPassed - radius;
 			currentHitPos = RIGHT;
 		}
 		
@@ -179,13 +179,13 @@ void Ball::edgeBounce()
 		if (y - radius <= minY)
 		{
 			float distPassed = minY - (y - radius);
-			y = minY + distPassed + fabs(speedY) + radius;
+			y = minY + distPassed + radius;
 			currentHitPos = UP;
 		}
 		if (y + radius >= maxY)
 		{
 			float distPassed = (y + radius) - maxY;
-			y = maxY - distPassed - fabs(speedY) - radius;
+			y = maxY - distPassed - radius;
 			currentHitPos = DOWN;
 		}
 		
