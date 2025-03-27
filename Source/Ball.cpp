@@ -6,31 +6,7 @@ Ball::Ball(int ballIndex, float x, float y, float radius, float velocity, float 
 {
 	this->isMoving = false;
 	setAngledSpeed();
-	//initializeBallArrow(); TODO- delete if not in use
 }
-
-
-void Ball::initializeBallArrow()
-{
-	float angleInRadians = angle * (PI / 180.0f);
-	float endX = x + 10.0f * cos(angleInRadians);
-	float endY = y + 10.0f * sin(angleInRadians);
-	juce::Line<float> line(x, y, endX, endY);
-	auto reversed = line.reversed();
-	float lineThickness = 0.5f;
-	float arrowheadWidth = 0.5f;
-	float arrowheadLength = 0.4f;
-
-	ballArrow.startNewSubPath(line.getPointAlongLine(0, lineThickness));
-	ballArrow.lineTo(line.getPointAlongLine(0, -lineThickness));
-	ballArrow.lineTo(reversed.getPointAlongLine(arrowheadLength, lineThickness));
-	ballArrow.lineTo(reversed.getPointAlongLine(arrowheadLength, arrowheadWidth));
-	ballArrow.lineTo(line.getEnd());
-	ballArrow.lineTo(reversed.getPointAlongLine(arrowheadLength, -arrowheadWidth));
-	ballArrow.lineTo(reversed.getPointAlongLine(arrowheadLength, -lineThickness));
-	ballArrow.closeSubPath();
-}
-
 
 void Ball::setBallEdgeEventListener(BallEdgeEventListener* l)
 {
@@ -75,36 +51,55 @@ void Ball::updateScaleNotes(int* newScaleNotes)
 
 void Ball::draw(juce::Graphics& g) const
 {
+	juce::Colour ballColor;
 	switch (ballIndex)
 	{
 		case 0:
-			g.setColour(juce::Colours::blue);
+			ballColor = juce::Colours::blue;
 			break;
 		case 1:
-			g.setColour(juce::Colours::crimson);
+			ballColor = juce::Colours::crimson;
 			break;
 		case 2:
-			g.setColour(juce::Colours::orange);
+			ballColor = juce::Colours::orange;
 			break;
 	default:
 		break;
 	}
 
+	g.setColour(juce::Colours::black);
+	g.fillEllipse(x - radius - 1.0,
+				  y - radius - 1.0,
+				  radius * 2.0f + 2.0,
+				  radius * 2.0f + 2.0);
+	g.setColour(ballColor);
 	g.fillEllipse(x - radius,
 				  y - radius,
 				  radius * 2.0f,
 				  radius * 2.0f);
 
-	if (isMoving == false)
+	if (isMoving == false) // draw direction arrow
 	{
-		g.setColour(juce::Colours::white);
+		float radiusRatio = pow(radius, 1.2);
 		float angleInRadians = (angle - 90) * (PI / 180.0f); // (angle-90) is the actual knob direction
-		float startX = x + (3.0f + radius) * cos(angleInRadians);
-		float endX = x + (30.0f) * cos(angleInRadians);
-		float startY = y + (3.0f + radius) * sin(angleInRadians);
-		float endY = y + (30.0f) * sin(angleInRadians);
+		float startX = x + (5.0f + radius) * cos(angleInRadians);
+		float endX = x + (20.0f + radiusRatio) * cos(angleInRadians);
+		float startY = y + (5.0f + radius) * sin(angleInRadians);
+		float endY = y + (20.0f + radiusRatio) * sin(angleInRadians);
+		float arrowThickness = (2.5f + (radius / 6.0f));
+		float arrowHeadWidth = (6.0f + (radius / 3.0f));
+		float arrowHeadLength = (8.0f + (radius / 8.0f));
 		juce::Line<float> line(startX, startY, endX, endY);
-		g.drawArrow(line, 3.0f, 7.0f, 8.0f);
+		startX = x + (3.0f + radius) * cos(angleInRadians);
+		endX = x + (24.0f + radiusRatio) * cos(angleInRadians);
+		startY = y + (3.0f + radius) * sin(angleInRadians);
+		endY = y + (24.0f + radiusRatio) * sin(angleInRadians);
+		juce::Line<float> thickLine(startX, startY, endX, endY);
+
+		g.setColour(juce::Colours::black);
+		g.drawArrow(thickLine, arrowThickness + 3.0f, arrowHeadWidth + 3.0f, arrowHeadLength + 5.0f);
+		g.setColour(ballColor);
+		g.drawArrow(line, arrowThickness, arrowHeadWidth, arrowHeadLength);
 	}
 }
 
