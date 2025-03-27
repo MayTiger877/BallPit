@@ -41,7 +41,8 @@ public:
 	void paint (juce::Graphics&) override;
 	void resized() override;
 	void timerCallback() override;
-	void loadFromProcessorState();
+	void saveGUIState();
+	void loadGUIState();
 	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
 private:
@@ -97,7 +98,7 @@ private:
 
 	juce::Point<double> lastBall1Position, lastBall2Position, lastBall3Position = { 0.0, 0.0 };
 
-	juce::ValueTree newGUIState;
+	juce::ValueTree GUIState;
 
 	juce::TextEditor logBox;
 

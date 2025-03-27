@@ -62,7 +62,10 @@ private:
     float velocity, angle;
     float speedX, speedY;
     bool active;
-    int ballndex;
+    int ballIndex;
+
+    juce::Path ballArrow;
+    void initializeBallArrow();
 
     double sampleRate;
     bool isMoving;

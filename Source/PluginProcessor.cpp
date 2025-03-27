@@ -23,8 +23,8 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters()), m_logger(new CostumeLogger())
 #endif
 {
-	this->isGUIUploaded = false;
-	this->GUIState = juce::ValueTree("GUIState");
+	this->wasGUIUploaded = false;
+	this->processorGUIState = juce::ValueTree("GUIState");
 
 	// ball 1
 	auto ball1 = std::make_unique<Ball>(0, 50.0f, 200.0f, 10.0f, 10.0f, 6.0f);
@@ -522,7 +522,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	return params;
 }
 
-void BallPitAudioProcessor::saveGUIState(juce::ValueTree &newGUIState)
+void BallPitAudioProcessor::saveGUIState(juce::ValueTree &currentGUIState)
 {
-	this->GUIState.copyPropertiesFrom(newGUIState, nullptr);
+	processorGUIState.copyPropertiesFrom(currentGUIState, nullptr);
 }

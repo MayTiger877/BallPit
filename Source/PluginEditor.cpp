@@ -30,11 +30,10 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	tabs->setBounds(407, 10, 421, 398);
 	addAndMakeVisible(tabs.get());
 	
-
 	setSize(836, 754); // TODO - set back to original (836, 654) after removing logger
 	startTimerHz(60);
 
-	this->newGUIState = juce::ValueTree("newGUIState");
+	GUIState = juce::ValueTree("GUIState");
 
 	// Configure and attach parameters and sliders
 	for (int i = 0; i < 3; i++)
@@ -89,7 +88,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 
 	logBox.setMultiLine(true);
 	logBox.setReadOnly(true);
-	logBox.setScrollbarsShown(true);
+	logBox.setScrollbarsShown(false);
 	logBox.setFont(juce::Font(16.0f));
 	logBox.setColour(juce::TextEditor::backgroundColourId, juce::Colours::black);
 	logBox.setColour(juce::TextEditor::textColourId, juce::Colours::white);
@@ -99,9 +98,24 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	addChildComponent(&presetPanel);
 
 	initiateComponents();
+
+	if (audioProcessor.getWasGUIUploaded() == false) // save default state only at first time gui is built
+	{
+		saveGUIState();
+		audioProcessor.updateGUIFlag(true);
+	}
+	else
+	{
+		loadGUIState();
+	}
 }
 
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
+{
+	if (audioProcessor.getWasGUIUploaded() == true) { saveGUIState(); }
+}
+
+void BallPitAudioProcessorEditor::saveGUIState()
 {
 	for (int i = 0; i < 3; ++i)
 	{
@@ -113,30 +127,30 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 		std::string ballXVelocityId = "ballXVelocity" + std::to_string(i);
 		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
 
-		this->newGUIState.setProperty(juce::Identifier(ballXId), audioProcessor.valueTreeState.getRawParameterValue(ballXId)->load(), nullptr);
-		this->newGUIState.setProperty(juce::Identifier(ballYId), audioProcessor.valueTreeState.getRawParameterValue(ballYId)->load(), nullptr);
-		this->newGUIState.setProperty(juce::Identifier(ballRadiusId), audioProcessor.valueTreeState.getRawParameterValue(ballRadiusId)->load(), nullptr);
-		this->newGUIState.setProperty(juce::Identifier(ballVelocityId), audioProcessor.valueTreeState.getRawParameterValue(ballVelocityId)->load(), nullptr);
-		this->newGUIState.setProperty(juce::Identifier(ballAngleId), audioProcessor.valueTreeState.getRawParameterValue(ballAngleId)->load(), nullptr);
-		this->newGUIState.setProperty(juce::Identifier(ballXVelocityId), audioProcessor.valueTreeState.getRawParameterValue(ballXVelocityId)->load(), nullptr);
-		this->newGUIState.setProperty(juce::Identifier(ballYVelocityId), audioProcessor.valueTreeState.getRawParameterValue(ballYVelocityId)->load(), nullptr);
+		float temp = ballsSlidersAndAttachments[i].xSlider.getValue();
+		GUIState.setProperty(juce::Identifier(ballXId), temp, nullptr);
+		GUIState.setProperty(juce::Identifier(ballYId), ballsSlidersAndAttachments[i].ySlider.getValue(), nullptr);
+		GUIState.setProperty(juce::Identifier(ballRadiusId), ballsSlidersAndAttachments[i].radiusSlider.getValue(), nullptr);
+		GUIState.setProperty(juce::Identifier(ballVelocityId), ballsSlidersAndAttachments[i].velocitySlider.getValue(), nullptr);
+		GUIState.setProperty(juce::Identifier(ballAngleId), ballsSlidersAndAttachments[i].angleSlider.getValue(), nullptr);
+		GUIState.setProperty(juce::Identifier(ballXVelocityId), ballsSlidersAndAttachments[i].xVelocitySlider.getValue(), nullptr);
+		GUIState.setProperty(juce::Identifier(ballYVelocityId), ballsSlidersAndAttachments[i].yVelocitySlider.getValue(), nullptr);
 	}
 
-	this->newGUIState.setProperty("edgePhase", audioProcessor.valueTreeState.getRawParameterValue("edgePhase")->load(), nullptr);
-	this->newGUIState.setProperty("edgeDenomenator", audioProcessor.valueTreeState.getRawParameterValue("edgeDenomenator")->load(), nullptr);
-	this->newGUIState.setProperty("edgeRange", audioProcessor.valueTreeState.getRawParameterValue("edgeRange")->load(), nullptr);
-	this->newGUIState.setProperty("scaleChoice", audioProcessor.valueTreeState.getRawParameterValue("scaleChoice")->load(), nullptr);
-	this->newGUIState.setProperty("rootNote", audioProcessor.valueTreeState.getRawParameterValue("rootNote")->load(), nullptr);
-	this->newGUIState.setProperty("ballsPositioningType", audioProcessor.valueTreeState.getRawParameterValue("ballsPositioningType")->load(), nullptr);
-	this->newGUIState.setProperty("snapToGrid", audioProcessor.valueTreeState.getRawParameterValue("snapToGrid")->load(), nullptr);
-	this->newGUIState.setProperty("collision", audioProcessor.valueTreeState.getRawParameterValue("collision")->load(), nullptr);
+	GUIState.setProperty("edgePhase", edgePhaseSlider.getValue(), nullptr);
+	GUIState.setProperty("edgeDenomenator", edgeDenomenatorSlider.getValue(), nullptr);
+	GUIState.setProperty("edgeRange", edgeRangeSlider.getValue(), nullptr);
+	GUIState.setProperty("scaleChoice", scaleChoiceComboBox.getSelectedItemIndex(), nullptr);
+	GUIState.setProperty("rootNote", rootNoteComboBox.getSelectedItemIndex(), nullptr);
+	GUIState.setProperty("ballsPositioningType", ballsPositioningTypeComboBox.getSelectedItemIndex(), nullptr);
+	GUIState.setProperty("snapToGrid", snapToGridButton.getToggleState(), nullptr);
+	GUIState.setProperty("collision", collisionButton.getToggleState(), nullptr);
 
-	audioProcessor.saveGUIState(this->newGUIState);
-	audioProcessor.updateGUIFlag(false);
+	audioProcessor.saveGUIState(GUIState);
 	audioProcessor.removeChangeListener(this);
 }
 
-void BallPitAudioProcessorEditor::loadFromProcessorState()
+void BallPitAudioProcessorEditor::loadGUIState()
 {
 	auto& GUIState = audioProcessor.getGUIState();
 
@@ -452,6 +466,8 @@ void BallPitAudioProcessorEditor::initiateComponents()
 			}
 		};
 	addAndMakeVisible(openPresetManager);
+
+	
 }
 
 //==============================================================================
@@ -466,28 +482,14 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 		drawable->setBounds(getLocalBounds());
 		drawable->draw(g, 1.0f);
 	}
-	
-	if (audioProcessor.getIsGUIUploaded() == false)
-	{
-		audioProcessor.updateGUIFlag(true);
-		loadFromProcessorState();
-	}
 
 	// draw balls
 	const auto& balls = audioProcessor.getPit().getBalls();
-	int color = 0;
 	for (const auto& ball : balls) 
 	{
-		if (color == 0) { g.setColour(juce::Colours::blue); }
-		if (color == 1) { g.setColour(juce::Colours::crimson); }
-		if (color == 2) { g.setColour(juce::Colours::orange); }
-		color++;
 		if (ball->isActive() == true)
 		{
-			g.fillEllipse(ball->getX() - ball->getRadius(),
-						  ball->getY() - ball->getRadius(),
-						  ball->getRadius() * 2.0f,
-						  ball->getRadius() * 2.0f);
+			ball->draw(g);
 		}
 	}
 
@@ -582,7 +584,6 @@ void BallPitAudioProcessorEditor::changeXAndYToSnapToGrid()
 		}
 	}
 }
-
 
 void BallPitAudioProcessorEditor::changeXAndYToFree()
 {

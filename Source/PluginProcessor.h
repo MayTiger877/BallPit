@@ -69,14 +69,13 @@ public:
 
 	juce::Atomic<bool> isPlaying;
 
-	juce::ValueTree GUIState;
-	juce::ValueTree& getGUIState() { return GUIState; }
-	void saveGUIState(juce::ValueTree &newGUIState);
+	juce::ValueTree& getGUIState() { return processorGUIState; }
+	void saveGUIState(juce::ValueTree &GUIState);
 
 	Pit& getPit();
 
-	void updateGUIFlag(bool newStatus) { isGUIUploaded = newStatus; }
-	bool getIsGUIUploaded() { return isGUIUploaded; }
+	void updateGUIFlag(bool newStatus) { wasGUIUploaded = newStatus; }
+	bool getWasGUIUploaded() { return wasGUIUploaded; }
 
 	bool isHostPlaying() const { return isDAWPlaying; }
 
@@ -118,8 +117,8 @@ private:
 	int sampleCounter = 0;
 	juce::AudioPlayHead::TimeSignature m_timeSignature;
 
-
-	bool isGUIUploaded;
+	bool wasGUIUploaded;
+	juce::ValueTree processorGUIState;
 
 	std::unique_ptr<CostumeLogger> m_logger;
 

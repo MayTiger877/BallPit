@@ -1,12 +1,36 @@
 #include "Ball.h"
 #include <iostream>
 
-Ball::Ball(int ballndex, float x, float y, float radius, float velocity, float angle)
-	: ballndex(ballndex), x(x), y(y), radius(radius), velocity(0.1 * velocity), angle(angle)
+Ball::Ball(int ballIndex, float x, float y, float radius, float velocity, float angle)
+	: ballIndex(ballIndex), x(x), y(y), radius(radius), velocity(0.1 * velocity), angle(angle)
 {
 	this->isMoving = false;
 	setAngledSpeed();
+	//initializeBallArrow(); TODO- delete if not in use
 }
+
+
+void Ball::initializeBallArrow()
+{
+	float angleInRadians = angle * (PI / 180.0f);
+	float endX = x + 10.0f * cos(angleInRadians);
+	float endY = y + 10.0f * sin(angleInRadians);
+	juce::Line<float> line(x, y, endX, endY);
+	auto reversed = line.reversed();
+	float lineThickness = 0.5f;
+	float arrowheadWidth = 0.5f;
+	float arrowheadLength = 0.4f;
+
+	ballArrow.startNewSubPath(line.getPointAlongLine(0, lineThickness));
+	ballArrow.lineTo(line.getPointAlongLine(0, -lineThickness));
+	ballArrow.lineTo(reversed.getPointAlongLine(arrowheadLength, lineThickness));
+	ballArrow.lineTo(reversed.getPointAlongLine(arrowheadLength, arrowheadWidth));
+	ballArrow.lineTo(line.getEnd());
+	ballArrow.lineTo(reversed.getPointAlongLine(arrowheadLength, -arrowheadWidth));
+	ballArrow.lineTo(reversed.getPointAlongLine(arrowheadLength, -lineThickness));
+	ballArrow.closeSubPath();
+}
+
 
 void Ball::setBallEdgeEventListener(BallEdgeEventListener* l)
 {
@@ -28,7 +52,7 @@ void Ball::update()
 	else
 	{
 		speedX = speedY = 0;
-		x = 440 + ballndex * 50;
+		x = 440 + ballIndex * 50;
 		y = 380;
 	}
 
@@ -51,8 +75,37 @@ void Ball::updateScaleNotes(int* newScaleNotes)
 
 void Ball::draw(juce::Graphics& g) const
 {
-	g.setColour(juce::Colours::honeydew);
-	g.fillEllipse(x - radius, y - radius, (radius * 2), (radius * 2));
+	switch (ballIndex)
+	{
+		case 0:
+			g.setColour(juce::Colours::blue);
+			break;
+		case 1:
+			g.setColour(juce::Colours::crimson);
+			break;
+		case 2:
+			g.setColour(juce::Colours::orange);
+			break;
+	default:
+		break;
+	}
+
+	g.fillEllipse(x - radius,
+				  y - radius,
+				  radius * 2.0f,
+				  radius * 2.0f);
+
+	if (isMoving == false)
+	{
+		g.setColour(juce::Colours::white);
+		float angleInRadians = (angle - 90) * (PI / 180.0f); // (angle-90) is the actual knob direction
+		float startX = x + (3.0f + radius) * cos(angleInRadians);
+		float endX = x + (30.0f) * cos(angleInRadians);
+		float startY = y + (3.0f + radius) * sin(angleInRadians);
+		float endY = y + (30.0f) * sin(angleInRadians);
+		juce::Line<float> line(startX, startY, endX, endY);
+		g.drawArrow(line, 3.0f, 7.0f, 8.0f);
+	}
 }
 
 void Ball::setRadius(float radius)
@@ -67,15 +120,15 @@ float Ball::getRadius() const
 
 void Ball::setAngledSpeed()
 {
-	float offset = juce::MathConstants<float>::pi * (this->angle - 90) / 180;
+	float offset = juce::MathConstants<float>::pi * (this->angle - 90.0f) / 180.0f;
 	this->speedX = velocity * cos(offset);
 	this->speedY = velocity * sin(offset);
 	// actually angle of the knob is (angle - 90)
-	if (angle == 90 || angle == 270) // 0 or 180
+	if (angle == 90.0f || angle == 270.0f) // 0 or 180
 	{
 		this->speedY = NO_SPEED;
 	}
-	if (angle == 0 || angle == 180) // 270 or 90
+	if (angle == 0.0f || angle == 180.0f) // 270 or 90
 	{
 		this->speedX = NO_SPEED;
 	}
