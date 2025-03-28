@@ -6,6 +6,7 @@ Ball::Ball(int ballIndex, float x, float y, float radius, float velocity, float 
 {
 	this->isMoving = false;
 	setAngledSpeed();
+	setInterceptsMouseClicks(true, false);
 }
 
 void Ball::setBallEdgeEventListener(BallEdgeEventListener* l)
@@ -311,4 +312,11 @@ void Ball::resolveCollision(Ball& other)
 	{
 		if (this->collideListener) this->collideListener->onBallsColide(scaleNotes, sampleRate);
 	}
+}
+
+float Ball::isMouseInsineBall(juce::Point<float> mousePosition) const
+{
+	juce::Point<float> ballPosition(this->x, this->y);
+	float distance = mousePosition.getDistanceFrom(ballPosition);
+	return (distance <= radius) ? distance : MOUSE_NOT_IN_BALL;
 }

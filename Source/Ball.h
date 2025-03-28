@@ -4,6 +4,7 @@
 
 #define PI 3.14159265
 #define NO_SPEED 0
+#define MOUSE_NOT_IN_BALL -1.0
 
 typedef enum {
     UP,
@@ -13,7 +14,7 @@ typedef enum {
 }HitPossition;
 
 
-class Ball
+class Ball : public juce::Component
 {
 public:
     Ball(int ballndex, float x, float y, float radius, float velocity, float angle);
@@ -45,10 +46,14 @@ public:
     void updateAbstractedEdge(int* abstractedEdge);
     void updateScaleNotes(int* scaleNotes);
 
+	int getBallIndex() const { return ballIndex; }
+
 	bool isBallMoving() { return isMoving; }
 	void setBallMoving(bool isMoving) { this->isMoving = isMoving; }
 
     void draw(juce::Graphics& g) const;
+
+	float isMouseInsineBall(juce::Point<float> mousePosition) const;
 
 private:
     // pit coordinates- stupid simple
@@ -65,7 +70,6 @@ private:
     int ballIndex;
 
     juce::Path ballArrow;
-    void initializeBallArrow();
 
     double sampleRate;
     bool isMoving;
