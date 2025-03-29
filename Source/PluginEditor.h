@@ -83,6 +83,9 @@ private:
 	juce::ComboBox rootNoteComboBox;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> rootNoteAttachment;
 
+	juce::ComboBox edgeTypeComboBox;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> edgeTypeAttachment;
+
 	//juce::ComboBox scaleModeComboBox; TODO
 	
 	juce::ComboBox ballsPositioningTypeComboBox;

@@ -28,6 +28,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 		tabs->addTab("Ball " + std::to_string(i + 1), juce::Colours::grey, ballControlComponent.release(), true);
 	}
 	tabs->setBounds(409, 10, 419, 398);
+	tabs->setColour(juce::TabbedComponent::backgroundColourId, juce::Colour::fromString("ffD9D9D9"));
 	addAndMakeVisible(tabs.get());
 	
 	setSize(836, 754); // TODO - set back to original (836, 654) after removing logger
@@ -74,6 +75,9 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 
 	std::string rootNoteID = "rootNote";
 	rootNoteAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, rootNoteID, rootNoteComboBox);
+
+	std::string edgeTypeID = "edgeType";
+	edgeTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, edgeTypeID, edgeTypeComboBox);
 
 	std::string ballsPositioningTypeID = "ballsPositioningType";
 	ballsPositioningTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, ballsPositioningTypeID, ballsPositioningTypeComboBox);
@@ -142,6 +146,7 @@ void BallPitAudioProcessorEditor::saveGUIState()
 	GUIState.setProperty("edgeRange", edgeRangeSlider.getValue(), nullptr);
 	GUIState.setProperty("scaleChoice", scaleChoiceComboBox.getSelectedItemIndex(), nullptr);
 	GUIState.setProperty("rootNote", rootNoteComboBox.getSelectedItemIndex(), nullptr);
+	GUIState.setProperty("edgeType", edgeTypeComboBox.getSelectedItemIndex(), nullptr);
 	GUIState.setProperty("ballsPositioningType", ballsPositioningTypeComboBox.getSelectedItemIndex(), nullptr);
 	GUIState.setProperty("snapToGrid", snapToGridButton.getToggleState(), nullptr);
 	GUIState.setProperty("collision", collisionButton.getToggleState(), nullptr);
@@ -178,6 +183,7 @@ void BallPitAudioProcessorEditor::loadGUIState()
 	edgeRangeSlider.setValue(GUIState.getProperty("edgeRange"), juce::dontSendNotification);
 	scaleChoiceComboBox.setSelectedItemIndex(GUIState.getProperty("scaleChoice"), juce::dontSendNotification);
 	rootNoteComboBox.setSelectedItemIndex(GUIState.getProperty("rootNote"), juce::dontSendNotification);
+	edgeTypeComboBox.setSelectedItemIndex(GUIState.getProperty("edgeType"), juce::dontSendNotification);
 	ballsPositioningTypeComboBox.setSelectedItemIndex(GUIState.getProperty("ballsPositioningType"), juce::dontSendNotification);
 	snapToGridButton.setToggleState(GUIState.getProperty("snapToGrid"), juce::dontSendNotification);
 	collisionButton.setToggleState(GUIState.getProperty("collision"), juce::dontSendNotification);
@@ -364,28 +370,28 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	addRemoveBallButton.setBounds(580, 350, 140, 40);
 	addAndMakeVisible(addRemoveBallButton);
 
-	edgePhaseSlider.setBounds(200, 475, 100, 30);
+	edgePhaseSlider.setBounds(195, 470, 100, 30);
 	edgePhaseSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
 	edgePhaseSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
 	edgePhaseSlider.setRange(0, 360, 10);
 	edgePhaseSlider.setValue(0);
 	addAndMakeVisible(edgePhaseSlider);
 	
-	edgeDenomenatorSlider.setBounds(200, 540, 100, 30);
+	edgeDenomenatorSlider.setBounds(195, 510, 100, 30);
 	edgeDenomenatorSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
 	edgeDenomenatorSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
 	edgeDenomenatorSlider.setRange(1, 8, 1);
 	edgeDenomenatorSlider.setValue(1);
 	addAndMakeVisible(edgeDenomenatorSlider);
 
-	edgeRangeSlider.setBounds(630, 540, 100, 30);
+	edgeRangeSlider.setBounds(630, 530, 100, 30);
 	edgeRangeSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
 	edgeRangeSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
 	edgeRangeSlider.setRange(1, 8, 1);
 	edgeRangeSlider.setValue(2);
 	addAndMakeVisible(edgeRangeSlider);
 
-	scaleChoiceComboBox.setBounds(630, 475, 100, 30);
+	scaleChoiceComboBox.setBounds(630, 470, 100, 30);
 	scaleChoiceComboBox.addItem("Chromatic", 1);
 	scaleChoiceComboBox.addItem("Octatonic", 2);
 	scaleChoiceComboBox.addItem("Dominant Diminished", 3);
@@ -423,6 +429,12 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	rootNoteComboBox.addItem("B",  12);
 	rootNoteComboBox.setSelectedId(1);
 	addAndMakeVisible(rootNoteComboBox);
+
+	edgeTypeComboBox.setBounds(195, 550, 100, 30);
+	edgeTypeComboBox.addItem("Cyclic up", 1);
+	edgeTypeComboBox.addItem("Cyclic down", 2);
+	edgeTypeComboBox.setSelectedId(1);
+	addAndMakeVisible(edgeTypeComboBox);
 
 	ballsPositioningTypeComboBox.setBounds(550, 120, 100, 30);
 	ballsPositioningTypeComboBox.addItem("Chaos", 1);

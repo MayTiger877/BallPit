@@ -73,11 +73,12 @@ void Pit::setBallParams(int index, float x, float y, float radius, float velocit
 	}
 }
 
-void Pit::setEdgeParams(int phase, int denomenator, int range)
+void Pit::setEdgeParams(int phase, int denomenator, int range, int edgeType)
 {
 	this->edge.setPhase(phase);
 	this->edge.setDenomenator(denomenator);
 	this->edge.setRange(range);
+	this->edge.setEdgeType(edgeType);
 	this->edge.updateAbstractedEdge();
 }
 
@@ -199,10 +200,9 @@ static void drawRectDividers(juce::Graphics& g, int numOfSplits) // KISS  W(-_-)
 		g.fillRect(403, 405 - (980 % 392) - dividerSize + (dividerSize / 2), 5, dividerSize);
 		g.fillRect(404 - dividerSize - (1372 % 392) + (dividerSize / 2), 10, dividerSize, 5);
 	}
-
 }
 
-void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const
+void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors)
 {
 	int numOfSplits = this->edge.getDenomenator();
 	int numOfColors = this->edge.getRange();
@@ -233,16 +233,20 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const
 			}
 		} while (currentRectSize > 0);
 
-		colorIndex = (colorIndex + 1) % numOfColors;
+		//colorIndex = (colorIndex + 1) % numOfColors;
+		colorIndex = this->edge.promoteColorIndexByEdgeType(colorIndex, numOfColors);
 		g.setColour(edgeColors[colorIndex]);
 		noteRectSize = 1568 / numOfSplits;
 	}
 
-	drawRectDividers(g, numOfSplits);
+	if (this->edge.getRange() > 1)
+	{
+		drawRectDividers(g, numOfSplits);
+	}
 
 	if (reminder != 0) 
 	{
-		colorIndex = (colorIndex - 1) % numOfColors;
+		colorIndex = this->edge.promoteColorIndexByEdgeType(colorIndex, numOfColors, true);
 		g.setColour(edgeColors[colorIndex]);
 		g.fillRect(10, 12, reminder, 4);
 	}

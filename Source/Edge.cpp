@@ -17,6 +17,7 @@ Edge::Edge() : scale(Scale::ScaleKinds::MAJOR, 0)
 	numerator = 1;
 	denomenator = 8;
 	range = 2;
+	edgeType = 0; //Cycle up
 
 	// Initialize the pit edges musical scale
 	rootNote = 60; // middle C4
@@ -37,6 +38,12 @@ void Edge::setScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
 	this->scale.SetScale(scaleKind);
 	this->scale.SetMode(mode);
 	this->rootNote = rootNote;
+}
+
+void Edge::setEdgeType(int edgeType)
+{
+	this->edgeType = edgeType;
+
 }
 
 void Edge::getMIDI()
@@ -67,13 +74,32 @@ int Edge::hitPositionToScalenote(float x, float y)
 	return abstractedEdge[index];
 }
 
+int Edge::promoteColorIndexByEdgeType(int currentColorIndex, int numOfColors, bool reverse)
+{
+	int reverseFactor = (reverse == true) ? -1 : 1;
+	switch (edgeType)
+	{
+		case 0: // Cycle up
+		{
+			return (currentColorIndex + (1 * reverseFactor) + numOfColors) % numOfColors; 
+		}
+		case 1: // Cycle down
+		{
+			return (currentColorIndex - (1 * reverseFactor) + numOfColors) % numOfColors;
+		}
+		default:
+			break;
+	}
+}
+
 void Edge::updateAbstractedEdge()
 {
 	int numOfSplits = this->denomenator;
 	int numOfColors = this->range;
 	int split = 1568 / numOfSplits;
 	int remainder = 1568 % numOfSplits;
-	int index, colorIndex = 0;
+	int index = 0;
+	int colorIndex = 0;
 
 	for (int i = 0; i < numOfSplits; i++)
 	{
@@ -84,7 +110,7 @@ void Edge::updateAbstractedEdge()
 		}
 		if (index < 1568)
 		{
-			colorIndex = (colorIndex + 1) % numOfColors;
+			colorIndex = promoteColorIndexByEdgeType(colorIndex, numOfColors);
 		}
 	}
 	

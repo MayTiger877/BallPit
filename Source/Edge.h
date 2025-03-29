@@ -40,6 +40,9 @@ public:
 	void setScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode);
 	Scale getScale() const { return scale; }
 
+	void setEdgeType(int edgeType);
+	int promoteColorIndexByEdgeType(int currentColorIndex, int numOfColors, bool reverse = false);
+
 	int* getAbstractedEdge() { return abstractedEdge; }
 
 	void getMIDI();
@@ -60,6 +63,8 @@ private:
 	int range;
 
 	Scale scale;
+
+	int edgeType;
 
 	int abstractedEdge[1568];
 

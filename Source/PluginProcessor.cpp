@@ -293,7 +293,8 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 	pit.setEdgeScale(static_cast<Scale::ScaleKinds>(scaleChoice), rootNote, 0);
 	pit.setEdgeParams(valueTreeState.getRawParameterValue("edgePhase")->load(), 
 					  valueTreeState.getRawParameterValue("edgeDenomenator")->load(),
-					  valueTreeState.getRawParameterValue("edgeRange")->load());
+					  valueTreeState.getRawParameterValue("edgeRange")->load(),
+					  valueTreeState.getRawParameterValue("edgeType")->load());
 	pit.setBallsEdgeNotes();
 }
 
@@ -467,6 +468,11 @@ juce::StringArray getScaleOptions()
 			 "Pentatonic", "Minor Pentatonic" };
 }
 
+juce::StringArray getEdgeTypes()
+{
+	return { "Cyclic up", "Cyclic down" };
+}
+
 juce::StringArray getBallsPositioningTypes()
 {
 	return { "Chaos", "By Tempo" };
@@ -509,6 +515,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	
 	std::string rootNoteId = "rootNote";
 	params.add(std::make_unique<juce::AudioParameterInt>(rootNoteId, "Root Note", 0, 11, 0));
+
+	std::string edgeTypeID = "edgeType";
+	params.add(std::make_unique<juce::AudioParameterChoice>(edgeTypeID, "Edge Type", getEdgeTypes(), 0));
 
 	std::string ballsPositioningTypeId = "ballsPositioningType";
 	params.add(std::make_unique<juce::AudioParameterChoice>(ballsPositioningTypeId, "BallsPositioning", getBallsPositioningTypes(), 0));
