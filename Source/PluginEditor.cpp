@@ -27,7 +27,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 		auto ballControlComponent = std::make_unique<BallSlidersAndAttachments>();
 		tabs->addTab("Ball " + std::to_string(i + 1), juce::Colours::grey, ballControlComponent.release(), true);
 	}
-	tabs->setBounds(407, 10, 421, 398);
+	tabs->setBounds(409, 10, 419, 398);
 	addAndMakeVisible(tabs.get());
 	
 	setSize(836, 754); // TODO - set back to original (836, 654) after removing logger
