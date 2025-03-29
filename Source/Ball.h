@@ -54,6 +54,7 @@ public:
     void draw(juce::Graphics& g) const;
 
 	float isMouseInsineBall(juce::Point<float> mousePosition) const;
+    void setIsMouseOverBall(bool newIsMouseOverBall) { this->isMouseOverBall = newIsMouseOverBall; }
 
 private:
     // pit coordinates- stupid simple
@@ -72,7 +73,8 @@ private:
     juce::Path ballArrow;
 
     double sampleRate;
-    bool isMoving;
+    bool isMoving = false;
+    bool isMouseOverBall = false;
     
     int abstractedEdgeDuplicate[1568];
     int scaleNotes[3];

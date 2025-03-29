@@ -646,10 +646,31 @@ void BallPitAudioProcessorEditor::changeXAndYToFree()
 	}
 }
 
+void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
+{
+	float result = MOUSE_NOT_IN_BALL;
+	for (const auto& ball : this->audioProcessor.getPit().getBalls())
+	{
+		result = ball->isMouseInsineBall(event.position);
+		if (result != MOUSE_NOT_IN_BALL)
+		{
+			ballBeingDragged.first = ball->getBallIndex();
+			ballBeingDragged.second = result;
+			this->audioProcessor.getPit().getBalls()[ball->getBallIndex()]->setIsMouseOverBall(true);
+			return;
+		}
+		else
+		{
+			this->audioProcessor.getPit().getBalls()[ball->getBallIndex()]->setIsMouseOverBall(false);
+		}
+	}
+	ballBeingDragged.first = MOUSE_NOT_IN_BALL;
+	ballBeingDragged.second = MOUSE_NOT_IN_BALL;
+}
+
 void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 {
-	ballBeingDragged = whichBallIsClicked(event.position);
-	if (ballBeingDragged.second > MOUSE_NOT_IN_BALL)
+	if (ballBeingDragged.first > MOUSE_NOT_IN_BALL)
 	{
 		// TODO- decide wheather to use position offset or "pop" ball to mouse pos imeediately....
 		if (this->audioProcessor.getPit().getBalls()[ballBeingDragged.first]->isActive() == true)
@@ -661,7 +682,7 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 
 void BallPitAudioProcessorEditor::mouseDrag(const juce::MouseEvent& event)
 {
-	if (mouseIsDragging)
+	if ((mouseIsDragging) && (ballBeingDragged.first > MOUSE_NOT_IN_BALL))
 	{
 		ballsSlidersAndAttachments[ballBeingDragged.first].xSlider.setValue(event.position.getX(), juce::sendNotification);
 		ballsSlidersAndAttachments[ballBeingDragged.first].ySlider.setValue(event.position.getY(), juce::sendNotification);
@@ -673,17 +694,4 @@ void BallPitAudioProcessorEditor::mouseDrag(const juce::MouseEvent& event)
 void BallPitAudioProcessorEditor::mouseUp(const juce::MouseEvent&)
 {
 	mouseIsDragging = false;
-}
-
-std::pair<int,float> BallPitAudioProcessorEditor::whichBallIsClicked(juce::Point<float> mousePosition) const
-{
-	float result = MOUSE_NOT_IN_BALL;
-	for (const auto& ball : this->audioProcessor.getPit().getBalls())
-	{
-		result = ball->isMouseInsineBall(mousePosition);
-		if (result != MOUSE_NOT_IN_BALL)
-		{
-			return std::pair<int, float>(ball->getBallIndex(), result);
-		}
-	}
 }

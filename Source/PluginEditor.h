@@ -46,10 +46,10 @@ public:
 	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
 	// this is foe dealing with the mouse moving the balllz----------------
+	void mouseMove(const juce::MouseEvent& event) override;
 	void mouseDown(const juce::MouseEvent& event) override;
 	void mouseDrag(const juce::MouseEvent& event) override;
 	void mouseUp(const juce::MouseEvent& event) override;
-	std::pair<int, float> whichBallIsClicked(juce::Point<float> mousePosition) const;
 	std::pair<int, float> ballBeingDragged; // first is ball index, second is mouse distance from center
 	bool mouseIsDragging = false;
 	//----------------------------------------------------------------------
