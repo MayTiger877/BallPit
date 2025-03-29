@@ -151,6 +151,28 @@ static void drawSingleRect(juce::Graphics& g, int index, int rectSizeToDraw)
 	}
 }
 
+static void drawRectDivider(juce::Graphics& g, int index)
+{
+	int dividerThickness = 3;
+	int dividerIndex = (index - dividerThickness) % 1568;
+	if (dividerIndex < 382)
+	{
+		g.fillRect(7, 13 + (dividerIndex % 392), 5, dividerThickness);
+	}
+	else if ((dividerIndex >= 392) && (dividerIndex < 774))
+	{
+		g.fillRect(11 + (dividerIndex % 392), 404, dividerThickness, 5);
+	}
+	else if ((dividerIndex >= 784) && (dividerIndex < 1166))
+	{
+		g.fillRect(403, 405 - (dividerIndex % 392) - dividerThickness, 5, dividerThickness);
+	}
+	else if ((dividerIndex >= 1176) && (dividerIndex < 1468)) // here its 1368 and not 1568 because last dividet not relevant
+	{
+		g.fillRect(404 - dividerThickness - (dividerIndex % 392), 10, dividerThickness, 5);
+	}
+}
+
 void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const
 {
 	int numOfSplits = this->edge.getDenomenator();
@@ -183,6 +205,8 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors) const
 		} while (currentRectSize > 0);
 
 		colorIndex = (colorIndex + 1) % numOfColors;
+		g.setColour(juce::Colours::black);
+		drawRectDivider(g, index);
 		g.setColour(edgeColors[colorIndex]);
 		noteRectSize = 1568 / numOfSplits;
 	}
