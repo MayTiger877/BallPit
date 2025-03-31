@@ -40,10 +40,17 @@ void Edge::setScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
 	this->rootNote = rootNote;
 }
 
-void Edge::setEdgeType(int edgeType)
+void Edge::setEdgeType(int newEdgeType)
 {
-	this->edgeType = edgeType;
-
+	this->edgeType = newEdgeType;
+	if (edgeType == 2)
+	{
+		randomEdgeTypeSelected = true;
+	}
+	else
+	{
+		randomEdgeTypeSelected = false;
+	}
 }
 
 void Edge::getMIDI()
@@ -86,6 +93,26 @@ int Edge::promoteColorIndexByEdgeType(int currentColorIndex, int numOfColors, bo
 		case 1: // Cycle down
 		{
 			return (currentColorIndex - (1 * reverseFactor) + numOfColors) % numOfColors;
+		}
+		case 2 : // Random
+		{
+			return rand() % numOfColors;
+		}
+		case 3: // Ping-Pong effect
+		{
+			float middle = numOfColors / 2.0f;
+			if (currentColorIndex < middle)
+			{
+				return ((numOfColors - currentColorIndex) - (1 * reverseFactor) + numOfColors) % numOfColors;
+			}
+			else if (currentColorIndex > middle)
+			{
+				return ((-1 - currentColorIndex) + (1 * reverseFactor) + numOfColors) % numOfColors;
+			}
+			else
+			{
+				return (reverseFactor == false ? 0 : (numOfColors - 1));
+			}
 		}
 		default:
 			break;

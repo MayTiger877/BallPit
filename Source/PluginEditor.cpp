@@ -433,6 +433,8 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgeTypeComboBox.setBounds(195, 550, 100, 30);
 	edgeTypeComboBox.addItem("Cyclic up", 1);
 	edgeTypeComboBox.addItem("Cyclic down", 2);
+	edgeTypeComboBox.addItem("Ping pong", 3);
+	edgeTypeComboBox.addItem("Random", 4);
 	edgeTypeComboBox.setSelectedId(1);
 	addAndMakeVisible(edgeTypeComboBox);
 
@@ -658,6 +660,19 @@ void BallPitAudioProcessorEditor::changeXAndYToFree()
 	}
 }
 
+static bool isMouseOverDice(const juce::MouseEvent& event)
+{
+	if (event.position.x > 195 &&
+		event.position.x < 220 &&
+		event.position.y > 595 &&
+		event.position.y < 620)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 {
 	float result = MOUSE_NOT_IN_BALL;
@@ -678,6 +693,13 @@ void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 	}
 	ballBeingDragged.first = MOUSE_NOT_IN_BALL;
 	ballBeingDragged.second = MOUSE_NOT_IN_BALL;
+	
+	if (isMouseOverDice(event))
+	{
+		mouseOverDice = true;
+		return;
+	}
+	mouseOverDice = false;
 }
 
 void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
@@ -689,6 +711,16 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 		{
 			mouseIsDragging = true;
 		}
+	}
+	else if (mouseOverDice == true)
+	{
+		edgeTypeComboBox.setSelectedId(4);
+		auto* param = this->audioProcessor.valueTreeState.getRawParameterValue("edgeType");
+		if (param != nullptr)
+		{
+			*param = 2;
+		}
+		this->audioProcessor.getPit().setEdgeTypeToRandom();
 	}
 }
 

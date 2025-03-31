@@ -82,6 +82,12 @@ void Pit::setEdgeParams(int phase, int denomenator, int range, int edgeType)
 	this->edge.updateAbstractedEdge();
 }
 
+void Pit::setEdgeTypeToRandom()
+{
+	this->edge.setEdgeType(2);
+	this->edge.updateAbstractedEdge();
+}
+
 void Pit::setBallsEdgeNotes()
 {
 	for (auto& ball : balls)

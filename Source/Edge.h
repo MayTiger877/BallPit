@@ -65,6 +65,7 @@ private:
 	Scale scale;
 
 	int edgeType;
+	bool randomEdgeTypeSelected = false;
 
 	int abstractedEdge[1568];
 
