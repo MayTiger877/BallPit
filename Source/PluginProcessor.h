@@ -29,7 +29,8 @@ typedef struct
 /**
 */
 class BallPitAudioProcessor  :  public juce::AudioProcessor, 
-								public juce::ChangeBroadcaster
+								public juce::ChangeBroadcaster,
+								public juce::AudioProcessorValueTreeState::Listener
 {
 public:
 	//==============================================================================
@@ -65,6 +66,7 @@ public:
 
 	juce::AudioProcessorValueTreeState valueTreeState;
 	juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
+	void addParamListeners(juce::AudioProcessorValueTreeState& apvts);
 	juce::AudioProcessorValueTreeState& getValueTreeState() { return valueTreeState; }
 
 	juce::Atomic<bool> isPlaying;
@@ -119,6 +121,11 @@ private:
 
 	bool wasGUIUploaded;
 	juce::ValueTree processorGUIState;
+	bool wasGUIUpdated = true; // initialize to true to force the GUI to update on first load
+	void parameterChanged(const juce::String& parameterID, float newValue) override
+	{
+		wasGUIUpdated = true;
+	}
 
 	std::unique_ptr<CostumeLogger> m_logger;
 

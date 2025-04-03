@@ -64,12 +64,14 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 
 	valueTreeState.state.setProperty(Service::PresetManager::presetNameProperty, "", nullptr);
 	valueTreeState.state.setProperty("version", ProjectInfo::versionString, nullptr);
+	addParamListeners(valueTreeState);
 
 	presetManager = std::make_unique<Service::PresetManager>(valueTreeState);
 }
 
 BallPitAudioProcessor::~BallPitAudioProcessor()
 {
+	valueTreeState.removeParameterListener("someParameter", this);
 }
 
 //==============================================================================
@@ -347,7 +349,11 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		}
 	}
 
-	getUpdatedEdgeParams();
+	if (wasGUIUpdated == true)
+	{
+		getUpdatedEdgeParams();
+		wasGUIUpdated = false;
+	}
 	if ((this->isDAWPlaying == false) && (this->pit.areBallsMoving() == false))
 	{
 		getUpdatedBallParams();
@@ -529,6 +535,25 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	params.add(std::make_unique<juce::AudioParameterBool>(collisionId, "Collision", true));
 	
 	return params;
+}
+
+void BallPitAudioProcessor::addParamListeners(juce::AudioProcessorValueTreeState& apvts)
+{
+	std::vector<juce::String> paramIDs = {
+		"ballX0", "ballY0", "ballRadius0", "ballVelocity0", "ballAngle0", "ballXVelocity0", "ballYVelocity0",
+		"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "ballYVelocity1",
+		"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "ballYVelocity2",
+		"edgePhase", "edgeDenomenator", "edgeRange", "scaleChoice", "rootNote", "edgeType",
+		"ballsPositioningType", "snapToGrid", "collision"
+	};
+
+	for (const auto& paramID : paramIDs)
+	{
+		if (apvts.getParameter(paramID) != nullptr)
+		{
+			apvts.addParameterListener(paramID, this);
+		}
+	}
 }
 
 void BallPitAudioProcessor::saveGUIState(juce::ValueTree &currentGUIState)
