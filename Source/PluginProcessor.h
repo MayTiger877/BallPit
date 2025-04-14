@@ -122,12 +122,19 @@ private:
 	bool wasGUIUploaded;
 	juce::ValueTree processorGUIState;
 	bool wasGUIUpdated = true; // initialize to true to force the GUI to update on first load
-	void parameterChanged(const juce::String& parameterID, float newValue) override
-	{
-		wasGUIUpdated = true;
-	}
+	bool wasEdgeParamChanged = true; // initialize to true to force the GUI to update on first load
+	void parameterChanged(const juce::String& parameterID, float newValue) override;
 
 	std::unique_ptr<CostumeLogger> m_logger;
 
 	std::unique_ptr<Service::PresetManager> presetManager;
+
+	// TODO- check that all params are here!
+	std::vector<juce::String> paramIDs = {
+	"ballX0", "ballY0", "ballRadius0", "ballVelocity0", "ballAngle0", "ballXVelocity0", "ballYVelocity0",
+	"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "ballYVelocity1",
+	"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "ballYVelocity2",
+	"edgePhase", "edgeDenomenator", "edgeRange", "scaleChoice", "rootNote", "edgeType",
+	"ballsPositioningType", "snapToGrid", "collision"
+	};
 };

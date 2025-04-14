@@ -293,10 +293,13 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 	int scaleChoice = valueTreeState.getRawParameterValue("scaleChoice")->load();
 	int rootNote = 59 + valueTreeState.getRawParameterValue("rootNote")->load(); // 59 is the offset for starting the parameter at 1 to reach middle C = 60
 	pit.setEdgeScale(static_cast<Scale::ScaleKinds>(scaleChoice), rootNote, 0);
-	pit.setEdgeParams(valueTreeState.getRawParameterValue("edgePhase")->load(), 
-					  valueTreeState.getRawParameterValue("edgeDenomenator")->load(),
-					  valueTreeState.getRawParameterValue("edgeRange")->load(),
-					  valueTreeState.getRawParameterValue("edgeType")->load());
+	if (wasEdgeParamChanged == true)
+	{
+		pit.setEdgeParams(valueTreeState.getRawParameterValue("edgePhase")->load(),
+			valueTreeState.getRawParameterValue("edgeDenomenator")->load(),
+			valueTreeState.getRawParameterValue("edgeRange")->load(),
+			valueTreeState.getRawParameterValue("edgeType")->load());
+	}
 	pit.setBallsEdgeNotes();
 }
 
@@ -353,6 +356,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	{
 		getUpdatedEdgeParams();
 		wasGUIUpdated = false;
+		wasEdgeParamChanged = false;
 	}
 	if ((this->isDAWPlaying == false) && (this->pit.areBallsMoving() == false))
 	{
@@ -538,15 +542,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 }
 
 void BallPitAudioProcessor::addParamListeners(juce::AudioProcessorValueTreeState& apvts)
-{
-	std::vector<juce::String> paramIDs = {
-		"ballX0", "ballY0", "ballRadius0", "ballVelocity0", "ballAngle0", "ballXVelocity0", "ballYVelocity0",
-		"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "ballYVelocity1",
-		"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "ballYVelocity2",
-		"edgePhase", "edgeDenomenator", "edgeRange", "scaleChoice", "rootNote", "edgeType",
-		"ballsPositioningType", "snapToGrid", "collision"
-	};
-
+{	
 	for (const auto& paramID : paramIDs)
 	{
 		if (apvts.getParameter(paramID) != nullptr)
@@ -559,4 +555,16 @@ void BallPitAudioProcessor::addParamListeners(juce::AudioProcessorValueTreeState
 void BallPitAudioProcessor::saveGUIState(juce::ValueTree &currentGUIState)
 {
 	processorGUIState.copyPropertiesFrom(currentGUIState, nullptr);
+}
+
+void BallPitAudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
+{
+	wasGUIUpdated = true;
+	if ((parameterID == "edgePhase") ||
+		(parameterID == "edgeDenomenator") ||
+		(parameterID == "edgeRange") ||
+		(parameterID == "edgeType"))
+	{
+		wasEdgeParamChanged = true;
+	}
 }

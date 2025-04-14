@@ -43,7 +43,8 @@ public:
 	void setEdgeType(int edgeType);
 	int promoteColorIndexByEdgeType(int currentColorIndex, int numOfColors, bool reverse = false);
 
-	int* getAbstractedEdge() { return abstractedEdge; }
+	const int* getAbstractedEdge() { return abstractedEdge; }
+	const int* getAbstractedEdgeColors() { return abstractedEdgeColors; }
 
 	void getMIDI();
 
@@ -68,6 +69,7 @@ private:
 	bool randomEdgeTypeSelected = false;
 
 	int abstractedEdge[1568];
+	int abstractedEdgeColors[1568];
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Edge)
 };

@@ -212,12 +212,13 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors)
 {
 	int numOfSplits = this->edge.getDenomenator();
 	int numOfColors = this->edge.getRange();
+	const int* pointerToAbstractedEdgeColors = this->edge.getAbstractedEdgeColors();
 	int noteRectSize = 1568 / numOfSplits;
 	int reminder = 1568 % numOfSplits;
-	int colorIndex = 0;
 	int index = this->edge.getPhase() % 1568;
 	int currentRectSize = -1;
-	g.setColour(edgeColors[colorIndex]);
+	int temp = pointerToAbstractedEdgeColors[index];
+	g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
 
 	for (int i = 0; i < numOfSplits;)
 	{
@@ -228,20 +229,18 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors)
 			if (currentRectSize == -1)
 			{
 				drawSingleRect(g, index, noteRectSize);
-				index += noteRectSize % 1568;
+				index = (index + noteRectSize) % 1568;
 				i++;
 			}
 			else
 			{
 				drawSingleRect(g, index, currentRectSize);
-				index += currentRectSize % 1568;
+				index = (index + currentRectSize) % 1568;
 				noteRectSize -= currentRectSize;
 			}
 		} while (currentRectSize > 0);
 
-		//colorIndex = (colorIndex + 1) % numOfColors;
-		colorIndex = this->edge.promoteColorIndexByEdgeType(colorIndex, numOfColors);
-		g.setColour(edgeColors[colorIndex]);
+		g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
 		noteRectSize = 1568 / numOfSplits;
 	}
 
@@ -252,8 +251,7 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors)
 
 	if (reminder != 0) 
 	{
-		colorIndex = this->edge.promoteColorIndexByEdgeType(colorIndex, numOfColors, true);
-		g.setColour(edgeColors[colorIndex]);
+		g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
 		g.fillRect(10, 12, reminder, 4);
 	}
 }
