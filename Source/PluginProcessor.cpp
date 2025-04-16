@@ -20,7 +20,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					  #endif
 					   .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
 					 #endif
-					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters()), m_logger(new CostumeLogger())
+					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters())
 #endif
 {
 	this->wasGUIUploaded = false;

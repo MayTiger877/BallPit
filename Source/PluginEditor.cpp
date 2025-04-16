@@ -31,7 +31,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	tabs->setColour(juce::TabbedComponent::backgroundColourId, juce::Colour::fromString("ffD9D9D9"));
 	addAndMakeVisible(tabs.get());
 	
-	setSize(836, 754); // TODO - set back to original (836, 654) after removing logger
+	setSize(836, 654);
 	startTimerHz(60);
 
 	GUIState = juce::ValueTree("GUIState");
@@ -89,15 +89,6 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	collisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, collisionID, collisionButton);
 	
 	audioProcessor.addChangeListener(this); // Register as listener
-
-	logBox.setMultiLine(true);
-	logBox.setReadOnly(true);
-	logBox.setScrollbarsShown(false);
-	logBox.setFont(juce::Font(16.0f));
-	logBox.setColour(juce::TextEditor::backgroundColourId, juce::Colours::black);
-	logBox.setColour(juce::TextEditor::textColourId, juce::Colours::white);
-	logBox.setColour(juce::TextEditor::highlightColourId, juce::Colours::yellow);
-	addAndMakeVisible(logBox);
 
 	addChildComponent(&presetPanel);
 
@@ -521,23 +512,11 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 
 void BallPitAudioProcessorEditor::resized()
 {
-	logBox.setBounds(0, 654, 836, 100);
+	
 }
 
 void BallPitAudioProcessorEditor::timerCallback() 
 {
-	if (auto* logger = audioProcessor.getLogger())
-	{
-		auto messages = logger->getMessages();
-		juce::String allMessages;
-
-		for (const auto& message : messages)
-		{
-			allMessages += message + "\n";
-		}
-
-		logBox.setText(allMessages, juce::dontSendNotification);
-	}
 	repaint();
 }
 

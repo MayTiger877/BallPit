@@ -13,7 +13,6 @@
 #include "Pit.h"
 #include "EdgeEventListener.h"
 #include "Scales.h"
-#include "CostumeLogger.h"
 #include "Configs.h"
 #include "PresetManagerBackend.h"
 
@@ -86,14 +85,6 @@ public:
 
 	juce::AudioPlayHead::TimeSignature m_timeSignatureDEBUG;
 
-	CostumeLogger* getLogger() const { return m_logger.get(); }
-
-	void printLoggedEvent(std::string toPrint)
-	{
-		if (m_logger)
-			m_logger->logMessage(toPrint);
-	}
-
 	void getUpdatedBallParams();
 	void getUpdatedEdgeParams();
 	void setXYVelocityByTempo(float& xVelocity, float& yVelocity, float ballRadius);
@@ -127,8 +118,6 @@ private:
 	bool wasGUIUpdated = true; // initialize to true to force the GUI to update on first load
 	bool wasEdgeParamChanged = true; // initialize to true to force the GUI to update on first load
 	void parameterChanged(const juce::String& parameterID, float newValue) override;
-
-	std::unique_ptr<CostumeLogger> m_logger;
 
 	std::unique_ptr<Service::PresetManager> presetManager;
 

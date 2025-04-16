@@ -114,7 +114,6 @@ private:
 
 	juce::ValueTree GUIState;
 
-	juce::TextEditor logBox;
 
 	juce::TextButton openPresetManager;
 	PresetPanel presetPanel;
