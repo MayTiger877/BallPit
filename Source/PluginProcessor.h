@@ -98,6 +98,9 @@ public:
 	void getUpdatedEdgeParams();
 	void setXYVelocityByTempo(float& xVelocity, float& yVelocity, float ballRadius);
 
+	void setWasGUIUpdatedToTrue() { this->wasGUIUpdated = true; }
+	void setWasEdgeParamChangedFlagToTrue() { this->wasEdgeParamChanged = true; }
+
 	Service::PresetManager& getPresetManager() { return *presetManager; }
 
 private:

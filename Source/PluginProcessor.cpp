@@ -299,8 +299,8 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 			valueTreeState.getRawParameterValue("edgeDenomenator")->load(),
 			valueTreeState.getRawParameterValue("edgeRange")->load(),
 			valueTreeState.getRawParameterValue("edgeType")->load());
+		pit.setBallsEdgeNotes();
 	}
-	pit.setBallsEdgeNotes();
 }
 
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)

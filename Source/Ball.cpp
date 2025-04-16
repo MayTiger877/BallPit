@@ -35,7 +35,7 @@ void Ball::update()
 
 }
 
-void Ball::updateAbstractedEdge(const int* abstractedEdge)
+void Ball::updateBallAbstractedEdge(const int* abstractedEdge)
 {
 	for (int i = 0; i < 1568; i++)
 	{

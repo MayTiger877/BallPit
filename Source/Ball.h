@@ -43,7 +43,7 @@ public:
 	bool isActive() const { return active; }
 	void setActive(bool active) { this->active = active; }
     
-    void updateAbstractedEdge(const int* abstractedEdge);
+    void updateBallAbstractedEdge(const int* abstractedEdge);
     void updateScaleNotes(int* scaleNotes);
 
 	int getBallIndex() const { return ballIndex; }
