@@ -2,7 +2,7 @@
 #include <JuceHeader.h>
 #include <vector>
 #include <memory>
-
+#include "Configs.h"
 #include "Ball.h"
 #include "Edge.h"
 

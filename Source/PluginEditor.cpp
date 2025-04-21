@@ -15,23 +15,23 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 {
 	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg"); //laptop
 	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
-	auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/LayOut.svg"); //haifa
+	auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/Version_2_Layout.svg"); //haifa
 
 	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
 	if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
 
 	// Tabs
-	tabs.reset(new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop));
+	tabs.reset(new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtLeft));
 	for (int i = 0; i < 3; ++i)
 	{
 		auto ballControlComponent = std::make_unique<BallSlidersAndAttachments>();
 		tabs->addTab("Ball " + std::to_string(i + 1), juce::Colours::grey, ballControlComponent.release(), true);
 	}
-	tabs->setBounds(409, 10, 419, 398);
+	tabs->setBounds(BALLS_TABS_BOUNDS);
 	tabs->setColour(juce::TabbedComponent::backgroundColourId, juce::Colour::fromString("ffD9D9D9"));
 	addAndMakeVisible(tabs.get());
 	
-	setSize(836, 654);
+	setSize(APP_WINDOW_WIDTH, APP_WINDOW_HIGHT);
 	startTimerHz(60);
 
 	GUIState = juce::ValueTree("GUIState");
@@ -244,7 +244,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 {
 	for (int i = 0; i < 3; i++)
 	{
-		ballsSlidersAndAttachments[i].xSlider.setBounds(656, 65, 65, 65);
+		ballsSlidersAndAttachments[i].xSlider.setBounds(BALL_X_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].xSlider.setValue(75.0f + (i * 130.0f));
 		ballsSlidersAndAttachments[i].xSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].xSlider.setDoubleClickReturnValue(true, 50.0f);
@@ -253,7 +253,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].xSlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].xSlider);
 
-		ballsSlidersAndAttachments[i].ySlider.setBounds(744, 65, 65, 65);
+		ballsSlidersAndAttachments[i].ySlider.setBounds(BALL_Y_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].ySlider.setValue(200.0f);
 		ballsSlidersAndAttachments[i].ySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].ySlider.setDoubleClickReturnValue(true, 50.0f);
@@ -262,7 +262,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].ySlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].ySlider);
 
-		ballsSlidersAndAttachments[i].angleSlider.setBounds(656, 115, 65, 65);
+		ballsSlidersAndAttachments[i].angleSlider.setBounds(BALL_DIRECTION_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].angleSlider.setValue(0.0f + (i * 60.0f));
 		ballsSlidersAndAttachments[i].angleSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].angleSlider.setDoubleClickReturnValue(true, 0.0f);
@@ -272,7 +272,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].angleSlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
 
-		ballsSlidersAndAttachments[i].velocitySlider.setBounds(744, 115, 65, 65);
+		ballsSlidersAndAttachments[i].velocitySlider.setBounds(BALL_SPEED_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].velocitySlider.setValue(5.0f);
 		ballsSlidersAndAttachments[i].velocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].velocitySlider.setDoubleClickReturnValue(true, 3.0f);
@@ -281,7 +281,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].velocitySlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].velocitySlider);
 
-		ballsSlidersAndAttachments[i].radiusSlider.setBounds(656, 165, 65, 65);
+		ballsSlidersAndAttachments[i].radiusSlider.setBounds(BALL_SIZE_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].radiusSlider.setValue(10.0f);
 		ballsSlidersAndAttachments[i].radiusSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].radiusSlider.setDoubleClickReturnValue(true, 10.0f);
@@ -290,7 +290,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].radiusSlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].radiusSlider);
 
-		ballsSlidersAndAttachments[i].xVelocitySlider.setBounds(656, 115, 65, 65);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setBounds(BALL_X_VELOCITY_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setValue(1.0f);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setDoubleClickReturnValue(true, 1.0f);
@@ -306,7 +306,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		};
 		addChildComponent(ballsSlidersAndAttachments[i].xVelocitySlider);
 
-		ballsSlidersAndAttachments[i].yVelocitySlider.setBounds(744, 115, 65, 65);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setBounds(BALL_Y_VELOCITY_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setValue(1.0f);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setDoubleClickReturnValue(true, 1.0f);
@@ -341,7 +341,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		else
 			startStopButton.setButtonText("Start");
 	};
-	startStopButton.setBounds(420, 350, 140, 40);
+	startStopButton.setBounds(START_STOP_BUTTON_BOUNDS);
 	addAndMakeVisible(startStopButton);
 
 	addRemoveBallButton.setButtonText("Add");
@@ -358,31 +358,31 @@ void BallPitAudioProcessorEditor::initiateComponents()
 			audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->setActive(true);
 		}
 	};
-	addRemoveBallButton.setBounds(580, 350, 140, 40);
+	addRemoveBallButton.setBounds(ADD_REMOVE_BUTTON_BOUNDS);
 	addAndMakeVisible(addRemoveBallButton);
 
-	edgePhaseSlider.setBounds(195, 470, 100, 30);
+	edgePhaseSlider.setBounds(EDGE_PHASE_COMBOBOX_BOUNDS);
 	edgePhaseSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
 	edgePhaseSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
 	edgePhaseSlider.setRange(0, 360, 10);
 	edgePhaseSlider.setValue(0);
 	addAndMakeVisible(edgePhaseSlider);
 	
-	edgeDenomenatorSlider.setBounds(195, 510, 100, 30);
+	edgeDenomenatorSlider.setBounds(EDGE_DENOMENATOR_COMBOBOX_BOUNDS);
 	edgeDenomenatorSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
 	edgeDenomenatorSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
 	edgeDenomenatorSlider.setRange(1, 8, 1);
 	edgeDenomenatorSlider.setValue(1);
 	addAndMakeVisible(edgeDenomenatorSlider);
 
-	edgeRangeSlider.setBounds(630, 530, 100, 30);
+	edgeRangeSlider.setBounds(RANGE_COMBOBOX_BOUNDS);
 	edgeRangeSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
 	edgeRangeSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
 	edgeRangeSlider.setRange(1, 8, 1);
 	edgeRangeSlider.setValue(2);
 	addAndMakeVisible(edgeRangeSlider);
 
-	scaleChoiceComboBox.setBounds(630, 470, 100, 30);
+	scaleChoiceComboBox.setBounds(SCALE_COMBOBOX_BOUNDS);
 	scaleChoiceComboBox.addItem("Chromatic", 1);
 	scaleChoiceComboBox.addItem("Octatonic", 2);
 	scaleChoiceComboBox.addItem("Dominant Diminished", 3);
@@ -405,7 +405,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	scaleChoiceComboBox.setSelectedId(5);
 	addAndMakeVisible(scaleChoiceComboBox);
 
-	rootNoteComboBox.setBounds(630, 590, 100, 30);
+	rootNoteComboBox.setBounds(ROOT_NOTE_COMBOBOX_BOUNDS);
 	rootNoteComboBox.addItem("C",  1);
 	rootNoteComboBox.addItem("C#", 2);
 	rootNoteComboBox.addItem("D",  3);
@@ -421,7 +421,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	rootNoteComboBox.setSelectedId(1);
 	addAndMakeVisible(rootNoteComboBox);
 
-	edgeTypeComboBox.setBounds(195, 550, 100, 30);
+	edgeTypeComboBox.setBounds(EDGE_TYPE_COMBOBOX_BOUNDS);
 	edgeTypeComboBox.addItem("Cyclic up", 1);
 	edgeTypeComboBox.addItem("Cyclic down", 2);
 	edgeTypeComboBox.addItem("Ping pong", 3);
@@ -429,13 +429,13 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgeTypeComboBox.setSelectedId(1);
 	addAndMakeVisible(edgeTypeComboBox);
 
-	ballsPositioningTypeComboBox.setBounds(550, 120, 100, 30);
+	ballsPositioningTypeComboBox.setBounds(BALLS_POSITIONING_TYPE_BUTTON);
 	ballsPositioningTypeComboBox.addItem("Chaos", 1);
 	ballsPositioningTypeComboBox.addItem("By Tempo", 2);
 	ballsPositioningTypeComboBox.setSelectedId(1);
 	addAndMakeVisible(ballsPositioningTypeComboBox);
 
-	snapToGridButton.setBounds(670, 45, 100, 30);
+	snapToGridButton.setBounds(SNAP_TO_GRID_BUTTON);
 	snapToGridButton.setToggleState(false, juce::dontSendNotification);
 	snapToGridButton.setButtonText("Snap To Grid");
 	snapToGridButton.onClick = [this]()
@@ -451,13 +451,13 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		};
 	addAndMakeVisible(snapToGridButton);
 
-	collisionButton.setBounds(550, 45, 100, 30);
+	collisionButton.setBounds(COLLISION_BUTTON);
 	collisionButton.setToggleState(true, juce::dontSendNotification);
 	collisionButton.setButtonText("Collision");
 	addAndMakeVisible(collisionButton);
 
 	openPresetManager.setButtonText("Presets");
-	openPresetManager.setBounds(670, 10, 100, 30);
+	openPresetManager.setBounds(PRESET_MANAGER_MENU_BUTTON);
 	openPresetManager.onClick = [this]()
 		{
 			if (presetPanel.isVisible())
@@ -504,10 +504,10 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 
 	// draw pit corner "polls"
 	g.setColour(juce::Colours::silver);
-	g.fillEllipse(6, 9, 9, 9);
-	g.fillEllipse(401, 9, 9, 9);
-	g.fillEllipse(6, 401, 9, 9);
-	g.fillEllipse(401, 401, 9, 9);
+	g.fillEllipse(PIT_CORNER_TL);
+	g.fillEllipse(PIT_CORNER_TR);
+	g.fillEllipse(PIT_CORNER_BL);
+	g.fillEllipse(PIT_CORNER_BR);
 }
 
 void BallPitAudioProcessorEditor::resized()
@@ -641,10 +641,10 @@ void BallPitAudioProcessorEditor::changeXAndYToFree()
 
 static bool isMouseOverDice(const juce::MouseEvent& event)
 {
-	if (event.position.x > 195 &&
-		event.position.x < 220 &&
-		event.position.y > 595 &&
-		event.position.y < 620)
+	if (event.position.x > EDGE_RANDON_DICE_MIN_X &&
+		event.position.x < EDGE_RANDON_DICE_MIN_Y &&
+		event.position.y > EDGE_RANDON_DICE_MAX_X &&
+		event.position.y < EDGE_RANDON_DICE_MAX_Y)
 	{
 		return true;
 	}

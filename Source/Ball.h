@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "EdgeEventListener.h"
+#include "Configs.h"
 
 #define PI 3.14159265
 #define NO_SPEED 0
@@ -58,10 +59,10 @@ public:
 
 private:
     // pit coordinates- stupid simple
-    const float minX = 12;
-    const float minY = 15;
-    const float maxX = 402;
-    const float maxY = 405;
+    const float minX = PIT_MIN_X + 5;
+    const float minY = PIT_MIN_Y + 5;
+    const float maxX = PIT_MAX_X - 2;
+    const float maxY = PIT_MAX_Y + 1;
     
     float x, y;
     float radius;
