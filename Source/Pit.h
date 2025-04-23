@@ -39,12 +39,6 @@ public:
 	void drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors);
 
 private:
-	// pit coordinates
-	// size is 390x390
-	const float minX = 12;
-	const float minY = 15;
-	const float maxX = 402;
-	const float maxY = 405;
 	
 	Edge edge;
 	

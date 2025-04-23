@@ -29,8 +29,8 @@ void Ball::update()
 	else
 	{
 		speedX = speedY = 0;
-		x = 440 + ballIndex * 50;
-		y = 380;
+		x = PIT_MAX_X + 20 + ballIndex * 50;
+		y = 800;
 	}
 
 }

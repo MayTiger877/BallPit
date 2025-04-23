@@ -502,8 +502,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		std::string ballXVelocityId = "ballXVelocity" + std::to_string(i);
 		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
 
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", 0.0f, 390.0f, 10.0f));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", 0.0f, 390.0f, 10.0f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, 10.0f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, 10.0f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", 5.0f, 25.0f, 0.5f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Velocity", 0.0f, 10.0f, 0.5f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", 0.0f, 360.0f, 1.0f));

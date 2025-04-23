@@ -245,11 +245,11 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	for (int i = 0; i < 3; i++)
 	{
 		ballsSlidersAndAttachments[i].xSlider.setBounds(BALL_X_KNOB_BOUNDS);
-		ballsSlidersAndAttachments[i].xSlider.setValue(75.0f + (i * 130.0f));
+		ballsSlidersAndAttachments[i].xSlider.setValue(PIT_MIN_X + 50 + (i * 130.0f));
 		ballsSlidersAndAttachments[i].xSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].xSlider.setDoubleClickReturnValue(true, 50.0f);
 		ballsSlidersAndAttachments[i].xSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballsSlidersAndAttachments[i].xSlider.setRange(0.0f, 390.0f, 10.0f);
+		ballsSlidersAndAttachments[i].xSlider.setRange(BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, 10.0f);
 		ballsSlidersAndAttachments[i].xSlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].xSlider);
 
@@ -258,7 +258,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].ySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 		ballsSlidersAndAttachments[i].ySlider.setDoubleClickReturnValue(true, 50.0f);
 		ballsSlidersAndAttachments[i].ySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballsSlidersAndAttachments[i].ySlider.setRange(0.0f, 390.0f, 10.0f);
+		ballsSlidersAndAttachments[i].ySlider.setRange(BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, 10.0f);
 		ballsSlidersAndAttachments[i].ySlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].ySlider);
 
@@ -542,8 +542,8 @@ void BallPitAudioProcessorEditor::changeXAndYToSnapToGrid()
 	for (int i = 0; i < 3; i++)
 	{
 		// Set the sliders to the snap-to-grid range
-		ballsSlidersAndAttachments[i].xSlider.setRange(0.0f, 390.0f, 48.75f);
-		ballsSlidersAndAttachments[i].ySlider.setRange(0.0f, 390.0f, 48.75f);
+		ballsSlidersAndAttachments[i].xSlider.setRange(BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, 48.75f);
+		ballsSlidersAndAttachments[i].ySlider.setRange(BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, 48.75f);
 
 		// Get parameter IDs
 		std::string ballXId = "ballX" + std::to_string(i);
@@ -586,8 +586,8 @@ void BallPitAudioProcessorEditor::changeXAndYToFree()
 	for (int i = 0; i < 3; i++)
 	{
 		// Set the sliders to the snap-to-grid range
-		ballsSlidersAndAttachments[i].xSlider.setRange(0.0f, 390.0f, 10.0f);
-		ballsSlidersAndAttachments[i].ySlider.setRange(0.0f, 390.0f, 10.0f);
+		ballsSlidersAndAttachments[i].xSlider.setRange(BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, 10.0f);
+		ballsSlidersAndAttachments[i].ySlider.setRange(BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, 10.0f);
 
 		// Get parameter IDs
 		std::string ballXId = "ballX" + std::to_string(i);

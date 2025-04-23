@@ -41,10 +41,10 @@
 #define APP_WINDOW_HIGHT (654)
 
 #define PIT_SIZE (396,396)
-#define PIT_MIN_X (220)
-#define PIT_MIN_Y (60)
-#define PIT_MAX_X (616)
-#define PIT_MAX_Y (456)
+#define PIT_MIN_X 220.0
+#define PIT_MIN_Y 60.0
+#define PIT_MAX_X 616.0
+#define PIT_MAX_Y 456.0
 
 #define PIT_EDGE_THICKNESS 2
 #define PIT_CORNER_THICKNESS 12
@@ -86,3 +86,12 @@
 #define BALLS_POSITIONING_TYPE_BUTTON juce::Rectangle<int>(15, 530, 90, 25)
 #define SNAP_TO_GRID_BUTTON juce::Rectangle<int>(15, 570, 90, 25)
 #define COLLISION_BUTTON juce::Rectangle<int>(15, 610, 90, 25)
+
+//-----------------------------------------------------------------------
+// Sliders values
+
+#define BALL_X_SLIDER_MIN PIT_MIN_X
+#define BALL_X_SLIDER_MAX PIT_MAX_X
+
+#define BALL_Y_SLIDER_MIN PIT_MIN_Y
+#define BALL_Y_SLIDER_MAX PIT_MAX_Y
