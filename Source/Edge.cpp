@@ -126,13 +126,14 @@ void Edge::updateAbstractedEdge()
 	int split = 1568 / numOfSplits;
 	int remainder = 1568 % numOfSplits;
 	int index = 0;
+	int startingIndex = juce::jmap<int>(this->phase, 0, 360, 0, 1567);
 	int colorIndex = (edgeType == 2) ? (rand() % numOfColors) : 0; // if random, so also first edge part is random, daa....
 
 	for (int i = 0; i < numOfSplits; i++)
 	{
 		for (int j = 0; j < split; j++)
 		{
-			index = (j + (i * split) + this->phase) % 1568;
+			index = (j + (i * split) + startingIndex) % 1568;
 			abstractedEdge[index] = this->scaleNotes[colorIndex];
 			abstractedEdgeColors[index] = colorIndex;
 		}

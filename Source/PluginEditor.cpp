@@ -364,7 +364,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgePhaseSlider.setBounds(EDGE_PHASE_COMBOBOX_BOUNDS);
 	edgePhaseSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
 	edgePhaseSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
-	edgePhaseSlider.setRange(0, 360, 10);
+	edgePhaseSlider.setRange(0, 360, 5);
 	edgePhaseSlider.setValue(0);
 	addAndMakeVisible(edgePhaseSlider);
 	

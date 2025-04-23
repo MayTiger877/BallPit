@@ -158,53 +158,41 @@ static void drawSingleRect(juce::Graphics& g, int index, int rectSizeToDraw)
 	}
 }
 
-static void drawRectDividers(juce::Graphics& g, int numOfSplits) // KISS  W(-_-)W
+static void drawSingleRectDivider(juce::Graphics& g, int dividerSize, int currentIndex)
 {
+	if (currentIndex < 392)
+	{
+		currentIndex = currentIndex - (dividerSize / 2);
+		g.fillRect(PIT_MIN_X, PIT_MIN_Y + 1 + (currentIndex % 392), PIT_EDGE_THICKNESS + 1, dividerSize);
+	}
+	else if ((currentIndex >= 392) && (currentIndex < 784))
+	{
+		g.fillRect(PIT_MIN_X + (currentIndex % 392), PIT_MAX_Y - 3, dividerSize, PIT_EDGE_THICKNESS + 1);
+	}
+	else if ((currentIndex >= 784) && (currentIndex < 1176))
+	{
+		g.fillRect(PIT_MAX_X - 3, PIT_MAX_Y - 1 - (currentIndex % 392) - dividerSize, PIT_EDGE_THICKNESS + 1, dividerSize);
+	}
+	else if ((currentIndex >= 1176) && (currentIndex < 1568))
+	{
+		g.fillRect(PIT_MAX_X - 1 - dividerSize - (currentIndex % 392), PIT_MIN_Y, dividerSize, PIT_EDGE_THICKNESS + 1);
+	}
+}
+
+static void drawRectDividers(juce::Graphics& g, int numOfSplits, int currentPhase)
+{
+	if (numOfSplits == 1)
+		return;
+
 	g.setColour(juce::Colours::white);
+	int currentSplitPos = 0;
 	int dividerSize = 4; // must be even
 	jassert((numOfSplits > 0) && (dividerSize % 2 == 0));
 
-	if ((numOfSplits == 1) ||
-		(numOfSplits == 2) ||
-		(numOfSplits == 4))
+	for (int i = 0; i < numOfSplits; i++)
 	{
-		return;
-	}
-	else if (numOfSplits == 3)
-	{
-		g.fillRect(PIT_MIN_X + 4 + (523 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
-		g.fillRect(PIT_MAX_X - 1, PIT_MAX_Y - (1045 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
-	}
-	else if (numOfSplits == 5)
-	{
-		g.fillRect(PIT_MIN_X, PIT_MIN_Y + (314 % 392) - (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
-		g.fillRect(PIT_MIN_X + (627 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
-		g.fillRect(PIT_MAX_X, PIT_MAX_Y - (941 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
-		g.fillRect(PIT_MAX_X - dividerSize - (1254 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, PIT_EDGE_THICKNESS);
-	}
-	else if (numOfSplits == 6)
-	{
-		g.fillRect(PIT_MIN_X, PIT_MIN_Y + (261 % 392) - (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
-		g.fillRect(PIT_MIN_X + 4 + (523 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
-		// can pass the 3rd
-		g.fillRect(PIT_MAX_X - 1, PIT_MAX_Y + 1 - (1045 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
-		g.fillRect(PIT_MAX_X - dividerSize - (1307 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, PIT_EDGE_THICKNESS);
-	}
-	else if (numOfSplits == 7)
-	{
-		g.fillRect(PIT_MIN_X, PIT_MIN_Y + 3 + (224 % 392) - (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
-		g.fillRect(PIT_MIN_X + 4 + (448 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
-		g.fillRect(PIT_MIN_X + 4 + (672 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
-		g.fillRect(PIT_MAX_X, PIT_MAX_Y + 1 - (896 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
-		g.fillRect(PIT_MAX_X, PIT_MAX_Y + 1 - (1120 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
-		g.fillRect(PIT_MAX_X + 1 - dividerSize - (1344 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, PIT_EDGE_THICKNESS);
-	}
-	else if (numOfSplits == 8)
-	{
-		g.fillRect(PIT_MIN_X, PIT_MIN_Y + 3 + (196 % 392) - (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
-		g.fillRect(PIT_MIN_X + 4 + (588 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
-		g.fillRect(PIT_MAX_X, PIT_MAX_Y + 1 - (980 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
-		g.fillRect(PIT_MAX_X + 1 - dividerSize - (1372 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, PIT_EDGE_THICKNESS);
+		currentSplitPos = (static_cast<int>(i * 1568 / numOfSplits) + currentPhase) % 1568;
+		drawSingleRectDivider(g, dividerSize, currentSplitPos);
 	}
 }
 
@@ -212,12 +200,13 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors)
 {
 	int numOfSplits = this->edge.getDenomenator();
 	int numOfColors = this->edge.getRange();
+	int currentPhase = juce::jmap<int>(this->edge.getPhase(), 0, 360, 0, 1567);
+	if (currentPhase == 1567) { currentPhase = 0; } // weird but does the job.....
 	const int* pointerToAbstractedEdgeColors = this->edge.getAbstractedEdgeColors();
 	int noteRectSize = 1568 / numOfSplits;
 	int reminder = 1568 % numOfSplits;
-	int index = this->edge.getPhase() % 1568;
+	int index = currentPhase;
 	int currentRectSize = -1;
-	int temp = pointerToAbstractedEdgeColors[index];
 	g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
 
 	for (int i = 0; i < numOfSplits;)
@@ -230,6 +219,12 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors)
 			{
 				drawSingleRect(g, index, noteRectSize);
 				index = (index + noteRectSize) % 1568;
+				if ((index > 1560) && (reminder != 0))
+				{
+					drawSingleRect(g, index, reminder);
+					index = (index + reminder) % 1568;
+					reminder = 0;
+				}
 				i++;
 			}
 			else
@@ -240,13 +235,13 @@ void Pit::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors)
 			}
 		} while (currentRectSize > 0);
 
-		g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
 		noteRectSize = 1568 / numOfSplits;
+		g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
 	}
 
 	if (this->edge.getRange() > 1)
 	{
-		drawRectDividers(g, numOfSplits);
+		drawRectDividers(g, numOfSplits, currentPhase);
 	}
 
 	if (reminder != 0) 
