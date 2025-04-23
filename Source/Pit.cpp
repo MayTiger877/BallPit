@@ -142,19 +142,19 @@ static void drawSingleRect(juce::Graphics& g, int index, int rectSizeToDraw)
 {
 	if (index < 392)
 	{
-		g.fillRect(PIT_MIN_X, PIT_MIN_Y + (index % 392), 5, rectSizeToDraw);
+		g.fillRect(PIT_MIN_X + 1, PIT_MIN_Y + 1 + (index % 392), PIT_EDGE_THICKNESS, rectSizeToDraw);
 	}
 	else if ((index >= 392) && (index < 784))
 	{
-		g.fillRect(PIT_MIN_X + 4 + (index % 392), PIT_MAX_Y, rectSizeToDraw, 5);
+		g.fillRect(PIT_MIN_X + 2 + (index % 392), PIT_MAX_Y - 3, rectSizeToDraw, PIT_EDGE_THICKNESS);
 	}
 	else if ((index >= 784) && (index < 1176))
 	{
-		g.fillRect(PIT_MAX_X - 1, PIT_MAX_Y + 1 - (index % 392) - rectSizeToDraw, 5, rectSizeToDraw);
+		g.fillRect(PIT_MAX_X - 3, PIT_MAX_Y - 1 - (index % 392) - rectSizeToDraw, PIT_EDGE_THICKNESS, rectSizeToDraw);
 	}
 	else if ((index >= 1176) && (index < 1568))
 	{
-		g.fillRect(PIT_MAX_X - rectSizeToDraw - (index % 392), PIT_MIN_Y - 3, rectSizeToDraw, 5);
+		g.fillRect(PIT_MAX_X - 1 - rectSizeToDraw - (index % 392), PIT_MIN_Y + 1, rectSizeToDraw, PIT_EDGE_THICKNESS);
 	}
 }
 
@@ -172,39 +172,39 @@ static void drawRectDividers(juce::Graphics& g, int numOfSplits) // KISS  W(-_-)
 	}
 	else if (numOfSplits == 3)
 	{
-		g.fillRect(PIT_MIN_X + 4 + (523 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, 5);
-		g.fillRect(PIT_MAX_X - 1, PIT_MAX_Y - (1045 % 392) - dividerSize + (dividerSize / 2), 5, dividerSize);
+		g.fillRect(PIT_MIN_X + 4 + (523 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
+		g.fillRect(PIT_MAX_X - 1, PIT_MAX_Y - (1045 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
 	}
 	else if (numOfSplits == 5)
 	{
-		g.fillRect(PIT_MIN_X, PIT_MIN_Y + (314 % 392) - (dividerSize / 2), 5, dividerSize);
-		g.fillRect(PIT_MIN_X + (627 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, 5);
-		g.fillRect(PIT_MAX_X, PIT_MAX_Y - (941 % 392) - dividerSize + (dividerSize / 2), 5, dividerSize);
-		g.fillRect(PIT_MAX_X - dividerSize - (1254 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, 5);
+		g.fillRect(PIT_MIN_X, PIT_MIN_Y + (314 % 392) - (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
+		g.fillRect(PIT_MIN_X + (627 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
+		g.fillRect(PIT_MAX_X, PIT_MAX_Y - (941 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
+		g.fillRect(PIT_MAX_X - dividerSize - (1254 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, PIT_EDGE_THICKNESS);
 	}
 	else if (numOfSplits == 6)
 	{
-		g.fillRect(PIT_MIN_X, PIT_MIN_Y + (261 % 392) - (dividerSize / 2), 5, dividerSize);
-		g.fillRect(PIT_MIN_X + 4 + (523 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, 5);
+		g.fillRect(PIT_MIN_X, PIT_MIN_Y + (261 % 392) - (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
+		g.fillRect(PIT_MIN_X + 4 + (523 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
 		// can pass the 3rd
-		g.fillRect(PIT_MAX_X - 1, PIT_MAX_Y + 1 - (1045 % 392) - dividerSize + (dividerSize / 2), 5, dividerSize);
-		g.fillRect(PIT_MAX_X - dividerSize - (1307 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, 5);
+		g.fillRect(PIT_MAX_X - 1, PIT_MAX_Y + 1 - (1045 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
+		g.fillRect(PIT_MAX_X - dividerSize - (1307 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, PIT_EDGE_THICKNESS);
 	}
 	else if (numOfSplits == 7)
 	{
-		g.fillRect(PIT_MIN_X, PIT_MIN_Y + 3 + (224 % 392) - (dividerSize / 2), 5, dividerSize);
-		g.fillRect(PIT_MIN_X + 4 + (448 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, 5);
-		g.fillRect(PIT_MIN_X + 4 + (672 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, 5);
-		g.fillRect(PIT_MAX_X, PIT_MAX_Y + 1 - (896 % 392) - dividerSize + (dividerSize / 2), 5, dividerSize);
-		g.fillRect(PIT_MAX_X, PIT_MAX_Y + 1 - (1120 % 392) - dividerSize + (dividerSize / 2), 5, dividerSize);
-		g.fillRect(PIT_MAX_X + 1 - dividerSize - (1344 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, 5);
+		g.fillRect(PIT_MIN_X, PIT_MIN_Y + 3 + (224 % 392) - (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
+		g.fillRect(PIT_MIN_X + 4 + (448 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
+		g.fillRect(PIT_MIN_X + 4 + (672 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
+		g.fillRect(PIT_MAX_X, PIT_MAX_Y + 1 - (896 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
+		g.fillRect(PIT_MAX_X, PIT_MAX_Y + 1 - (1120 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
+		g.fillRect(PIT_MAX_X + 1 - dividerSize - (1344 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, PIT_EDGE_THICKNESS);
 	}
 	else if (numOfSplits == 8)
 	{
-		g.fillRect(PIT_MIN_X, PIT_MIN_Y + 3 + (196 % 392) - (dividerSize / 2), 5, dividerSize);
-		g.fillRect(PIT_MIN_X + 4 + (588 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, 5);
-		g.fillRect(PIT_MAX_X, PIT_MAX_Y + 1 - (980 % 392) - dividerSize + (dividerSize / 2), 5, dividerSize);
-		g.fillRect(PIT_MAX_X + 1 - dividerSize - (1372 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, 5);
+		g.fillRect(PIT_MIN_X, PIT_MIN_Y + 3 + (196 % 392) - (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
+		g.fillRect(PIT_MIN_X + 4 + (588 % 392) - (dividerSize / 2), PIT_MAX_Y, dividerSize, PIT_EDGE_THICKNESS);
+		g.fillRect(PIT_MAX_X, PIT_MAX_Y + 1 - (980 % 392) - dividerSize + (dividerSize / 2), PIT_EDGE_THICKNESS, dividerSize);
+		g.fillRect(PIT_MAX_X + 1 - dividerSize - (1372 % 392) + (dividerSize / 2), PIT_MIN_Y, dividerSize, PIT_EDGE_THICKNESS);
 	}
 }
 
