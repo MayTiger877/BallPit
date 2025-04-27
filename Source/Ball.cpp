@@ -83,22 +83,23 @@ void Ball::draw(juce::Graphics& g) const
 				  radius * 2.0f + mouseOnMagnifier * 2,
 				  radius * 2.0f + mouseOnMagnifier * 2);
 
-	if (isMoving == false) // draw direction arrow
+	if (isMoving == false) // draw direction and length arrow
 	{
 		float radiusRatio = pow(radius, 1.2);
 		float angleInRadians = (angle - 90) * (PI / 180.0f); // (angle-90) is the actual knob direction
+		float arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 10.0, 0.0, 15.0);
 		float startX = x + (5.0f + mouseOnMagnifier + radius) * cos(angleInRadians);
-		float endX = x + (20.0f + mouseOnMagnifier + radiusRatio) * cos(angleInRadians);
+		float endX = x + (20.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * cos(angleInRadians);
 		float startY = y + (5.0f + mouseOnMagnifier + radius) * sin(angleInRadians);
-		float endY = y + (20.0f + mouseOnMagnifier + radiusRatio) * sin(angleInRadians);
+		float endY = y + (20.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * sin(angleInRadians);
 		float arrowThickness = (2.5f + (radius / 6.0f));
-		float arrowHeadWidth = (6.0f + (radius / 3.0f));
+		float arrowHeadWidth = (6.0f + (radius / 3.0f) + arrowLenghtMultiplierByVelocity / 3.0);
 		float arrowHeadLength = (8.0f + (radius / 8.0f));
 		juce::Line<float> line(startX, startY, endX, endY);
 		startX = x + (3.0f + mouseOnMagnifier + radius) * cos(angleInRadians);
-		endX = x + (24.0f + mouseOnMagnifier + radiusRatio) * cos(angleInRadians);
+		endX = x + (24.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * cos(angleInRadians);
 		startY = y + (3.0f + mouseOnMagnifier + radius) * sin(angleInRadians);
-		endY = y + (24.0f + mouseOnMagnifier + radiusRatio) * sin(angleInRadians);
+		endY = y + (24.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * sin(angleInRadians);
 		juce::Line<float> thickLine(startX, startY, endX, endY);
 
 		g.setColour(juce::Colours::black);
