@@ -88,6 +88,9 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	std::string collisionID = "collision";
 	collisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, collisionID, collisionButton);
 	
+	std::string quantizationID = "quantization";
+	quantizationAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, quantizationID, quantizationSlider);
+
 	audioProcessor.addChangeListener(this); // Register as listener
 
 	addChildComponent(&presetPanel);
@@ -140,7 +143,7 @@ void BallPitAudioProcessorEditor::saveGUIState()
 	GUIState.setProperty("edgeType", edgeTypeComboBox.getSelectedItemIndex(), nullptr);
 	GUIState.setProperty("ballsPositioningType", ballsPositioningTypeComboBox.getSelectedItemIndex(), nullptr);
 	GUIState.setProperty("snapToGrid", snapToGridButton.getToggleState(), nullptr);
-	GUIState.setProperty("collision", collisionButton.getToggleState(), nullptr);
+	GUIState.setProperty("quantization", quantizationSlider.getValue(), nullptr);
 
 	audioProcessor.saveGUIState(GUIState);
 	audioProcessor.removeChangeListener(this);
@@ -178,6 +181,7 @@ void BallPitAudioProcessorEditor::loadGUIState()
 	ballsPositioningTypeComboBox.setSelectedItemIndex(GUIState.getProperty("ballsPositioningType"), juce::dontSendNotification);
 	snapToGridButton.setToggleState(GUIState.getProperty("snapToGrid"), juce::dontSendNotification);
 	collisionButton.setToggleState(GUIState.getProperty("collision"), juce::dontSendNotification);
+	quantizationSlider.setValue(GUIState.getProperty("quantization"), juce::dontSendNotification);
 }
 
 void BallPitAudioProcessorEditor::displayKnobsByTab()
@@ -429,13 +433,13 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgeTypeComboBox.setSelectedId(1);
 	addAndMakeVisible(edgeTypeComboBox);
 
-	ballsPositioningTypeComboBox.setBounds(BALLS_POSITIONING_TYPE_BUTTON);
+	ballsPositioningTypeComboBox.setBounds(BALLS_POSITIONING_TYPE_BUTTON_BOUNDS);
 	ballsPositioningTypeComboBox.addItem("Chaos", 1);
 	ballsPositioningTypeComboBox.addItem("By Tempo", 2);
 	ballsPositioningTypeComboBox.setSelectedId(1);
 	addAndMakeVisible(ballsPositioningTypeComboBox);
 
-	snapToGridButton.setBounds(SNAP_TO_GRID_BUTTON);
+	snapToGridButton.setBounds(SNAP_TO_GRID_BUTTON_BOUNDS);
 	snapToGridButton.setToggleState(false, juce::dontSendNotification);
 	snapToGridButton.setButtonText("Snap To Grid");
 	snapToGridButton.onClick = [this]()
@@ -451,13 +455,21 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		};
 	addAndMakeVisible(snapToGridButton);
 
-	collisionButton.setBounds(COLLISION_BUTTON);
+	collisionButton.setBounds(COLLISION_BUTTON_BOUNDS);
 	collisionButton.setToggleState(true, juce::dontSendNotification);
 	collisionButton.setButtonText("Collision");
 	addAndMakeVisible(collisionButton);
 
+	quantizationSlider.setBounds(QUANTIZATION_KNOB_BOUNDS);
+	quantizationSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+	quantizationSlider.setDoubleClickReturnValue(true, 10.0f);
+	quantizationSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+	quantizationSlider.setValue(0.0);
+	quantizationSlider.setRange(0.0, 100.0, 1.0);
+	addAndMakeVisible(quantizationSlider);
+
 	openPresetManager.setButtonText("Presets");
-	openPresetManager.setBounds(PRESET_MANAGER_MENU_BUTTON);
+	openPresetManager.setBounds(PRESET_MANAGER_MENU_BUTTON_BOUNDS);
 	openPresetManager.onClick = [this]()
 		{
 			if (presetPanel.isVisible())
@@ -641,10 +653,10 @@ void BallPitAudioProcessorEditor::changeXAndYToFree()
 
 static bool isMouseOverDice(const juce::MouseEvent& event)
 {
-	if (event.position.x > EDGE_RANDON_DICE_MIN_X &&
-		event.position.x < EDGE_RANDON_DICE_MIN_Y &&
-		event.position.y > EDGE_RANDON_DICE_MAX_X &&
-		event.position.y < EDGE_RANDON_DICE_MAX_Y)
+	if (event.position.x > EDGE_RANDOM_DICE_MIN_X &&
+		event.position.x < EDGE_RANDOM_DICE_MIN_Y &&
+		event.position.y > EDGE_RANDOM_DICE_MAX_X &&
+		event.position.y < EDGE_RANDOM_DICE_MAX_Y)
 	{
 		return true;
 	}

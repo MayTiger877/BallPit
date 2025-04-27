@@ -75,6 +75,9 @@ private:
 
 	juce::Slider edgePhaseSlider, edgeDenomenatorSlider, edgeRangeSlider;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> edgePhaseAttachment, edgeDenomenatorAttachment, edgeRangeAttachment;
+
+	juce::Slider quantizationSlider;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> quantizationAttachment;
 	
 	std::unique_ptr<juce::TabbedComponent> tabs;
 

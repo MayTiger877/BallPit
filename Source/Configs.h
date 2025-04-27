@@ -54,38 +54,42 @@
 #define PIT_CORNER_BL juce::Rectangle<float>(PIT_MIN_X - (PIT_CORNER_THICKNESS / 4), PIT_MAX_Y - (3 * PIT_CORNER_THICKNESS / 4), PIT_CORNER_THICKNESS, PIT_CORNER_THICKNESS)
 #define PIT_CORNER_BR juce::Rectangle<float>(PIT_MAX_X - (3 * PIT_CORNER_THICKNESS / 4), PIT_MAX_Y - (3 * PIT_CORNER_THICKNESS / 4), PIT_CORNER_THICKNESS, PIT_CORNER_THICKNESS)
 
-#define BALLS_TABS_BOUNDS juce::Rectangle<int>(120, 490, 50, 150)
+#define BALLS_TABS_BOUNDS juce::Rectangle<int>(415, 490, 50, 150)
 
-#define BALL_X_KNOB_BOUNDS juce::Rectangle<int>(265, 525, 65, 65)
-#define BALL_Y_KNOB_BOUNDS juce::Rectangle<int>(370, 525, 65, 65)
-#define BALL_DIRECTION_KNOB_BOUNDS juce::Rectangle<int>(500, 525, 65, 65)
-#define BALL_SPEED_KNOB_BOUNDS juce::Rectangle<int>(630, 525, 65, 65)
-#define BALL_SIZE_KNOB_BOUNDS juce::Rectangle<int>(750, 525, 65, 65)
-#define BALL_X_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(550, 525, 65, 65)
-#define BALL_Y_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(650, 525, 65, 65)
+#define BALL_X_KNOB_BOUNDS juce::Rectangle<int>(600, 522, 55, 55)
+#define BALL_Y_KNOB_BOUNDS juce::Rectangle<int>(710, 522, 55, 55)
+#define ADD_REMOVE_BUTTON_BOUNDS juce::Rectangle<int>(485, 522, 80, 25)
+#define BALL_SPEED_KNOB_BOUNDS juce::Rectangle<int>(485, 595, 55, 55)
+#define BALL_SIZE_KNOB_BOUNDS juce::Rectangle<int>(600, 595, 55, 55)
+#define BALL_DIRECTION_KNOB_BOUNDS juce::Rectangle<int>(710, 595, 55, 55)
+#define BALL_X_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(550, 595, 55, 55)
+#define BALL_Y_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(650, 595, 55, 55)
 
-#define EDGE_PHASE_COMBOBOX_BOUNDS juce::Rectangle<int>(50, 155, 100, 25)
-#define EDGE_DENOMENATOR_COMBOBOX_BOUNDS juce::Rectangle<int>(50, 235 , 100, 25)
-#define EDGE_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(50, 315, 100, 25)
+#define EDGE_PHASE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 130, 100, 25)
+#define EDGE_DENOMENATOR_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 185 , 100, 25)
+#define EDGE_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 240, 100, 25)
 
-#define ROOT_NOTE_COMBOBOX_BOUNDS juce::Rectangle<int>(670, 155, 100, 25)
-#define SCALE_COMBOBOX_BOUNDS juce::Rectangle<int>(670, 235, 100, 25)
-#define RANGE_COMBOBOX_BOUNDS juce::Rectangle<int>(670, 315, 100, 25)
+#define ROOT_NOTE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 340, 100, 25)
+#define SCALE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 395, 100, 25)
+#define RANGE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 450, 100, 25)
 
-#define EDGE_LAYOUT_DICE_BOUNDS juce::Rectangle<int>(81, 365, 40, 40)
-#define EDGE_RANDON_DICE_MIN_X EDGE_LAYOUT_DICE_BOUNDS.getX()
-#define EDGE_RANDON_DICE_MIN_Y EDGE_LAYOUT_DICE_BOUNDS.getY()
-#define EDGE_RANDON_DICE_MAX_X (EDGE_LAYOUT_DICE_BOUNDS.getX() + EDGE_LAYOUT_DICE_BOUNDS.getWidth())
-#define EDGE_RANDON_DICE_MAX_Y (EDGE_LAYOUT_DICE_BOUNDS.getY() + EDGE_LAYOUT_DICE_BOUNDS.getHeight())
+#define EDGE_LAYOUT_DICE_BOUNDS juce::Rectangle<int>(182, 68, 20, 20)
+#define EDGE_RANDOM_DICE_MIN_X EDGE_LAYOUT_DICE_BOUNDS.getX()
+#define EDGE_RANDOM_DICE_MIN_Y EDGE_LAYOUT_DICE_BOUNDS.getY()
+#define EDGE_RANDOM_DICE_MAX_X (EDGE_LAYOUT_DICE_BOUNDS.getX() + EDGE_LAYOUT_DICE_BOUNDS.getWidth())
+#define EDGE_RANDOM_DICE_MAX_Y (EDGE_LAYOUT_DICE_BOUNDS.getY() + EDGE_LAYOUT_DICE_BOUNDS.getHeight())
 
-#define SCALE_PARAMS_DICE_BOUNDS juce::Rectangle<int>(698, 365, 40 ,40)
+#define SCALE_PARAMS_DICE_BOUNDS juce::Rectangle<int>(698, 365, 20 ,20)
+// TODO- add this dice
 
 #define START_STOP_BUTTON_BOUNDS juce::Rectangle<int>(43, 13, 100, 25)
-#define PRESET_MANAGER_MENU_BUTTON juce::Rectangle<int>(675, 13, 100, 25)
-#define ADD_REMOVE_BUTTON_BOUNDS juce::Rectangle<int>(190, 600, 100, 25)
-#define BALLS_POSITIONING_TYPE_BUTTON juce::Rectangle<int>(15, 530, 90, 25)
-#define SNAP_TO_GRID_BUTTON juce::Rectangle<int>(15, 570, 90, 25)
-#define COLLISION_BUTTON juce::Rectangle<int>(15, 610, 90, 25)
+#define PRESET_MANAGER_MENU_BUTTON_BOUNDS juce::Rectangle<int>(675, 13, 100, 25)
+
+#define QUANTIZATION_KNOB_BOUNDS juce::Rectangle<int>(50, 522, 55, 55)
+#define VOLUME_VARIATION_KNOB_BOUNDS juce::Rectangle<int>(170, 510, 55, 55)
+#define SNAP_TO_GRID_BUTTON_BOUNDS juce::Rectangle<int>(300, 530, 90, 25)
+#define COLLISION_BUTTON_BOUNDS juce::Rectangle<int>(40, 600, 90, 25)
+#define BALLS_POSITIONING_TYPE_BUTTON_BOUNDS juce::Rectangle<int>(185, 600, 90, 25)
 
 //-----------------------------------------------------------------------
 // Sliders values
