@@ -44,6 +44,9 @@ public:
 	bool isActive() const { return active; }
 	void setActive(bool active) { this->active = active; }
     
+    float getQuantization() { return this->quantization; }
+    void setQuantization(float newQuantization) { this->quantization = newQuantization; }
+
     void updateBallAbstractedEdge(const int* abstractedEdge);
     void updateScaleNotes(int* scaleNotes);
 
@@ -74,6 +77,7 @@ private:
     juce::Path ballArrow;
 
     double sampleRate;
+    float quantization;
     bool isMoving = false;
     bool isMouseOverBall = false;
     

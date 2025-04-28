@@ -88,6 +88,7 @@ public:
 	void getUpdatedBallParams();
 	void getUpdatedEdgeParams();
 	void setXYVelocityByTempo(float& xVelocity, float& yVelocity, float ballRadius);
+	void updateBallsQuantization();
 
 	void setWasGUIUpdatedToTrue() { this->wasGUIUpdated = true; }
 	void setWasEdgeParamChangedFlagToTrue() { this->wasEdgeParamChanged = true; }

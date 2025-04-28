@@ -125,8 +125,7 @@ void BallPitAudioProcessorEditor::saveGUIState()
 		std::string ballXVelocityId = "ballXVelocity" + std::to_string(i);
 		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
 
-		float temp = ballsSlidersAndAttachments[i].xSlider.getValue();
-		GUIState.setProperty(juce::Identifier(ballXId), temp, nullptr);
+		GUIState.setProperty(juce::Identifier(ballXId), ballsSlidersAndAttachments[i].xSlider.getValue(), nullptr);
 		GUIState.setProperty(juce::Identifier(ballYId), ballsSlidersAndAttachments[i].ySlider.getValue(), nullptr);
 		GUIState.setProperty(juce::Identifier(ballRadiusId), ballsSlidersAndAttachments[i].radiusSlider.getValue(), nullptr);
 		GUIState.setProperty(juce::Identifier(ballVelocityId), ballsSlidersAndAttachments[i].velocitySlider.getValue(), nullptr);
@@ -548,36 +547,27 @@ void BallPitAudioProcessorEditor::changeXAndYToSnapToGrid()
 	lastBall2Position = { ballsSlidersAndAttachments[1].xSlider.getValue(), ballsSlidersAndAttachments[1].ySlider.getValue() };
 	lastBall3Position = { ballsSlidersAndAttachments[2].xSlider.getValue(), ballsSlidersAndAttachments[2].ySlider.getValue() };
 
-	// Define the snapping factor
-	constexpr float gridFactor = 48.75f; // Scaling factor for snapping
+	constexpr float gridFactor = 48.75f; // scaling factor for snapping-- 390 = 48.75px * 8 parts
 
 	for (int i = 0; i < 3; i++)
 	{
-		// Set the sliders to the snap-to-grid range
 		ballsSlidersAndAttachments[i].xSlider.setRange(BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, 48.75f);
 		ballsSlidersAndAttachments[i].ySlider.setRange(BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, 48.75f);
 
-		// Get parameter IDs
 		std::string ballXId = "ballX" + std::to_string(i);
 		std::string ballYId = "ballY" + std::to_string(i);
 
-		// Get the current parameter values
-		float currentX = audioProcessor.valueTreeState.getRawParameterValue(ballXId)->load() - 12;
-		float currentY = audioProcessor.valueTreeState.getRawParameterValue(ballYId)->load() - 12;
-
-		// Snap values to the nearest grid step based on the scaling factor
+		float currentX = audioProcessor.valueTreeState.getRawParameterValue(ballXId)->load() - PIT_MIN_X;
+		float currentY = audioProcessor.valueTreeState.getRawParameterValue(ballYId)->load() - PIT_MIN_Y;
 		float snappedX = std::round(currentX / gridFactor);
 		float snappedY = std::round(currentY / gridFactor);
 
-		// Clamp the snapped values within the slider range
 		snappedX = juce::jlimit(0.0f, 9.0f, snappedX);
 		snappedY = juce::jlimit(0.0f, 9.0f, snappedY);
 
-		// Update the sliders
 		ballsSlidersAndAttachments[i].xSlider.setValue(snappedX, juce::sendNotification);
 		ballsSlidersAndAttachments[i].ySlider.setValue(snappedY, juce::sendNotification);
 
-		// Update the parameters and notify the host
 		if (auto* xParam = audioProcessor.valueTreeState.getParameter(ballXId))
 		{
 			xParam->setValueNotifyingHost((snappedX * gridFactor) / 390.0f); // Scale to normalized 0-1 range
@@ -592,36 +582,30 @@ void BallPitAudioProcessorEditor::changeXAndYToSnapToGrid()
 
 void BallPitAudioProcessorEditor::changeXAndYToFree()
 {
-	// Define the snapping factor
 	constexpr float gridFactor = 10.0f; // Scaling factor for snapping
 
 	for (int i = 0; i < 3; i++)
 	{
-		// Set the sliders to the snap-to-grid range
 		ballsSlidersAndAttachments[i].xSlider.setRange(BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, 10.0f);
 		ballsSlidersAndAttachments[i].ySlider.setRange(BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, 10.0f);
 
-		// Get parameter IDs
 		std::string ballXId = "ballX" + std::to_string(i);
 		std::string ballYId = "ballY" + std::to_string(i);
 
-		// Get the current parameter values
-		float currentX = audioProcessor.valueTreeState.getRawParameterValue(ballXId)->load();
-		float currentY = audioProcessor.valueTreeState.getRawParameterValue(ballYId)->load();
-
-		// Snap values to the nearest grid step based on the scaling factor
+		float currentX = audioProcessor.valueTreeState.getRawParameterValue(ballXId)->load() - PIT_MIN_X;
+		float currentY = audioProcessor.valueTreeState.getRawParameterValue(ballYId)->load() - PIT_MIN_Y;
 		float snappedX = std::round(currentX / gridFactor);
 		float snappedY = std::round(currentY / gridFactor);
 
-		// Clamp the snapped values within the slider range
 		snappedX = juce::jlimit(0.0f, 39.0f, snappedX);
 		snappedY = juce::jlimit(0.0f, 39.0f, snappedY);
 
-		// Update the sliders
-		ballsSlidersAndAttachments[i].xSlider.setValue(snappedX, juce::sendNotification);
-		ballsSlidersAndAttachments[i].ySlider.setValue(snappedY, juce::sendNotification);
+		float newX = snappedX * gridFactor;
+		float newY = snappedY * gridFactor;
 
-		// Update the parameters and notify the host
+		ballsSlidersAndAttachments[i].xSlider.setValue(newX, juce::sendNotification);
+		ballsSlidersAndAttachments[i].ySlider.setValue(newY, juce::sendNotification);
+
 		if (auto* xParam = audioProcessor.valueTreeState.getParameter(ballXId))
 		{
 			xParam->setValueNotifyingHost((snappedX * gridFactor) / 390.0f); // Scale to normalized 0-1 range
@@ -631,7 +615,7 @@ void BallPitAudioProcessorEditor::changeXAndYToFree()
 		{
 			yParam->setValueNotifyingHost((snappedY * gridFactor) / 390.0f); // Scale to normalized 0-1 range
 		}
-
+		/*
 		// --------------------------------- TODO - decide what is right- return to last or snap to closest?
 		//---------------------------------------------------------------------------------------------------------------------------
 		// Update the sliders
@@ -648,6 +632,7 @@ void BallPitAudioProcessorEditor::changeXAndYToFree()
 			yParam->setValueNotifyingHost(lastBall1Position.getY() / 390.0f); // Scale to normalized 0-1 range
 		}
 		//------------------------------ ----------------------------------------------------------------------------------------------
+		*/
 	}
 }
 

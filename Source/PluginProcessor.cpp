@@ -244,7 +244,7 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 {
 	for (int i = 0; i < 3; i++)
 	{
-		if (pit.getBalls()[i]->isActive() == false)	
+		if (pit.getBalls()[i]->isActive() == false)
 			continue;
 
 		std::string ballXId = "ballX" + std::to_string(i);
@@ -257,11 +257,6 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 
 		float x = valueTreeState.getRawParameterValue(ballXId)->load();
 		float y = valueTreeState.getRawParameterValue(ballYId)->load();
-		if (valueTreeState.getRawParameterValue("snapToGrid")->load() == true)
-		{
-			x = x + 12;
-			y = y + 12;
-		}
 		float radius = valueTreeState.getRawParameterValue(ballRadiusId)->load();
 		float velocity = valueTreeState.getRawParameterValue(ballVelocityId)->load();
 		float angle = valueTreeState.getRawParameterValue(ballAngleId)->load();
@@ -300,6 +295,15 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 			valueTreeState.getRawParameterValue("edgeRange")->load(),
 			valueTreeState.getRawParameterValue("edgeType")->load());
 		pit.setBallsEdgeNotes();
+	}
+}
+
+void BallPitAudioProcessor::updateBallsQuantization()
+{
+	float quantization = valueTreeState.getRawParameterValue("quantization")->load();
+	for (int i = 0; i < 3; i++)
+	{
+		this->pit.setBallsQuantization(quantization);
 	}
 }
 
@@ -355,6 +359,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	if (wasGUIUpdated == true)
 	{
 		getUpdatedEdgeParams();
+		updateBallsQuantization();
 		wasGUIUpdated = false;
 		wasEdgeParamChanged = false;
 	}
