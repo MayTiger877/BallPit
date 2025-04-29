@@ -150,6 +150,8 @@ void BallPitAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 	sampleCounter = 0;
 	m_timeSignature.numerator = DEFAULT_TIME_SIGNATURE_NUMERATOR;
 	m_timeSignature.denominator = DEFAULT_TIME_SIGNATURE_DENOMINATOR;
+
+	clockTimeSeconds = 0.0;
 }
 
 void BallPitAudioProcessor::releaseResources()
@@ -298,12 +300,27 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 	}
 }
 
-void BallPitAudioProcessor::updateBallsQuantization()
+void BallPitAudioProcessor::updateQuantization()
 {
-	float quantization = valueTreeState.getRawParameterValue("quantization")->load();
-	for (int i = 0; i < 3; i++)
+	quantizationpercent = valueTreeState.getRawParameterValue("quantization")->load();
+	int quantizationDivisionChoice = valueTreeState.getRawParameterValue("quantizationDivision")->load();
+	switch (quantizationDivisionChoice)
 	{
-		this->pit.setBallsQuantization(quantization);
+	case 0:
+		quantizationDivision = (1.0 / 32.0);
+		break;
+	case 1:
+		quantizationDivision = (1.0 / 16.0);
+		break;
+	case 2:
+		quantizationDivision = (1.0 / 8.0);
+		break;
+	case 3:
+		quantizationDivision = (1.0 / 4.0);
+		break;
+	default:
+		quantizationDivision = (1.0 / 32.0);
+		break;
 	}
 }
 
@@ -359,12 +376,13 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	if (wasGUIUpdated == true)
 	{
 		getUpdatedEdgeParams();
-		updateBallsQuantization();
+		updateQuantization();
 		wasGUIUpdated = false;
 		wasEdgeParamChanged = false;
 	}
 	if ((this->isDAWPlaying == false) && (this->pit.areBallsMoving() == false))
 	{
+		clockTimeSeconds = 0.0;
 		getUpdatedBallParams();
 	}
 	else 
@@ -376,6 +394,8 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			{
 				pit.toggleBallMovement();
 			}*/
+
+			clockTimeSeconds += buffer.getNumSamples() / this->m_sampleRate;
 
 			if (tickPassed == true)
 			{
@@ -406,6 +426,31 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			++pendingIt;
 		}
 	}
+
+	juce::MidiBuffer quantizedMidi;
+	double secondsPerBeat = (60.0 / m_bpm);
+	double secondsPerDivision = (secondsPerBeat * quantizationDivision);
+	double samplesPerDivision = (secondsPerDivision * m_sampleRate);
+
+	for (const auto metadata : midiMessages)
+	{
+		auto msg = metadata.getMessage();
+		int samplePosition = metadata.samplePosition;
+
+		if (msg.isNoteOnOrOff())
+		{
+			int quantizedSamplePos = static_cast<int>(std::round(samplePosition / samplesPerDivision) * samplesPerDivision);
+			//quantizedSamplePos = juce::jlimit(0, buffer.getNumSamples() - 1, quantizedSamplePos); Todo- check if neede....
+			int finalquantizedSamplePos = quantizedSamplePos + ((samplePosition - quantizedSamplePos) * quantizationpercent);
+			quantizedMidi.addEvent(msg, quantizedSamplePos);
+		}
+		else
+		{
+			quantizedMidi.addEvent(msg, samplePosition);
+		}
+	}
+
+	midiMessages.swapWith(quantizedMidi);
 
 	while (it.getNextEvent(message, samplePosition))
 	{
@@ -493,6 +538,11 @@ juce::StringArray getBallsPositioningTypes()
 	return { "Chaos", "By Tempo" };
 }
 
+juce::StringArray getQuantizationDivisionTypes()
+{
+	return { "1/32", "1/16", "1/8", "1/4" };
+}
+
 juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::createParameters()
 {
 	juce::AudioProcessorValueTreeState::ParameterLayout params;
@@ -545,6 +595,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 
 	std::string quantizationId = "quantization";
 	params.add(std::make_unique<juce::AudioParameterBool>(quantizationId, "Quantization", true));
+
+	std::string quantizationDivisionID = "quantizationDivision";
+	params.add(std::make_unique<juce::AudioParameterChoice>(quantizationDivisionID, "Quantization Division", getQuantizationDivisionTypes(), 1));
 	
 	return params;
 }

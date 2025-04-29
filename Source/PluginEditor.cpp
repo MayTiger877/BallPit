@@ -91,6 +91,9 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	std::string quantizationID = "quantization";
 	quantizationAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, quantizationID, quantizationSlider);
 
+	std::string quantizationDivisionID = "quantizationDivision";
+	quantizationDivisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, quantizationDivisionID, quantizationDivisionComboBox);
+
 	audioProcessor.addChangeListener(this); // Register as listener
 
 	addChildComponent(&presetPanel);
@@ -143,6 +146,7 @@ void BallPitAudioProcessorEditor::saveGUIState()
 	GUIState.setProperty("ballsPositioningType", ballsPositioningTypeComboBox.getSelectedItemIndex(), nullptr);
 	GUIState.setProperty("snapToGrid", snapToGridButton.getToggleState(), nullptr);
 	GUIState.setProperty("quantization", quantizationSlider.getValue(), nullptr);
+	GUIState.setProperty("quantization", quantizationDivisionComboBox.getSelectedItemIndex(), nullptr);
 
 	audioProcessor.saveGUIState(GUIState);
 	audioProcessor.removeChangeListener(this);
@@ -181,6 +185,7 @@ void BallPitAudioProcessorEditor::loadGUIState()
 	snapToGridButton.setToggleState(GUIState.getProperty("snapToGrid"), juce::dontSendNotification);
 	collisionButton.setToggleState(GUIState.getProperty("collision"), juce::dontSendNotification);
 	quantizationSlider.setValue(GUIState.getProperty("quantization"), juce::dontSendNotification);
+	quantizationDivisionComboBox.setSelectedItemIndex(GUIState.getProperty("quantizationDivision"), juce::dontSendNotification);
 }
 
 void BallPitAudioProcessorEditor::displayKnobsByTab()
@@ -466,6 +471,14 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	quantizationSlider.setValue(0.0);
 	quantizationSlider.setRange(0.0, 100.0, 1.0);
 	addAndMakeVisible(quantizationSlider);
+
+	quantizationDivisionComboBox.setBounds(QUANTIZATION_DIVISION_COMBOBOX_BOUNDS);
+	quantizationDivisionComboBox.addItem("1/32", 32);
+	quantizationDivisionComboBox.addItem("1/16", 16);
+	quantizationDivisionComboBox.addItem("1/8", 8);
+	quantizationDivisionComboBox.addItem("1/4", 4);
+	quantizationDivisionComboBox.setSelectedId(32);
+	addAndMakeVisible(quantizationDivisionComboBox);
 
 	openPresetManager.setButtonText("Presets");
 	openPresetManager.setBounds(PRESET_MANAGER_MENU_BUTTON_BOUNDS);

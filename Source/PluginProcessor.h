@@ -88,7 +88,7 @@ public:
 	void getUpdatedBallParams();
 	void getUpdatedEdgeParams();
 	void setXYVelocityByTempo(float& xVelocity, float& yVelocity, float ballRadius);
-	void updateBallsQuantization();
+	void updateQuantization();
 
 	void setWasGUIUpdatedToTrue() { this->wasGUIUpdated = true; }
 	void setWasEdgeParamChangedFlagToTrue() { this->wasEdgeParamChanged = true; }
@@ -107,6 +107,10 @@ private:
 	std::vector<PendingMidiEvent> pendingEvents;
 
 	bool isDAWPlaying;
+	double clockTimeSeconds = 0.0;
+
+	float quantizationpercent = 0.0;
+	float quantizationDivision = (1/32);
 
 	double lastPPQPosition = 0.0;
 	double stepPPQIncrement = 0.0;
@@ -128,6 +132,6 @@ private:
 	"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "ballYVelocity1",
 	"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "ballYVelocity2",
 	"edgePhase", "edgeDenomenator", "edgeRange", "scaleChoice", "rootNote", "edgeType",
-	"ballsPositioningType", "snapToGrid", "collision", "quantization"
+	"ballsPositioningType", "snapToGrid", "collision", "quantization", "quantizationDivision",
 	};
 };

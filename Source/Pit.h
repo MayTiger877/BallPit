@@ -20,7 +20,6 @@ public:
 	void setBallParams(int index, float x, float y, float radius, float velocity, float angle);
 	void checkBallsPositionBeforeStart();
 	void setBallsEdgeNotes();
-	void setBallsQuantization(float quantization);
 	
 	void toggleBallMovement() {
 		isMoving = !isMoving;

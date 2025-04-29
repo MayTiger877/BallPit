@@ -49,14 +49,6 @@ const std::vector<std::unique_ptr<Ball>>& Pit::getBalls() const
 	return balls;
 }
 
-void Pit::setBallsQuantization(float newQuantization)
-{
-	for (int i = 0; i < 3; i++)
-	{
-		balls[i]->setQuantization(newQuantization);
-	}
-}
-
 void Pit::setBallParams(int index, float x, float y, float radius, float velocity, float angle)
 {
 	balls[index]->setPosition(x, y);

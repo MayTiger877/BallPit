@@ -78,6 +78,9 @@ private:
 
 	juce::Slider quantizationSlider;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> quantizationAttachment;
+
+	juce::ComboBox quantizationDivisionComboBox;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> quantizationDivisionAttachment;
 	
 	std::unique_ptr<juce::TabbedComponent> tabs;
 
@@ -116,7 +119,6 @@ private:
 	juce::Point<double> lastBall1Position, lastBall2Position, lastBall3Position = { 0.0, 0.0 };
 
 	juce::ValueTree GUIState;
-
 
 	juce::TextButton openPresetManager;
 	PresetPanel presetPanel;
