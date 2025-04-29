@@ -711,7 +711,6 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 		}
 		this->audioProcessor.getPit().setEdgeTypeToRandom();
 		this->audioProcessor.setWasGUIUpdatedToTrue();
-		this->audioProcessor.setWasEdgeParamChangedFlagToTrue();
 	}
 }
 

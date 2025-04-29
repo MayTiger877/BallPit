@@ -91,7 +91,6 @@ public:
 	void updateQuantization();
 
 	void setWasGUIUpdatedToTrue() { this->wasGUIUpdated = true; }
-	void setWasEdgeParamChangedFlagToTrue() { this->wasEdgeParamChanged = true; }
 
 	Service::PresetManager& getPresetManager() { return *presetManager; }
 
@@ -121,7 +120,6 @@ private:
 	bool wasGUIUploaded;
 	juce::ValueTree processorGUIState;
 	bool wasGUIUpdated = true; // initialize to true to force the GUI to update on first load
-	bool wasEdgeParamChanged = true; // initialize to true to force the GUI to update on first load
 	void parameterChanged(const juce::String& parameterID, float newValue) override;
 
 	std::unique_ptr<Service::PresetManager> presetManager;
