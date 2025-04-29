@@ -387,6 +387,8 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	}
 	else 
 	{
+		clockTimeSeconds += buffer.getNumSamples() / this->m_sampleRate;
+
 		if (this->isDAWPlaying == true)
 		{
 			// TODO : figure out if need the START button and how to sync it with the DAW
@@ -394,8 +396,6 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			{
 				pit.toggleBallMovement();
 			}*/
-
-			clockTimeSeconds += buffer.getNumSamples() / this->m_sampleRate;
 
 			if (tickPassed == true)
 			{
@@ -435,14 +435,15 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	for (const auto metadata : midiMessages)
 	{
 		auto msg = metadata.getMessage();
-		int samplePosition = metadata.samplePosition;
+		samplePosition = metadata.samplePosition;
+		int realTimeSamplePosition = (clockTimeSeconds * m_sampleRate) + samplePosition;
 
 		if (msg.isNoteOnOrOff())
 		{
-			int quantizedSamplePos = static_cast<int>(std::round(samplePosition / samplesPerDivision) * samplesPerDivision);
+			int quantizedSamplePos = static_cast<int>(std::round(realTimeSamplePosition / samplesPerDivision) * samplesPerDivision);
 			//quantizedSamplePos = juce::jlimit(0, buffer.getNumSamples() - 1, quantizedSamplePos); Todo- check if neede....
-			int finalquantizedSamplePos = quantizedSamplePos + ((samplePosition - quantizedSamplePos) * quantizationpercent);
-			quantizedMidi.addEvent(msg, quantizedSamplePos);
+			int finalSamplePos = realTimeSamplePosition + ((quantizedSamplePos - realTimeSamplePosition) * quantizationpercent);
+			quantizedMidi.addEvent(msg, finalSamplePos);
 		}
 		else
 		{
