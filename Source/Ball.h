@@ -44,6 +44,8 @@ public:
 	bool isActive() const { return active; }
 	void setActive(bool active) { this->active = active; }
 
+    void setBallSpeedType(int newSpeedType) { this->ballSpeedType = newSpeedType; }
+
     void updateBallAbstractedEdge(const int* abstractedEdge);
     void updateScaleNotes(int* scaleNotes);
 
@@ -70,6 +72,7 @@ private:
     float speedX, speedY;
     bool active;
     int ballIndex;
+    int ballSpeedType = 0;
 
     juce::Path ballArrow;
 

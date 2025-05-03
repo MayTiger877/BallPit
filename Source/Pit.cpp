@@ -49,12 +49,13 @@ const std::vector<std::unique_ptr<Ball>>& Pit::getBalls() const
 	return balls;
 }
 
-void Pit::setBallParams(int index, float x, float y, float radius, float velocity, float angle)
+void Pit::setBallParams(int index, float x, float y, float radius, float velocity, float angle, int ballSpeedType)
 {
 	balls[index]->setPosition(x, y);
 	balls[index]->setRadius(radius);
 	balls[index]->setVelocity(velocity);
 	balls[index]->setAngle(angle);
+	balls[index]->setBallSpeedType(ballSpeedType);
 	
 	// TODO - add a func that sets the x,y of the other balls to not overlap
 	int otherIndex1 = (index + 1) % balls.size();

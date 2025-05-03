@@ -87,7 +87,15 @@ void Ball::draw(juce::Graphics& g) const
 	{
 		float radiusRatio = pow(radius, 1.2);
 		float angleInRadians = (angle - 90) * (PI / 180.0f); // (angle-90) is the actual knob direction
-		float arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 10.0, 0.0, 15.0);
+		float arrowLenghtMultiplierByVelocity;
+		if (this->ballSpeedType == 1) // chaos
+		{
+			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 10.0, 0.0, 15.0);
+		}
+		else
+		{
+			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 200.0, 0.0, 15.0);
+		}
 		float startX = x + (5.0f + mouseOnMagnifier + radius) * cos(angleInRadians);
 		float endX = x + (20.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * cos(angleInRadians);
 		float startY = y + (5.0f + mouseOnMagnifier + radius) * sin(angleInRadians);
@@ -198,6 +206,7 @@ void Ball::edgeBounce()
 	}
 
 	HitPossition currentHitPos = LEFT;
+	float yBeforeCorrection = -1;
 	
 	if ((x - radius <= minX || x + radius >= maxX) && (speedX != 0))// TODO - make this if better to cover radius when positioning balls
 	{
@@ -216,10 +225,26 @@ void Ball::edgeBounce()
 		}
 		
 		speedX = -speedX;
+
+		if ((y - radius <= minY || y + radius >= maxY) && (speedY != 0)) // corrct new y when x hit edge
+		{
+			yBeforeCorrection = y;
+			if (y - radius <= minY)
+			{
+				float distPassed = minY - (y - radius);
+				y = minY + distPassed + radius;
+			}
+			if (y + radius >= maxY)
+			{
+				float distPassed = (y + radius) - maxY;
+				y = maxY - distPassed - radius;
+			}
+		}
+
 		if (this->edgeListener)
 		{
 			int edgeIndex = getEdgeHitIndex(currentHitPos);
-
+			jassert((edgeIndex >= 0) && (edgeIndex < 1568));
 			if ((this->isMoving) && (speedX != NO_SPEED))
 			{
 				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));
@@ -227,6 +252,9 @@ void Ball::edgeBounce()
 			}
 		}
 	}
+
+	if (yBeforeCorrection != -1)
+		y = yBeforeCorrection;
 
 	if ((y - radius <= minY || y + radius >= maxY) && (speedY != 0))
 	{
@@ -247,7 +275,7 @@ void Ball::edgeBounce()
 		if (this->edgeListener)
 		{
 			int edgeIndex = getEdgeHitIndex(currentHitPos);
-
+			jassert((edgeIndex >= 0) && (edgeIndex < 1568));
 			if ((this->isMoving) && (speedY != NO_SPEED))
 			{
 				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));

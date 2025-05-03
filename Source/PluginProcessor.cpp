@@ -270,7 +270,6 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 		{
 			case 1: // chaos
 			{
-				// do nothing basically
 				break;
 			}
 			case 2: // by tempo
@@ -280,7 +279,7 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 				break;
 			}
 		}
-		pit.setBallParams(i, x, y, radius, velocity, angle);
+		pit.setBallParams(i, x, y, radius, velocity, angle, ballsPosType);
 	}
 	pit.setCollision(static_cast<bool>(valueTreeState.getRawParameterValue("collision")->load()));
 }
@@ -410,14 +409,33 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	double secondsPerDivision = (secondsPerBeat * quantizationDivision / 4);
 	double samplesPerDivision = (secondsPerDivision * m_sampleRate);
 
-	int nextQuantizedSamplePos = (static_cast<int>(std::ceil(this->clockTimeSeconds / secondsPerDivision) * secondsPerDivision) * m_sampleRate);
+	float temp = std::ceil(this->clockTimeSeconds / secondsPerDivision);
+	int nextQuantizedSamplePos = (static_cast<int>(temp * secondsPerDivision * m_sampleRate));
 
 	for (auto pendingIt = pendingEvents.begin(); pendingIt != pendingEvents.end();)
 	{
 		if (pendingIt->samplePosition < m_samplesPerBlock)
 		{
-			midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
-			pendingIt = pendingEvents.erase(pendingIt);
+			if (pendingIt->message.isNoteOn())
+			{
+				midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
+				juce::MidiMessage noteOff = juce::MidiMessage::noteOff(pendingIt->message.getChannel(), pendingIt->message.getNoteNumber());
+				int noteDurationSamples = static_cast<int>(0.2 * m_sampleRate); // 200ms note duration
+				if ((pendingIt->samplePosition + noteDurationSamples) < m_samplesPerBlock)
+				{
+					midiMessages.addEvent(noteOff, pendingIt->samplePosition + noteDurationSamples);
+					pendingIt = pendingEvents.erase(pendingIt);
+				}
+				else
+				{
+					pendingEvents.push_back({ noteOff, (pendingIt->samplePosition + noteDurationSamples - static_cast<int>(m_samplesPerBlock)) });
+				}
+			}
+			else if (pendingIt->message.isNoteOff())
+			{
+				midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
+				pendingIt = pendingEvents.erase(pendingIt);
+			}
 		}
 		else
 		{
