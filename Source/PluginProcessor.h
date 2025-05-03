@@ -125,6 +125,7 @@ private:
 	std::unique_ptr<Service::PresetManager> presetManager;
 
 	// TODO- check that all params are here!
+public:
 	std::vector<juce::String> paramIDs = {
 	"ballX0", "ballY0", "ballRadius0", "ballVelocity0", "ballAngle0", "ballXVelocity0", "ballYVelocity0",
 	"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "ballYVelocity1",

@@ -31,7 +31,8 @@ public:
 
 class BallPitAudioProcessorEditor  : public juce::AudioProcessorEditor, 
 									 public juce::Timer, 
-									 private juce::ChangeListener
+									 private juce::ChangeListener,
+									 public juce::ComboBox::Listener
 {
 public:
 	BallPitAudioProcessorEditor (BallPitAudioProcessor&);
@@ -44,6 +45,8 @@ public:
 	void saveGUIState();
 	void loadGUIState();
 	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+
+	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
 	// this is foe dealing with the mouse moving the balllz----------------
 	void mouseMove(const juce::MouseEvent& event) override;

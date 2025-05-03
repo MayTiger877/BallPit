@@ -15,7 +15,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 {
 	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg"); //laptop
 	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
-	auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/Version_2_Layout.svg"); //haifa
+	auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByKnobs.svg"); //haifa
 
 	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
 	if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
@@ -28,7 +28,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 		tabs->addTab("Ball " + std::to_string(i + 1), juce::Colours::grey, ballControlComponent.release(), true);
 	}
 	tabs->setBounds(BALLS_TABS_BOUNDS);
-	tabs->setColour(juce::TabbedComponent::backgroundColourId, juce::Colour::fromString("ffD9D9D9"));
+	tabs->setColour(juce::TabbedComponent::backgroundColourId, juce::Colour::fromString("000A1014"));
 	addAndMakeVisible(tabs.get());
 	
 	setSize(APP_WINDOW_WIDTH, APP_WINDOW_HIGHT);
@@ -442,6 +442,8 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	ballsPositioningTypeComboBox.addItem("By Tempo", 2);
 	ballsPositioningTypeComboBox.setSelectedId(1);
 	addAndMakeVisible(ballsPositioningTypeComboBox);
+	ballsPositioningTypeComboBox.addListener(this); // SPACIAL
+
 
 	snapToGridButton.setBounds(SNAP_TO_GRID_BUTTON_BOUNDS);
 	snapToGridButton.setToggleState(false, juce::dontSendNotification);
@@ -536,7 +538,32 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 
 void BallPitAudioProcessorEditor::resized()
 {
-	
+}
+
+void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
+{
+	if (comboBoxThatHasChanged == &ballsPositioningTypeComboBox)
+	{
+		int ballsPosType = comboBoxThatHasChanged->getSelectedId();
+		juce::File svgFile;
+
+		if (ballsPosType == 1)
+		{
+			svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByKnobs.svg");
+		}
+		else if (ballsPosType == 2)
+		{
+			svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByTempo.svg");
+		}
+
+		if (svgFile.existsAsFile())
+		{
+			std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
+			if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
+		}
+
+		repaint();
+	}
 }
 
 void BallPitAudioProcessorEditor::timerCallback() 
