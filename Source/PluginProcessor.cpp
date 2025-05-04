@@ -292,7 +292,7 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 	pit.setEdgeParams(valueTreeState.getRawParameterValue("edgePhase")->load(),
 					  valueTreeState.getRawParameterValue("edgeDenomenator")->load(),
 					  valueTreeState.getRawParameterValue("edgeRange")->load(),
-					  valueTreeState.getRawParameterValue("edgeType")->load());
+					  valueTreeState.getRawParameterValue("edgeType")->load() + 1); // +1 is for the edgetype offset
 	pit.setBallsEdgeNotes();
 }
 
@@ -404,75 +404,114 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		}
 	}
 
+	// --- Begin improved quantization implementation ---
 	int samplePosition;
-	double secondsPerBeat = (60.0 / m_bpm);
-	double secondsPerDivision = (secondsPerBeat * quantizationDivision / 4);
-	double samplesPerDivision = (secondsPerDivision * m_sampleRate);
+	double secondsPerBeat = 60.0 / m_bpm;
+	double secondsPerDivision = (secondsPerBeat * quantizationDivision / 4.0); // 1 division = 1/quantizationDivision of a measure
+	double samplesPerDivision = secondsPerDivision * m_sampleRate;
+	int blockEndSample = m_samplesPerBlock;
 
-	float temp = std::ceil(this->clockTimeSeconds / secondsPerDivision);
-	int nextQuantizedSamplePos = (static_cast<int>(temp * secondsPerDivision * m_sampleRate));
+	std::vector<PendingMidiEvent> eventsToAdd;
 
-	for (auto pendingIt = pendingEvents.begin(); pendingIt != pendingEvents.end();)
+	// Handle pending note-on and note-off events from previous blocks
+	if (!pendingEvents.empty())
 	{
-		if (pendingIt->samplePosition < m_samplesPerBlock)
+		for (auto pendingIt = pendingEvents.begin(); pendingIt != pendingEvents.end();)
 		{
-			if (pendingIt->message.isNoteOn())
+			if (pendingIt->samplePosition < blockEndSample)
 			{
-				midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
-				juce::MidiMessage noteOff = juce::MidiMessage::noteOff(pendingIt->message.getChannel(), pendingIt->message.getNoteNumber());
-				int noteDurationSamples = static_cast<int>(0.2 * m_sampleRate); // 200ms note duration
-				if ((pendingIt->samplePosition + noteDurationSamples) < m_samplesPerBlock)
+				if (pendingIt->message.isNoteOn())
 				{
-					midiMessages.addEvent(noteOff, pendingIt->samplePosition + noteDurationSamples);
+					midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
+
+					// Schedule note-off after fixed (or tempo-based) duration
+					double beatsHeld = 0.25; // quarter of a beat (16th note)
+					int noteDurationSamples = static_cast<int>(beatsHeld * secondsPerBeat * m_sampleRate);
+
+					int offSample = pendingIt->samplePosition + noteDurationSamples;
+					if (offSample < blockEndSample)
+					{
+						juce::MidiMessage noteOff = juce::MidiMessage::noteOff(
+							pendingIt->message.getChannel(),
+							pendingIt->message.getNoteNumber());
+
+						midiMessages.addEvent(noteOff, offSample);
+					}
+					else
+					{
+						// Note-off spills into next block
+						juce::MidiMessage noteOff = juce::MidiMessage::noteOff(
+							pendingIt->message.getChannel(),
+							pendingIt->message.getNoteNumber());
+
+						int futureSample = offSample - blockEndSample;
+						eventsToAdd.push_back({ noteOff, futureSample });
+					}
+
 					pendingIt = pendingEvents.erase(pendingIt);
 				}
-				else
+				else if (pendingIt->message.isNoteOff())
 				{
-					pendingEvents.push_back({ noteOff, (pendingIt->samplePosition + noteDurationSamples - static_cast<int>(m_samplesPerBlock)) });
-				}
-			}
-			else if (pendingIt->message.isNoteOff())
-			{
-				midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
-				pendingIt = pendingEvents.erase(pendingIt);
-			}
-		}
-		else
-		{
-			pendingIt->samplePosition -= static_cast<int>(m_samplesPerBlock);
-			++pendingIt;
-		}
-	}
-
-	for (const auto metadata : midiBuffer)
-	{
-		auto msg = metadata.getMessage();
-		if (msg.isNoteOn())
-		{
-			samplePosition = metadata.samplePosition;
-			int realTimeSamplePosition = (clockTimeSeconds * m_sampleRate) + samplePosition;
-			int quantizationDelta = ((nextQuantizedSamplePos - realTimeSamplePosition) * quantizationpercent);
-			int finalSamplePos = (quantizationDelta + samplePosition);
-			if (finalSamplePos < m_samplesPerBlock)
-			{
-				midiMessages.addEvent(msg, finalSamplePos);
-				juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
-				int noteDurationSamples = static_cast<int>(0.2 * m_sampleRate); // 200ms note duration
-				if ((finalSamplePos + noteDurationSamples) < m_samplesPerBlock)
-				{
-					midiMessages.addEvent(noteOff, finalSamplePos + noteDurationSamples);
-				}
-				else
-				{
-					pendingEvents.push_back({ noteOff, (finalSamplePos + noteDurationSamples - static_cast<int>(m_samplesPerBlock)) });
+					midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
+					pendingIt = pendingEvents.erase(pendingIt);
 				}
 			}
 			else
 			{
-				pendingEvents.push_back({ msg, (finalSamplePos - static_cast<int>(m_samplesPerBlock)) });
+				pendingIt->samplePosition -= blockEndSample;
+				++pendingIt;
 			}
 		}
+
+		if (!eventsToAdd.empty())
+		{
+			pendingEvents.insert(pendingEvents.end(), eventsToAdd.begin(), eventsToAdd.end());
+		}
 	}
+
+	// Handle incoming messages in current buffer
+	for (const auto& metadata : midiBuffer)
+	{
+		auto msg = metadata.getMessage();
+		if (!msg.isNoteOn())
+			continue;
+
+		samplePosition = metadata.samplePosition;
+		double messageTimeSec = clockTimeSeconds + (samplePosition / m_sampleRate);
+
+		// Quantize this time to nearest grid division
+		double quantizedTimeSec = std::ceil(messageTimeSec / secondsPerDivision) * secondsPerDivision;
+
+		// Convert quantized time to sample position relative to block
+		int quantizedSamplePosAbsolute = static_cast<int>(quantizedTimeSec * m_sampleRate);
+		int quantizedSamplePosRelative = quantizedSamplePosAbsolute - static_cast<int>(clockTimeSeconds * m_sampleRate);
+
+		// Apply interpolation factor
+		int finalSamplePos = static_cast<int>((1.0 - quantizationpercent) * samplePosition + quantizationpercent * quantizedSamplePosRelative);
+		finalSamplePos = juce::jlimit(0, m_samplesPerBlock - 1, finalSamplePos); // Ensure in block bounds
+
+		// Add note-on at quantized position
+		midiMessages.addEvent(msg, finalSamplePos);
+
+		// Schedule note-off after a tempo-relative duration
+		double beatsHeld = 0.25;
+		int noteDurationSamples = static_cast<int>(beatsHeld * secondsPerBeat * m_sampleRate);
+		int noteOffPos = finalSamplePos + noteDurationSamples;
+
+		if (noteOffPos < blockEndSample)
+		{
+			juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
+			midiMessages.addEvent(noteOff, noteOffPos);
+		}
+		else
+		{
+			int futureSample = noteOffPos - blockEndSample;
+			juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
+			pendingEvents.push_back({ noteOff, futureSample });
+		}
+	}
+	// --- End improved quantization implementation ---
+
 
 	midiBuffer.clear();
 }
@@ -533,7 +572,7 @@ juce::StringArray getScaleOptions()
 
 juce::StringArray getEdgeTypes()
 {
-	return { "Cyclic up", "Cyclic down" };
+	return { "Cyclic up", "Cyclic down", "Ping pong", "Random"};
 }
 
 juce::StringArray getBallsPositioningTypes()

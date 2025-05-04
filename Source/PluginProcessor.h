@@ -98,7 +98,7 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
 
 	double m_sampleRate;
-	double m_samplesPerBlock;
+	int m_samplesPerBlock;
 	
 	Pit pit;
 	juce::MidiBuffer midiBuffer;

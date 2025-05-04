@@ -17,7 +17,7 @@ Edge::Edge() : scale(Scale::ScaleKinds::MAJOR, 0)
 	numerator = 1;
 	denomenator = 8;
 	range = 2;
-	edgeType = 0; //Cycle up
+	edgeType = 1; //Cycle up
 
 	// Initialize the pit edges musical scale
 	rootNote = 60; // middle C4
@@ -43,7 +43,7 @@ void Edge::setScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
 void Edge::setEdgeType(int newEdgeType)
 {
 	this->edgeType = newEdgeType;
-	if (edgeType == 2)
+	if (edgeType == 4)
 	{
 		randomEdgeTypeSelected = true;
 	}
@@ -86,17 +86,14 @@ int Edge::promoteColorIndexByEdgeType(int currentColorIndex, int numOfColors, bo
 	int reverseFactor = (reverse == true) ? -1 : 1;
 	switch (edgeType)
 	{
-		case 0: // Cycle up
+		case 1: // Cycle up
 		{
 			return (currentColorIndex + (1 * reverseFactor) + numOfColors) % numOfColors; 
 		}
-		case 1: // Cycle down
+		case 2: // Cycle down
 		{
-			return (currentColorIndex - (1 * reverseFactor) + numOfColors) % numOfColors;
-		}
-		case 2 : // Random
-		{
-			return rand() % numOfColors;
+			int virtualColorIndex = 7 - currentColorIndex;
+			return 7 - (virtualColorIndex + (1 * reverseFactor) + numOfColors) % numOfColors;
 		}
 		case 3: // Ping-Pong effect
 		{
@@ -114,6 +111,10 @@ int Edge::promoteColorIndexByEdgeType(int currentColorIndex, int numOfColors, bo
 				return (reverseFactor == false ? 0 : (numOfColors - 1));
 			}
 		}
+		case 4 : // Random
+		{
+			return rand() % numOfColors;
+		}
 		default:
 			break;
 	}
@@ -127,7 +128,19 @@ void Edge::updateAbstractedEdge()
 	int remainder = 1568 % numOfSplits;
 	int index = 0;
 	int startingIndex = juce::jmap<int>(this->phase, 0, 360, 0, 1567);
-	int colorIndex = (edgeType == 2) ? (rand() % numOfColors) : 0; // if random, so also first edge part is random, daa....
+	int colorIndex;
+	if (edgeType == 2)
+	{
+		colorIndex = 7; // if cycle down starts from last color
+	}
+	else if (edgeType == 4)
+	{
+		colorIndex = (rand() % numOfColors); // if random, so also first edge part is random, daa....
+	}
+	else
+	{
+		colorIndex = 0;
+	}
 
 	for (int i = 0; i < numOfSplits; i++)
 	{

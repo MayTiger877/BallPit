@@ -85,7 +85,7 @@ void Pit::setEdgeParams(int phase, int denomenator, int range, int edgeType)
 
 void Pit::setEdgeTypeToRandom()
 {
-	this->edge.setEdgeType(2);
+	this->edge.setEdgeType(4);
 	this->edge.updateAbstractedEdge();
 }
 

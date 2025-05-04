@@ -436,6 +436,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgeTypeComboBox.addItem("Random", 4);
 	edgeTypeComboBox.setSelectedId(1);
 	addAndMakeVisible(edgeTypeComboBox);
+	edgeTypeComboBox.addListener(this); // SPACIAL
 
 	ballsPositioningTypeComboBox.setBounds(BALLS_POSITIONING_TYPE_BUTTON_BOUNDS);
 	ballsPositioningTypeComboBox.addItem("Chaos", 1);
@@ -563,6 +564,11 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 		}
 
 		repaint();
+	}
+	else if (comboBoxThatHasChanged == &edgeTypeComboBox)
+	{
+		int newType = edgeTypeComboBox.getSelectedId();
+		DBG("NewType is " << newType);
 	}
 }
 
