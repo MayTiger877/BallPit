@@ -6,6 +6,7 @@
 #define PI 3.14159265
 #define NO_SPEED 0
 #define MOUSE_NOT_IN_BALL -1.0
+#define MOUSE_NOT_IN_TAB -1
 
 typedef enum {
     UP,

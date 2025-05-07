@@ -64,9 +64,11 @@ private:
 	// access the processor object that created it.
 	BallPitAudioProcessor& audioProcessor;
 
-	std::unique_ptr<juce::Drawable> drawable;
+	std::unique_ptr<juce::Drawable> backgroundDrawable;
 
 	BallSlidersAndAttachments ballsSlidersAndAttachments[3];
+	std::unique_ptr<juce::Drawable> tabsDrawable;
+	int mouseOverTab = -1;
 	void initiateComponents();
 	void displayKnobsByTab();
 
@@ -85,7 +87,7 @@ private:
 	juce::ComboBox quantizationDivisionComboBox;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> quantizationDivisionAttachment;
 	
-	std::unique_ptr<juce::TabbedComponent> tabs;
+	int currentBallFocused = 0;
 
 	juce::ComboBox scaleChoiceComboBox;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> scaleChoiceAttachment;
@@ -95,8 +97,6 @@ private:
 
 	juce::ComboBox edgeTypeComboBox;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> edgeTypeAttachment;
-
-	//juce::ComboBox scaleModeComboBox; TODO
 	
 	juce::ComboBox ballsPositioningTypeComboBox;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> ballsPositioningTypeAttachment;

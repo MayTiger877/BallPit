@@ -13,24 +13,20 @@
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
 	: AudioProcessorEditor (&p), presetPanel(p.getPresetManager()), audioProcessor (p), ballBeingDragged(MOUSE_NOT_IN_BALL, MOUSE_NOT_IN_BALL)
 {
-	auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/ByKnobs.svg"); //laptop
-	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
-	//auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByKnobs.svg"); //haifa
+	auto backgroundSVGFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/ByKnobs.svg"); //laptop
+	//auto backgroundSVGFile = juce::File("D:/Computer_Science/project/BallPit/Resources/ByKnobs.svg"); //bialik
+	//auto backgroundSVGFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByKnobs.svg"); //haifa
 
-	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
-	if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
+	auto tabsSVGFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/Ball_tab_0.svg"); //laptop
+	//auto tabsSVGFile = juce::File("D:/Computer_Science/project/BallPit/Resources/Ball_tab_0.svg"); //bialik
+	//auto tabsSVGFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/Ball_tab_0.svg"); //haifa
 
-	// Tabs
-	tabs.reset(new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtLeft));
-	for (int i = 0; i < 3; ++i)
-	{
-		auto ballControlComponent = std::make_unique<BallSlidersAndAttachments>();
-		tabs->addTab("Ball " + std::to_string(i + 1), juce::Colours::grey, ballControlComponent.release(), true);
-	}
-	tabs->setBounds(BALLS_TABS_BOUNDS);
-	tabs->setColour(juce::TabbedComponent::backgroundColourId, juce::Colour::fromString("000A1014"));
-	addAndMakeVisible(tabs.get());
+	std::unique_ptr<juce::XmlElement> backgroundSVG(juce::XmlDocument::parse(backgroundSVGFile));
+	if (backgroundSVG != nullptr) { backgroundDrawable = juce::Drawable::createFromSVG(*backgroundSVG); }
 	
+	std::unique_ptr<juce::XmlElement> tabsSVG(juce::XmlDocument::parse(tabsSVGFile));
+	if (tabsSVG != nullptr) { tabsDrawable = juce::Drawable::createFromSVG(*tabsSVG); }
+
 	setSize(APP_WINDOW_WIDTH, APP_WINDOW_HIGHT);
 	startTimerHz(60);
 
@@ -191,7 +187,7 @@ void BallPitAudioProcessorEditor::loadGUIState()
 void BallPitAudioProcessorEditor::displayKnobsByTab()
 {
 	int ballsPosType = 1 + audioProcessor.valueTreeState.getRawParameterValue("ballsPositioningType")->load(); // 1 is offset
-	int currentTab = tabs->getCurrentTabIndex();
+	int currentTab = this->currentBallFocused;
 	int otherTab1 = (currentTab + 1) % 3;
 	int otherTab2 = (currentTab + 2) % 3;
 	std::string ballXVelocityID = "ballXVelocity" + std::to_string(currentTab);
@@ -238,7 +234,7 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 	ballsSlidersAndAttachments[otherTab2].xVelocitySlider.setVisible(false);
 	ballsSlidersAndAttachments[otherTab2].yVelocitySlider.setVisible(false);
 	
-	if (audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->isActive() == true)
+	if (audioProcessor.getPit().getBalls()[this->currentBallFocused]->isActive() == true)
 	{
 		addRemoveBallButton.setButtonText("Remove");
 	}
@@ -355,15 +351,15 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	addRemoveBallButton.setButtonText("Add");
 	addRemoveBallButton.onClick = [this]()
 	{
-		if (audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->isActive() == true)
+		if (audioProcessor.getPit().getBalls()[this->currentBallFocused]->isActive() == true)
 		{
 			addRemoveBallButton.setButtonText("Add");
-			audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->setActive(false);
+			audioProcessor.getPit().getBalls()[this->currentBallFocused]->setActive(false);
 		}
 		else
 		{
 			addRemoveBallButton.setButtonText("Remove");
-			audioProcessor.getPit().getBalls()[tabs->getCurrentTabIndex()]->setActive(true);
+			audioProcessor.getPit().getBalls()[this->currentBallFocused]->setActive(true);
 		}
 	};
 	addRemoveBallButton.setBounds(ADD_REMOVE_BUTTON_BOUNDS);
@@ -509,10 +505,20 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	g.fillAll(juce::Colours::black);
 
 	// draw background 
-	if (drawable != nullptr)
+	if (backgroundDrawable != nullptr)
 	{
-		drawable->setBounds(getLocalBounds());
-		drawable->draw(g, 1.0f);
+		backgroundDrawable->setBounds(getLocalBounds());
+		backgroundDrawable->draw(g, 1.0f);
+	}
+
+	// draw tabs
+	if (tabsDrawable != nullptr)
+	{
+		juce::Rectangle<int> originalBounds = tabsDrawable->getBounds();
+		float scaleX = BALLS_TABS_BOUNDS.getWidth() / static_cast<float>(originalBounds.getWidth());
+		float scaleY = BALLS_TABS_BOUNDS.getHeight() / static_cast<float>(originalBounds.getHeight());
+		juce::AffineTransform transform = juce::AffineTransform::scale(scaleX, scaleY).translated(BALLS_TABS_BOUNDS.getX(), BALLS_TABS_BOUNDS.getY());
+		tabsDrawable->draw(g, 1.0f, transform);
 	}
 
 	// draw balls
@@ -563,7 +569,7 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 		if (svgFile.existsAsFile())
 		{
 			std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
-			if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
+			if (svgXml != nullptr) { backgroundDrawable = juce::Drawable::createFromSVG(*svgXml); }
 		}
 
 		repaint();
@@ -670,6 +676,35 @@ static bool isMouseOverDice(const juce::MouseEvent& event)
 	return false;
 }
 
+static int isMouseOverTab(const juce::MouseEvent& event)
+{
+	if (event.position.x > BALLS_TAB_0_BOUNDS.getX() &&
+		event.position.x < BALLS_TAB_0_BOUNDS.getX() + BALLS_TAB_0_BOUNDS.getWidth())
+	{
+		if (event.position.y > BALLS_TAB_0_BOUNDS.getY() &&
+			event.position.y < BALLS_TAB_0_BOUNDS.getY() + BALLS_TAB_0_BOUNDS.getHeight())
+		{
+			return 0;
+		}
+		else if (event.position.y > BALLS_TAB_1_BOUNDS.getY() &&
+				 event.position.y < BALLS_TAB_1_BOUNDS.getY() + BALLS_TAB_1_BOUNDS.getHeight())
+		{
+			return 1;
+		}
+		else if (event.position.y > BALLS_TAB_2_BOUNDS.getY() &&
+				 event.position.y < BALLS_TAB_2_BOUNDS.getY() + BALLS_TAB_2_BOUNDS.getHeight())
+		{
+			return 2;
+		}
+		else
+		{
+			return MOUSE_NOT_IN_TAB;
+		}
+	}
+
+	return MOUSE_NOT_IN_TAB;
+}
+
 void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 {
 	float result = MOUSE_NOT_IN_BALL;
@@ -697,6 +732,13 @@ void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 		return;
 	}
 	mouseOverDice = false;
+
+	mouseOverTab = isMouseOverTab(event);
+	if (mouseOverTab != MOUSE_NOT_IN_TAB)
+	{
+		return;
+	}
+	mouseOverTab = MOUSE_NOT_IN_TAB;
 }
 
 void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
@@ -719,6 +761,21 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 		}
 		this->audioProcessor.getPit().setEdgeTypeToRandom();
 		this->audioProcessor.setWasGUIUpdatedToTrue();
+	}
+	else if (mouseOverTab != MOUSE_NOT_IN_TAB)
+	{
+		jassert(mouseOverTab >= 0 && mouseOverTab < 4);
+		currentBallFocused = mouseOverTab;
+		displayKnobsByTab();
+
+		std::string ballTabId = "C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/Ball_tab_" + std::to_string(currentBallFocused) + ".svg";
+		//std::string ballTabId = "D:/Computer_Science/project/BallPit/Resources/Ball_tab_" + std::to_string(currentBallFocused) + ".svg";
+		//std::string ballTabId = "D:/Plugin Laboratory/BallPit/Resources/Ball_tab_" + std::to_string(currentBallFocused) + ".svg";
+		auto tabsSVGFile = juce::File(ballTabId);
+		std::unique_ptr<juce::XmlElement> tabsSVG(juce::XmlDocument::parse(tabsSVGFile));
+		if (tabsSVG != nullptr) { tabsDrawable = juce::Drawable::createFromSVG(*tabsSVG); }
+
+		mouseOverTab = MOUSE_NOT_IN_TAB;
 	}
 }
 
