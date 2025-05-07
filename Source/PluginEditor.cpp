@@ -338,12 +338,15 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	startStopButton.setButtonText("Start");
 	startStopButton.onClick = [this]()
 	{
-		audioProcessor.getPit().checkBallsPositionBeforeStart();
 		audioProcessor.getPit().toggleBallMovement();
 		if (audioProcessor.getPit().areBallsMoving())
+		{
 			startStopButton.setButtonText("Stop");
+		}
 		else
+		{
 			startStopButton.setButtonText("Start");
+		}
 	};
 	startStopButton.setBounds(START_STOP_BUTTON_BOUNDS);
 	addAndMakeVisible(startStopButton);
@@ -527,6 +530,16 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	{
 		if (ball->isActive() == true)
 		{
+			if (std::isnan(ball->getX()) || ball->getX() < PIT_MIN_X || ball->getX() > PIT_MAX_X)
+			{
+				ball->setPosition(PIT_MIN_X + ball->getRadius(), ball->getY());
+				ballsSlidersAndAttachments[ball->getBallIndex()].xSlider.setValue(PIT_MIN_X + ball->getRadius(), juce::sendNotification);
+			}
+			if (std::isnan(ball->getY()) || ball->getY() < PIT_MIN_Y || ball->getY() > PIT_MAX_Y)
+			{
+				ball->setPosition(ball->getX(), PIT_MIN_Y + ball->getRadius());
+				ballsSlidersAndAttachments[ball->getBallIndex()].ySlider.setValue(PIT_MIN_Y + ball->getRadius(), juce::sendNotification);
+			}
 			ball->draw(g);
 		}
 	}

@@ -311,6 +311,12 @@ void Ball::resolveCollision(Ball& other)
 	other.x -= nx * (overlap / 2.0f);
 	other.y -= ny * (overlap / 2.0f);
 
+	if (std::isnan(other.x))
+		other.x = PIT_MIN_X + 5 + (2 * other.radius) * 50;
+
+	if (std::isnan(other.y))
+		other.y = PIT_MIN_Y + 5 + (2 * other.radius) * 50;
+
 	// Calculate relative velocity in the normal direction
 	float dvx = speedX - other.speedX;
 	float dvy = speedY - other.speedY;

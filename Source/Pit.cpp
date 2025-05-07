@@ -99,14 +99,6 @@ void Pit::setBallsEdgeNotes()
 	}
 }
 
-void Pit::checkBallsPositionBeforeStart()
-{
-	for (auto& ball : balls) // TODO - delete this kaka
-	{
-		DBG("tttttt");
-	}
-}
-
 void Pit::setEdgeScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode)
 {
 	this->edge.setScale(scaleKind, rootNote, mode);

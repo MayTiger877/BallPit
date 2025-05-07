@@ -18,7 +18,6 @@ public:
 	
 	const std::vector<std::unique_ptr<Ball>>& getBalls() const;
 	void setBallParams(int index, float x, float y, float radius, float velocity, float angle, int ballSpeedType);
-	void checkBallsPositionBeforeStart();
 	void setBallsEdgeNotes();
 	
 	void toggleBallMovement() {
