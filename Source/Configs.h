@@ -56,14 +56,14 @@
 
 #define BALLS_TABS_BOUNDS juce::Rectangle<int>(415, 490, 50, 150)
 
-#define BALL_X_KNOB_BOUNDS juce::Rectangle<int>(600, 522, 55, 55)
-#define BALL_Y_KNOB_BOUNDS juce::Rectangle<int>(710, 522, 55, 55)
+#define BALL_X_KNOB_BOUNDS juce::Rectangle<int>(640, 522, 55, 55)
+#define BALL_Y_KNOB_BOUNDS juce::Rectangle<int>(740, 522, 55, 55)
 #define ADD_REMOVE_BUTTON_BOUNDS juce::Rectangle<int>(485, 522, 80, 25)
-#define BALL_SPEED_KNOB_BOUNDS juce::Rectangle<int>(485, 595, 55, 55)
-#define BALL_DIRECTION_KNOB_BOUNDS juce::Rectangle<int>(575, 595, 55, 55)
-#define BALL_SIZE_KNOB_BOUNDS juce::Rectangle<int>(700, 595, 55, 55)
-#define BALL_X_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(485, 595, 55, 55)
-#define BALL_Y_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(575, 595, 55, 55)
+#define BALL_SPEED_KNOB_BOUNDS juce::Rectangle<int>(490, 595, 55, 55)
+#define BALL_DIRECTION_KNOB_BOUNDS juce::Rectangle<int>(600, 595, 55, 55)
+#define BALL_SIZE_KNOB_BOUNDS juce::Rectangle<int>(710, 595, 55, 55)
+#define BALL_X_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(490, 595, 55, 55)
+#define BALL_Y_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(600, 595, 55, 55)
 
 #define EDGE_PHASE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 130, 100, 25)
 #define EDGE_DENOMENATOR_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 185 , 100, 25)

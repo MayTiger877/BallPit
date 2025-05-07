@@ -60,7 +60,6 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	listeners.push_back(std::move(collisionListener3));
 	
 	getUpdatedBallParams();
-	this->isDAWPlaying = false;
 
 	valueTreeState.state.setProperty(Service::PresetManager::presetNameProperty, "", nullptr);
 	valueTreeState.state.setProperty("version", ProjectInfo::versionString, nullptr);
@@ -144,10 +143,6 @@ void BallPitAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 	pit.setSampleRate(sampleRate);
 	midiBuffer.clear();
 
-	lastPPQPosition = 0.0;
-	stepPPQIncrement = 0.0;
-	samplesPerStep = static_cast<int>(sampleRate / SECONDS_IN_MINUTE);
-	sampleCounter = 0;
 	m_timeSignature.numerator = DEFAULT_TIME_SIGNATURE_NUMERATOR;
 	m_timeSignature.denominator = DEFAULT_TIME_SIGNATURE_DENOMINATOR;
 
@@ -323,11 +318,10 @@ void BallPitAudioProcessor::updateQuantization()
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	buffer.clear();
-	bool tickPassed = false;
-
+	juce::Optional<juce::AudioPlayHead::PositionInfo> newPositionInfo;
 	if (auto* playhead = getPlayHead())
 	{
-		juce::Optional<juce::AudioPlayHead::PositionInfo> newPositionInfo = playhead->getPosition();
+		newPositionInfo = playhead->getPosition();
 		if (newPositionInfo.hasValue())
 		{
 			auto bpm = newPositionInfo->getBpm();
@@ -339,33 +333,8 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 				m_timeSignature.numerator = (*timeSig).numerator;
 				m_timeSignature.denominator = (*timeSig).denominator;
 			}
-
-			this->isDAWPlaying = newPositionInfo->getIsPlaying();
-			if (this->isPlaying.exchange(this->isDAWPlaying) != this->isDAWPlaying)
-			{
-				sendChangeMessage(); // Notify the editor of a state change
-			}
-
-			auto ppqPosition = newPositionInfo->getPpqPosition();
-			m_ppqPos = ppqPosition.hasValue() ? (*ppqPosition) : 0.0;
-			if (m_bpm > 0.0 && m_ppqPos > 0.0)
-			{
-				const double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm;
-				stepPPQIncrement = 1.0 / secondsPerBeat / SECONDS_IN_MINUTE;
-
-				sampleCounter += buffer.getNumSamples();
-				if (sampleCounter >= samplesPerStep)
-				{
-					sampleCounter -= samplesPerStep;
-
-					if (std::floor(m_ppqPos) != std::floor(lastPPQPosition))
-					{
-						tickPassed = true;
-					}
-
-					lastPPQPosition += stepPPQIncrement;
-				}
-			}
+			
+			this->isPlaying.set(newPositionInfo->getIsPlaying());
 		}
 	}
 
@@ -375,33 +344,24 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		updateQuantization();
 		wasGUIUpdated = false;
 	}
-	if ((this->isDAWPlaying == false) && (this->pit.areBallsMoving() == false))
+
+	if (this->pit.areBallsMoving() == false)
 	{
 		clockTimeSeconds = 0.0;
 		getUpdatedBallParams();
 	}
 	else 
 	{
-		clockTimeSeconds += buffer.getNumSamples() / this->m_sampleRate;
-
-		if (this->isDAWPlaying == true)
+		if (this->isPlaying.get() == true)
 		{
-			// TODO : figure out if need the START button and how to sync it with the DAW
-			/*if (pit.areBallsMoving())
+			auto currentPPQ = newPositionInfo->getPpqPosition();
+			if (currentPPQ.hasValue())
 			{
-				pit.toggleBallMovement();
-			}*/
-
-			if (tickPassed == true)
-			{
-				tickPassed = false;
-				pit.update();
+				// maybe quantize 1 time to closest ppq...
 			}
 		}
-		else if (this->pit.areBallsMoving() == true)
-		{
-			pit.update();
-		}
+		clockTimeSeconds += buffer.getNumSamples() / this->m_sampleRate;
+		pit.update();
 	}
 
 	// --- Begin improved quantization implementation ---

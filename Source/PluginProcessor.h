@@ -78,12 +78,7 @@ public:
 	void updateGUIFlag(bool newStatus) { wasGUIUploaded = newStatus; }
 	bool getWasGUIUploaded() { return wasGUIUploaded; }
 
-	bool isHostPlaying() const { return isDAWPlaying; }
-
 	std::atomic<double> m_bpm {DEFAULT_BPM};
-	double m_ppqPos = 0.0;
-
-	juce::AudioPlayHead::TimeSignature m_timeSignatureDEBUG;
 
 	void getUpdatedBallParams();
 	void getUpdatedEdgeParams();
@@ -105,14 +100,11 @@ private:
 	std::vector<std::unique_ptr<EdgeEventListener>> listeners;
 	std::vector<PendingMidiEvent> pendingEvents;
 
-	bool isDAWPlaying;
 	double clockTimeSeconds = 0.0;
 
 	float quantizationpercent = 0.0;
 	float quantizationDivision = (1/32);
 
-	double lastPPQPosition = 0.0;
-	double stepPPQIncrement = 0.0;
 	int samplesPerStep = 0;
 	int sampleCounter = 0;
 	juce::AudioPlayHead::TimeSignature m_timeSignature;

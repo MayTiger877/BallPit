@@ -13,9 +13,9 @@
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
 	: AudioProcessorEditor (&p), presetPanel(p.getPresetManager()), audioProcessor (p), ballBeingDragged(MOUSE_NOT_IN_BALL, MOUSE_NOT_IN_BALL)
 {
-	//auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/LayOut.svg"); //laptop
+	auto svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/ByKnobs.svg"); //laptop
 	//auto svgFile = juce::File("D:/Computer_Science/project/BallPit/Resources/LayOut.svg"); //bialik
-	auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByKnobs.svg"); //haifa
+	//auto svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByKnobs.svg"); //haifa
 
 	std::unique_ptr<juce::XmlElement> svgXml(juce::XmlDocument::parse(svgFile));
 	if (svgXml != nullptr) { drawable = juce::Drawable::createFromSVG(*svgXml); }
@@ -550,11 +550,14 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 
 		if (ballsPosType == 1)
 		{
-			svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByKnobs.svg");
+			//svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByKnobs.svg");
+			svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/ByKnobs.svg"); //laptop
+
 		}
 		else if (ballsPosType == 2)
 		{
-			svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByTempo.svg");
+			//svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByTempo.svg");
+			svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/ByTempo.svg"); //laptop
 		}
 
 		if (svgFile.existsAsFile())
