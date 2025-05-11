@@ -28,11 +28,7 @@ public:
 	void onEdgeHit(int note, int noteVelocity, double sampleRate) override
 	{
 		juce::MidiMessage noteOn = juce::MidiMessage::noteOn(1, note, (juce::uint8)noteVelocity);
-		//int noteDurationSamples = static_cast<int>(0.200 * sampleRate); // 200ms
-		//juce::MidiMessage noteOff = juce::MidiMessage::noteOff(1, note);
-
 		midiBuffer.addEvent(noteOn, 0);
-		//midiBuffer.addEvent(noteOff, noteDurationSamples);
 	}
 
 	void onBallsColide(int notes[3], double sampleRate) override

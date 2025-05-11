@@ -55,7 +55,8 @@ public:
 	void mouseUp(const juce::MouseEvent& event) override;
 	std::pair<int, float> ballBeingDragged; // first is ball index, second is mouse distance from center
 	bool mouseIsDragging = false;
-	bool mouseOverDice = false;
+	bool mouseOverEdgeDice = false;
+	bool mouseOverScaleDice = false;
 	//----------------------------------------------------------------------
 
 

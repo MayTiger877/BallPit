@@ -89,6 +89,12 @@ void Pit::setEdgeTypeToRandom()
 	this->edge.updateAbstractedEdge();
 }
 
+void Pit::setScaleTypeToRandom(int scaleChoice, int rootNote)
+{
+	setEdgeScale(static_cast<Scale::ScaleKinds>(scaleChoice), rootNote);
+	this->edge.updateAbstractedEdge();
+}
+
 void Pit::setBallsEdgeNotes()
 {
 	for (auto& ball : balls)

@@ -283,7 +283,7 @@ void BallPitAudioProcessor::getUpdatedEdgeParams()
 {
 	int scaleChoice = valueTreeState.getRawParameterValue("scaleChoice")->load();
 	int rootNote = 59 + valueTreeState.getRawParameterValue("rootNote")->load(); // 59 is the offset for starting the parameter at 1 to reach middle C = 60
-	pit.setEdgeScale(static_cast<Scale::ScaleKinds>(scaleChoice), rootNote, 0);
+	pit.setEdgeScale(static_cast<Scale::ScaleKinds>(scaleChoice), rootNote);
 	pit.setEdgeParams(valueTreeState.getRawParameterValue("edgePhase")->load(),
 					  valueTreeState.getRawParameterValue("edgeDenomenator")->load(),
 					  valueTreeState.getRawParameterValue("edgeRange")->load(),

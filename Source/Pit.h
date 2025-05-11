@@ -34,7 +34,8 @@ public:
 	
 	void setEdgeParams(int phase, int denomenator, int range, int edgeType);
 	void setEdgeTypeToRandom();
-	void setEdgeScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode);
+	void setScaleTypeToRandom(int scaleChoice, int rootNote);
+	void setEdgeScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode = 0);
 	void drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors);
 
 private:
