@@ -32,7 +32,6 @@ void Ball::update()
 		x = PIT_MAX_X + 20 + ballIndex * 50;
 		y = 800;
 	}
-
 }
 
 void Ball::updateBallAbstractedEdge(const int* abstractedEdge)
@@ -90,11 +89,11 @@ void Ball::draw(juce::Graphics& g) const
 		float arrowLenghtMultiplierByVelocity;
 		if (this->ballSpeedType == 1) // chaos
 		{
-			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 10.0, 0.0, 15.0);
+			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 10.0, 0.0, 20.0);
 		}
 		else
 		{
-			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 200.0, 0.0, 15.0);
+			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 200.0, 0.0, 25.0);
 		}
 		float startX = x + (5.0f + mouseOnMagnifier + radius) * cos(angleInRadians);
 		float endX = x + (20.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * cos(angleInRadians);
@@ -210,6 +209,8 @@ void Ball::edgeBounce()
 	
 	if ((x - radius <= minX || x + radius >= maxX) && (speedX != 0))// TODO - make this if better to cover radius when positioning balls
 	{
+		DBG("Edge hit at: " << juce::Time::getCurrentTime().toString(true, true));
+
 		if (x - radius <= minX)
 		{
 			float distPassed = minX - (x - radius);
@@ -258,6 +259,8 @@ void Ball::edgeBounce()
 
 	if ((y - radius <= minY || y + radius >= maxY) && (speedY != 0))
 	{
+		DBG("Edge hit at: " << juce::Time::getCurrentTime().toString(true, true));
+
 		if (y - radius <= minY)
 		{
 			float distPassed = minY - (y - radius);

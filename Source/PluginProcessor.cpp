@@ -183,51 +183,46 @@ bool BallPitAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 
 double velocityToInterval(int velocity)
 {
+	jassert(velocity >= 0 && velocity <= 10);
 	switch (velocity)
 	{
-	case 0:
-		return 0.0;
-	case 1:
-		return 4.0;
-	case 2:
-		return 2.0;
-	case 3:
-		return 1.25;
-	case 4:
-		return 1.0;
-	case 5:
-		return 0.75;
-	case 6:
-		return 0.5;
-	case 7:
-		return 0.33;
-	case 8:
-		return 0.25;
-	case 9:
-		return 0.166;
-	case 10:
-		return 0.125;
-	default:
-		break;
+	case 1: return 4.0;
+	case 2: return 2.0;
+	case 3: return 5.0 / 4.0;
+	case 4: return 1.0;
+	case 5: return 3.0 / 4.0;
+	case 6: return 1.0 / 2.0;
+	case 7: return 1.0 / 3.0;
+	case 8: return 1.0 / 4.0;
+	case 9: return 1.0 / 6.0;
+	case 10: return 1.0 / 8.0;
+	default: return 1.0;     // Safe default (1 beat)
 	}
 }
 
-// enterd every 1/60 seconds (60Hz)
 void BallPitAudioProcessor::setXYVelocityByTempo(float& xVelocity, float& yVelocity, float ballRadius)
 {
-	if (m_bpm > 0)
+	if (m_bpm <= 0)
+		return;
+
+	float beatsPerSecond = static_cast<double>(m_bpm) / SECONDS_IN_MINUTE;
+	double pitWidth = static_cast<double>(PIT_WIDTH - (2.0 * ballRadius));
+	float distancePerUpdate = pitWidth * beatsPerSecond;
+	double denomeratorRatio = 4.0 / static_cast<double>(m_timeSignature.denominator);
+	float effectiveVelocity = (distancePerUpdate / static_cast<double>(VISUAL_FRAMES_PER_SECOND)) / denomeratorRatio;
+
+	if (std::abs(xVelocity) > 0.0001)
 	{
-		float beatsPerSecond = m_bpm / SECONDS_IN_MINUTE;
-		double pitWidth = (390.0 - (2.0 * ballRadius));
-		float distancePerUpdate = pitWidth * beatsPerSecond;
-		double denomeratorRatio = 4.0 / static_cast<double>(m_timeSignature.denominator);
-		float effectiveVelocity = (distancePerUpdate / VISUAL_FRAMES_PER_SECOND) / denomeratorRatio;
-
 		double deviation = velocityToInterval(static_cast<int>(xVelocity));
-		xVelocity = (deviation != 0) ? (effectiveVelocity / deviation) : 0.0f;
+		jassert(deviation > 0.0001);
+		xVelocity = (effectiveVelocity / deviation);
+	}
 
-		deviation = velocityToInterval(static_cast<int>(yVelocity));
-		yVelocity = (deviation != 0) ? (effectiveVelocity / deviation) : 0.0f;
+	if (std::abs(yVelocity) > 0.0001)
+	{
+		double deviation = velocityToInterval(static_cast<int>(yVelocity));
+		jassert(deviation > 0.0001);
+		yVelocity = (effectiveVelocity / deviation);
 	}
 }
 
@@ -366,7 +361,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 
 	// --- Begin improved quantization implementation ---
 	int samplePosition;
-	double secondsPerBeat = 60.0 / m_bpm;
+	double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm;
 	double secondsPerDivision = (secondsPerBeat * quantizationDivision / 4.0); // 1 division = 1/quantizationDivision of a measure
 	double samplesPerDivision = secondsPerDivision * m_sampleRate;
 	int blockEndSample = m_samplesPerBlock;

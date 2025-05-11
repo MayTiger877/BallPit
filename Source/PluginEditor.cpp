@@ -28,7 +28,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	if (tabsSVG != nullptr) { tabsDrawable = juce::Drawable::createFromSVG(*tabsSVG); }
 
 	setSize(APP_WINDOW_WIDTH, APP_WINDOW_HIGHT);
-	startTimerHz(60);
+	startTimerHz(VISUAL_FRAMES_PER_SECOND);
 
 	GUIState = juce::ValueTree("GUIState");
 
@@ -569,14 +569,14 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 
 		if (ballsPosType == 1)
 		{
-			//svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByKnobs.svg");
-			svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/ByKnobs.svg"); //laptop
+			svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByKnobs.svg");
+			//svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/ByKnobs.svg"); //laptop
 
 		}
 		else if (ballsPosType == 2)
 		{
-			//svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByTempo.svg");
-			svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/ByTempo.svg"); //laptop
+			svgFile = juce::File("D:/Plugin Laboratory/BallPit/Resources/ByTempo.svg");
+			//svgFile = juce::File("C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/ByTempo.svg"); //laptop
 		}
 
 		if (svgFile.existsAsFile())
@@ -586,11 +586,6 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 		}
 
 		repaint();
-	}
-	else if (comboBoxThatHasChanged == &edgeTypeComboBox)
-	{
-		int newType = edgeTypeComboBox.getSelectedId();
-		DBG("NewType is " << newType);
 	}
 }
 
@@ -638,12 +633,12 @@ void BallPitAudioProcessorEditor::changeXAndYToSnapToGrid()
 
 		if (auto* xParam = audioProcessor.valueTreeState.getParameter(ballXId))
 		{
-			xParam->setValueNotifyingHost((snappedX * gridFactor) / 390.0f); // Scale to normalized 0-1 range
+			xParam->setValueNotifyingHost((snappedX * gridFactor) / PIT_WIDTH); // Scale to normalized 0-1 range
 		}
 
 		if (auto* yParam = audioProcessor.valueTreeState.getParameter(ballYId))
 		{
-			yParam->setValueNotifyingHost((snappedY * gridFactor) / 390.0f); // Scale to normalized 0-1 range
+			yParam->setValueNotifyingHost((snappedY * gridFactor) / PIT_WIDTH); // Scale to normalized 0-1 range
 		}
 	}
 }
@@ -666,12 +661,12 @@ void BallPitAudioProcessorEditor::changeXAndYToFree()
 		ballsSlidersAndAttachments[i].ySlider.setValue(currentY, juce::sendNotification);
 		if (auto* xParam = audioProcessor.valueTreeState.getParameter(ballXId))
 		{
-			xParam->setValueNotifyingHost(currentX / 390.0f); // Scale to normalized 0-1 range
+			xParam->setValueNotifyingHost(currentX / PIT_WIDTH); // Scale to normalized 0-1 range
 		}
 
 		if (auto* yParam = audioProcessor.valueTreeState.getParameter(ballYId))
 		{
-			yParam->setValueNotifyingHost(currentY / 390.0f); // Scale to normalized 0-1 range
+			yParam->setValueNotifyingHost(currentY / PIT_WIDTH); // Scale to normalized 0-1 range
 		}
 	}
 }
@@ -778,7 +773,6 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 {
 	if (ballBeingDragged.first > MOUSE_NOT_IN_BALL)
 	{
-		// TODO- decide wheather to use position offset or "pop" ball to mouse pos imeediately....
 		if (this->audioProcessor.getPit().getBalls()[ballBeingDragged.first]->isActive() == true)
 		{
 			mouseIsDragging = true;

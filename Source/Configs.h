@@ -14,7 +14,7 @@
 //-----------------------------------------------------------------------
 // defines and constants
 
-#define VISUAL_FRAMES_PER_SECOND 60.0
+#define VISUAL_FRAMES_PER_SECOND 50.0
 
 #define SECONDS_IN_MINUTE 60.0
 
@@ -40,7 +40,8 @@
 #define APP_WINDOW_WIDTH (836)
 #define APP_WINDOW_HIGHT (654)
 
-#define PIT_SIZE (396,396)
+#define PIT_WIDTH 396.0
+#define PIT_SIZE (PIT_WIDTH,PIT_WIDTH)
 #define PIT_MIN_X 220.0
 #define PIT_MIN_Y 60.0
 #define PIT_MAX_X 616.0
@@ -72,9 +73,9 @@
 #define EDGE_DENOMENATOR_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 185 , 100, 25)
 #define EDGE_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 240, 100, 25)
 
-#define ROOT_NOTE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 340, 100, 25)
-#define SCALE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 395, 100, 25)
-#define RANGE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 450, 100, 25)
+#define SCALE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 340, 100, 25)
+#define RANGE_COMBOBOX_BOUNDS     juce::Rectangle<int>(40, 395, 100, 25)
+#define ROOT_NOTE_COMBOBOX_BOUNDS     juce::Rectangle<int>(40, 450, 100, 25)
 
 #define EDGE_LAYOUT_DICE_BOUNDS juce::Rectangle<int>(182, 68, 20, 20)
 #define EDGE_RANDOM_DICE_MIN_X EDGE_LAYOUT_DICE_BOUNDS.getX()

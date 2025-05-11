@@ -69,8 +69,8 @@ private:
     
     float x, y;
     float radius;
-    float velocity, angle;
-    float speedX, speedY;
+    double velocity, angle;
+    double speedX, speedY;
     bool active;
     int ballIndex;
     int ballSpeedType = 0;
