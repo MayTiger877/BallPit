@@ -55,27 +55,14 @@ public:
 	void onBallsColide(int notes[3], double sampleRate) override
 	{
 		int noteVelocity = 100; // noteVelocity for the note
-		int noteDurationSamples = static_cast<int>(0.250 * sampleRate); // 250ms
-
-		DBG("The notes on colide are: " << notes[0] << ", " << notes[1] << ", " << notes[2]);
 
 		juce::MidiMessage noteOn1 = juce::MidiMessage::noteOn(1, notes[0], (juce::uint8)noteVelocity);
-		juce::MidiMessage noteOff1 = juce::MidiMessage::noteOff(1, notes[0]);
-
 		juce::MidiMessage noteOn2 = juce::MidiMessage::noteOn(1, notes[1], (juce::uint8)noteVelocity);
-		juce::MidiMessage noteOff2 = juce::MidiMessage::noteOff(1, notes[1]);
-
 		juce::MidiMessage noteOn3 = juce::MidiMessage::noteOn(1, notes[2], (juce::uint8)noteVelocity);
-		juce::MidiMessage noteOff3 = juce::MidiMessage::noteOff(1, notes[2]);
 
 		midiBuffer.addEvent(noteOn1, 0);
-		midiBuffer.addEvent(noteOff1, noteDurationSamples);
-
 		midiBuffer.addEvent(noteOn2, 0);
-		midiBuffer.addEvent(noteOff2, noteDurationSamples);
-
 		midiBuffer.addEvent(noteOn3, 0);
-		midiBuffer.addEvent(noteOff3, noteDurationSamples);
 	}
 
 private:

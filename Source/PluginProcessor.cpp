@@ -319,6 +319,7 @@ void BallPitAudioProcessor::updateQuantization()
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	buffer.clear();
+	double timePassed = buffer.getNumSamples() / this->m_sampleRate;
 	juce::Optional<juce::AudioPlayHead::PositionInfo> newPositionInfo;
 	if (auto* playhead = getPlayHead())
 	{
@@ -359,52 +360,37 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			//	// TODO- maybe quantize 1 time to closest ppq...
 			//}
 		}
-		double timePassed = buffer.getNumSamples() / this->m_sampleRate;
 		clockTimeSeconds += timePassed;
 		pit.update(timePassed);
 	}
 
 	// --- Begin improved quantization implementation ---
-	int samplePosition;
 	double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm;
 	double secondsPerDivision = (secondsPerBeat * quantizationDivision / 4.0); // 1 division = 1/quantizationDivision of a measure
-	double samplesPerDivision = secondsPerDivision * m_sampleRate;
-	int blockEndSample = m_samplesPerBlock;
-
 	std::vector<PendingMidiEvent> eventsToAdd;
 
-	// Handle pending note-on and note-off events from previous blocks
 	if (!pendingEvents.empty())
 	{
 		for (auto pendingIt = pendingEvents.begin(); pendingIt != pendingEvents.end();)
 		{
-			if (pendingIt->samplePosition < blockEndSample)
+			if (pendingIt->samplePosition < m_samplesPerBlock)
 			{
 				if (pendingIt->message.isNoteOn())
 				{
 					midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
-
-					// Schedule note-off after fixed (or tempo-based) duration
-					double beatsHeld = 0.25; // quarter of a beat (16th note)
-					int noteDurationSamples = static_cast<int>(beatsHeld * secondsPerBeat * m_sampleRate);
+					int noteDurationSamples = static_cast<int>(0.250 * m_sampleRate); // 250ms
 
 					int offSample = pendingIt->samplePosition + noteDurationSamples;
-					if (offSample < blockEndSample)
+					if (offSample < m_samplesPerBlock)
 					{
-						juce::MidiMessage noteOff = juce::MidiMessage::noteOff(
-							pendingIt->message.getChannel(),
-							pendingIt->message.getNoteNumber());
-
+						juce::MidiMessage noteOff = juce::MidiMessage::noteOff(pendingIt->message.getChannel(), pendingIt->message.getNoteNumber());
 						midiMessages.addEvent(noteOff, offSample);
 					}
 					else
 					{
-						// Note-off spills into next block
-						juce::MidiMessage noteOff = juce::MidiMessage::noteOff(
-							pendingIt->message.getChannel(),
-							pendingIt->message.getNoteNumber());
+						juce::MidiMessage noteOff = juce::MidiMessage::noteOff(pendingIt->message.getChannel(),	pendingIt->message.getNoteNumber());
 
-						int futureSample = offSample - blockEndSample;
+						int futureSample = offSample - m_samplesPerBlock;
 						eventsToAdd.push_back({ noteOff, futureSample });
 					}
 
@@ -418,7 +404,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			}
 			else
 			{
-				pendingIt->samplePosition -= blockEndSample;
+				pendingIt->samplePosition -= m_samplesPerBlock;
 				++pendingIt;
 			}
 		}
@@ -436,36 +422,35 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		if (!msg.isNoteOn())
 			continue;
 
-		samplePosition = metadata.samplePosition;
-		double messageTimeSec = clockTimeSeconds + (samplePosition / m_sampleRate);
-
-		// Quantize this time to nearest grid division
+		double messageTimeSec = clockTimeSeconds + (metadata.samplePosition / m_sampleRate);
 		double quantizedTimeSec = std::ceil(messageTimeSec / secondsPerDivision) * secondsPerDivision;
 
-		// Convert quantized time to sample position relative to block
+		// Convert quantized time to sample position relative to block enntry time
 		int quantizedSamplePosAbsolute = static_cast<int>(quantizedTimeSec * m_sampleRate);
 		int quantizedSamplePosRelative = quantizedSamplePosAbsolute - static_cast<int>(clockTimeSeconds * m_sampleRate);
 
-		// Apply interpolation factor
-		int finalSamplePos = static_cast<int>((1.0 - quantizationpercent) * samplePosition + quantizationpercent * quantizedSamplePosRelative);
-		finalSamplePos = juce::jlimit(0, m_samplesPerBlock - 1, finalSamplePos); // Ensure in block bounds
+		int finalSamplePos = static_cast<int>((1.0 - quantizationpercent) * metadata.samplePosition + quantizationpercent * quantizedSamplePosRelative);
+		if (finalSamplePos < m_samplesPerBlock)
+		{
+			midiMessages.addEvent(msg, finalSamplePos);
+		}
+		else
+		{
+			finalSamplePos = finalSamplePos = m_samplesPerBlock;
+			pendingEvents.push_back({ msg, finalSamplePos });
+		}
 
-		// Add note-on at quantized position
-		midiMessages.addEvent(msg, finalSamplePos);
-
-		// Schedule note-off after a tempo-relative duration
-		double beatsHeld = 0.25;
-		int noteDurationSamples = static_cast<int>(beatsHeld * secondsPerBeat * m_sampleRate);
+		int noteDurationSamples = static_cast<int>(0.250 * m_sampleRate); // 250ms
 		int noteOffPos = finalSamplePos + noteDurationSamples;
 
-		if (noteOffPos < blockEndSample)
+		if (noteOffPos < m_samplesPerBlock)
 		{
 			juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
 			midiMessages.addEvent(noteOff, noteOffPos);
 		}
 		else
 		{
-			int futureSample = noteOffPos - blockEndSample;
+			int futureSample = noteOffPos - m_samplesPerBlock;
 			juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
 			pendingEvents.push_back({ noteOff, futureSample });
 		}
@@ -567,7 +552,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, 10.0f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, 10.0f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", 5.0f, 25.0f, 0.5f));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Velocity", 0.0f, 10.0f, 0.5f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Velocity", 0.0f, 2000.0f, 20.0f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", 0.0f, 360.0f, 1.0f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballXVelocityId, "XVelocity", 0.0f, 10.0f, 1.0f));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballYVelocityId, "YVelocity", 0.0f, 10.0f, 1.0f));

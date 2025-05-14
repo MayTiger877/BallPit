@@ -277,11 +277,11 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
 
 		ballsSlidersAndAttachments[i].velocitySlider.setBounds(BALL_SPEED_KNOB_BOUNDS);
-		ballsSlidersAndAttachments[i].velocitySlider.setValue(5.0f);
+		ballsSlidersAndAttachments[i].velocitySlider.setValue(400.0f);
 		ballsSlidersAndAttachments[i].velocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].velocitySlider.setDoubleClickReturnValue(true, 3.0f);
+		ballsSlidersAndAttachments[i].velocitySlider.setDoubleClickReturnValue(true, 400.0f);
 		ballsSlidersAndAttachments[i].velocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballsSlidersAndAttachments[i].velocitySlider.setRange(0.0f, 10.0f, 0.5f);
+		ballsSlidersAndAttachments[i].velocitySlider.setRange(0.0f, 2000.0f, 20.0f);
 		ballsSlidersAndAttachments[i].velocitySlider.toFront(false);
 		addChildComponent(ballsSlidersAndAttachments[i].velocitySlider);
 
@@ -471,8 +471,8 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	quantizationSlider.setDoubleClickReturnValue(true, 10.0f);
 	quantizationSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 	quantizationSlider.setValue(0.0);
-	quantizationSlider.setRange(0.0, 100.0, 1.0);
-	//addAndMakeVisible(quantizationSlider); Todo- return
+	quantizationSlider.setRange(0.0, 1.0, 0.01);
+	addAndMakeVisible(quantizationSlider);
 
 	quantizationDivisionComboBox.setBounds(QUANTIZATION_DIVISION_COMBOBOX_BOUNDS);
 	quantizationDivisionComboBox.addItem("1/32", 32);
@@ -480,7 +480,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	quantizationDivisionComboBox.addItem("1/8", 8);
 	quantizationDivisionComboBox.addItem("1/4", 4);
 	quantizationDivisionComboBox.setSelectedId(32);
-	//addAndMakeVisible(quantizationDivisionComboBox); Todo- return
+	addAndMakeVisible(quantizationDivisionComboBox);
 
 	openPresetManager.setButtonText("Presets");
 	openPresetManager.setBounds(PRESET_MANAGER_MENU_BUTTON_BOUNDS);
@@ -554,20 +554,6 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	g.fillEllipse(PIT_CORNER_TR);
 	g.fillEllipse(PIT_CORNER_BL);
 	g.fillEllipse(PIT_CORNER_BR);
-
-	// TODO- delete this dbg
-	g.setColour(juce::Colours::white);
-	juce::String temp = "bpm is: " + std::to_string(this->audioProcessor.m_bpm);
-	g.setFont(15.0f);
-	g.drawText(temp, juce::Rectangle<int>(630, 130, 150, 25), juce::Justification(juce::Justification::left));
-	temp = "denominator: " + std::to_string(this->audioProcessor.m_timeSignature.denominator);
-	g.drawText(temp, juce::Rectangle<int>(630, 170, 200, 25), juce::Justification(juce::Justification::left));
-	temp = "sample rate: " + std::to_string(this->audioProcessor.m_sampleRate);
-	g.drawText(temp, juce::Rectangle<int>(630, 210, 200, 25), juce::Justification(juce::Justification::left));
-	temp = "block size: " + std::to_string(this->audioProcessor.m_samplesPerBlock);
-	g.drawText(temp, juce::Rectangle<int>(630, 250, 200, 25), juce::Justification(juce::Justification::left));
-	temp = "time passed: " + std::to_string(this->audioProcessor.getClockTimeSecond());
-	g.drawText(temp, juce::Rectangle<int>(630, 290, 200, 25), juce::Justification(juce::Justification::left));
 }
 
 void BallPitAudioProcessorEditor::resized()
