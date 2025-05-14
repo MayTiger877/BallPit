@@ -205,24 +205,30 @@ void BallPitAudioProcessor::setXYVelocityByTempo(float& xVelocity, float& yVeloc
 	if (m_bpm <= 0)
 		return;
 
-	float beatsPerSecond = static_cast<double>(m_bpm) / SECONDS_IN_MINUTE;
-	double pitWidth = static_cast<double>(PIT_WIDTH - (2.0 * ballRadius));
+	/*float beatsPerSecond = static_cast<double>(m_bpm) / SECONDS_IN_MINUTE;
+	double pitWidth = static_cast<double>(PIT_WIDTH - (2 * PIT_INNER_DIFF) - (2.0 * ballRadius));
 	float distancePerUpdate = pitWidth * beatsPerSecond;
 	double denomeratorRatio = 4.0 / static_cast<double>(m_timeSignature.denominator);
-	float effectiveVelocity = (distancePerUpdate / static_cast<double>(VISUAL_FRAMES_PER_SECOND)) / denomeratorRatio;
+	float effectiveVelocity = (distancePerUpdate / static_cast<double>(VISUAL_FRAMES_PER_SECOND)) / denomeratorRatio;*/
+	
+	const float beatsPerSecond = static_cast<float>(m_bpm) / SECONDS_IN_MINUTE;
+	const double pitWidth = static_cast<double>(PIT_WIDTH - (2 * PIT_INNER_DIFF) - (2.0 * ballRadius));
+	const float distancePerSecond = static_cast<float>(pitWidth * beatsPerSecond);
+	const double denominatorRatio = 4.0 / static_cast<double>(m_timeSignature.denominator);
+	const float effectiveVelocityPerSecond = distancePerSecond / static_cast<float>(denominatorRatio);
 
 	if (std::abs(xVelocity) > 0.0001)
 	{
 		double deviation = velocityToInterval(static_cast<int>(xVelocity));
 		jassert(deviation > 0.0001);
-		xVelocity = (effectiveVelocity / deviation);
+		xVelocity = (effectiveVelocityPerSecond / deviation);
 	}
 
 	if (std::abs(yVelocity) > 0.0001)
 	{
 		double deviation = velocityToInterval(static_cast<int>(yVelocity));
 		jassert(deviation > 0.0001);
-		yVelocity = (effectiveVelocity / deviation);
+		yVelocity = (effectiveVelocityPerSecond / deviation);
 	}
 }
 
@@ -328,8 +334,6 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 				m_timeSignature.numerator = (*timeSig).numerator;
 				m_timeSignature.denominator = (*timeSig).denominator;
 			}
-			
-			this->isPlaying.set(newPositionInfo->getIsPlaying());
 		}
 	}
 
@@ -349,14 +353,15 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	{
 		if (this->isPlaying.get() == true)
 		{
-			auto currentPPQ = newPositionInfo->getPpqPosition();
-			if (currentPPQ.hasValue())
-			{
-				// maybe quantize 1 time to closest ppq...
-			}
+			//auto currentPPQ = newPositionInfo->getPpqPosition();
+			//if (currentPPQ.hasValue())
+			//{
+			//	// TODO- maybe quantize 1 time to closest ppq...
+			//}
 		}
-		clockTimeSeconds += buffer.getNumSamples() / this->m_sampleRate;
-		pit.update();
+		double timePassed = buffer.getNumSamples() / this->m_sampleRate;
+		clockTimeSeconds += timePassed;
+		pit.update(timePassed);
 	}
 
 	// --- Begin improved quantization implementation ---
@@ -515,6 +520,11 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 Pit& BallPitAudioProcessor::getPit()
 {
 	return pit;
+}
+
+void BallPitAudioProcessor::togglePlayState()
+{
+	this->pit.toggleBallMovement();
 }
 
 juce::StringArray getScaleOptions()

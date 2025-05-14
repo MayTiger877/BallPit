@@ -79,6 +79,7 @@ public:
 	bool getWasGUIUploaded() { return wasGUIUploaded; }
 
 	std::atomic<double> m_bpm {DEFAULT_BPM};
+	juce::AudioPlayHead::TimeSignature m_timeSignature;
 
 	void getUpdatedBallParams();
 	void getUpdatedEdgeParams();
@@ -89,11 +90,16 @@ public:
 
 	Service::PresetManager& getPresetManager() { return *presetManager; }
 
-private:
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
+	double getClockTimeSecond() { return clockTimeSeconds; }
+	void setClockTimeSeconds(double newClockTimeSeconds) { this->clockTimeSeconds = newClockTimeSeconds; }
+	void togglePlayState();
 
 	double m_sampleRate;
 	int m_samplesPerBlock;
+
+private:
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
+
 	
 	Pit pit;
 	juce::MidiBuffer midiBuffer;
@@ -107,7 +113,6 @@ private:
 
 	int samplesPerStep = 0;
 	int sampleCounter = 0;
-	juce::AudioPlayHead::TimeSignature m_timeSignature;
 
 	bool wasGUIUploaded;
 	juce::ValueTree processorGUIState;

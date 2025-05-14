@@ -47,6 +47,8 @@
 #define PIT_MAX_X 616.0
 #define PIT_MAX_Y 456.0
 
+#define PIT_INNER_DIFF 3.0
+
 #define PIT_EDGE_THICKNESS 2
 #define PIT_CORNER_THICKNESS 12
 

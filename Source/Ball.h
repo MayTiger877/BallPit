@@ -26,7 +26,7 @@ public:
 
     void setSampleRate(double newSampleRate) { this->sampleRate = newSampleRate; }
 
-    void update();
+    void update(double timePassed);
     void edgeBounce();
     bool checkCollision(const Ball& other) const;
     void resolveCollision(Ball& other);
@@ -62,10 +62,10 @@ public:
 
 private:
     // pit coordinates- stupid simple
-    const float minX = PIT_MIN_X + 5;
-    const float minY = PIT_MIN_Y + 5;
-    const float maxX = PIT_MAX_X - 2;
-    const float maxY = PIT_MAX_Y + 1;
+    const float minX = PIT_MIN_X + PIT_INNER_DIFF;
+    const float minY = PIT_MIN_Y + PIT_INNER_DIFF;
+    const float maxX = PIT_MAX_X - PIT_INNER_DIFF;
+    const float maxY = PIT_MAX_Y + PIT_INNER_DIFF;
     
     float x, y;
     float radius;

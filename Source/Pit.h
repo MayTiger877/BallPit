@@ -14,13 +14,14 @@ public:
 
 	void addBall(std::unique_ptr<Ball> ball);
 	void setSampleRate(double updatedSampleRate);
-	void update();
+	void update(double timePassed);
 	
 	const std::vector<std::unique_ptr<Ball>>& getBalls() const;
 	void setBallParams(int index, float x, float y, float radius, float velocity, float angle, int ballSpeedType);
 	void setBallsEdgeNotes();
 	
-	void toggleBallMovement() {
+	void toggleBallMovement() 
+	{
 		isMoving = !isMoving;
 		for (auto& ball : balls)
 		{

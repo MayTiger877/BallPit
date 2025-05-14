@@ -22,12 +22,12 @@ void Pit::setSampleRate(double updatedSampleRate)
 	}
 }
 
-void Pit::update()
+void Pit::update(double timePassed)
 {
 	// edges hit
 	for (auto& ball : balls)
 	{
-		ball->update();
+		ball->update(timePassed);
 		ball->edgeBounce();
 	}
 

@@ -19,12 +19,12 @@ void Ball::setBallCollideEventListener(BallCollideEventListener* l)
 	this->collideListener = l;
 }
 
-void Ball::update()
+void Ball::update(double timePassed)
 {
 	if (this->active == true)
 	{
-		x += speedX;
-		y += speedY;
+		x += speedX * timePassed;
+		y += speedY * timePassed;
 	}
 	else
 	{
@@ -93,7 +93,7 @@ void Ball::draw(juce::Graphics& g) const
 		}
 		else
 		{
-			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 200.0, 0.0, 25.0);
+			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 8300.0, 0.0, 25.0);
 		}
 		float startX = x + (5.0f + mouseOnMagnifier + radius) * cos(angleInRadians);
 		float endX = x + (20.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * cos(angleInRadians);

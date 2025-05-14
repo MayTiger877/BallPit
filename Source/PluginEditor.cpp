@@ -338,7 +338,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	startStopButton.setButtonText("Start");
 	startStopButton.onClick = [this]()
 	{
-		audioProcessor.getPit().toggleBallMovement();
+		audioProcessor.togglePlayState();
 		if (audioProcessor.getPit().areBallsMoving())
 		{
 			startStopButton.setButtonText("Stop");
@@ -524,7 +524,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 		tabsDrawable->draw(g, 1.0f, transform);
 	}
 
-	// draw balls
+	// draw ballzzz
 	const auto& balls = audioProcessor.getPit().getBalls();
 	for (const auto& ball : balls)
 	{
@@ -554,6 +554,20 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	g.fillEllipse(PIT_CORNER_TR);
 	g.fillEllipse(PIT_CORNER_BL);
 	g.fillEllipse(PIT_CORNER_BR);
+
+	// TODO- delete this dbg
+	g.setColour(juce::Colours::white);
+	juce::String temp = "bpm is: " + std::to_string(this->audioProcessor.m_bpm);
+	g.setFont(15.0f);
+	g.drawText(temp, juce::Rectangle<int>(630, 130, 150, 25), juce::Justification(juce::Justification::left));
+	temp = "denominator: " + std::to_string(this->audioProcessor.m_timeSignature.denominator);
+	g.drawText(temp, juce::Rectangle<int>(630, 170, 200, 25), juce::Justification(juce::Justification::left));
+	temp = "sample rate: " + std::to_string(this->audioProcessor.m_sampleRate);
+	g.drawText(temp, juce::Rectangle<int>(630, 210, 200, 25), juce::Justification(juce::Justification::left));
+	temp = "block size: " + std::to_string(this->audioProcessor.m_samplesPerBlock);
+	g.drawText(temp, juce::Rectangle<int>(630, 250, 200, 25), juce::Justification(juce::Justification::left));
+	temp = "time passed: " + std::to_string(this->audioProcessor.getClockTimeSecond());
+	g.drawText(temp, juce::Rectangle<int>(630, 290, 200, 25), juce::Justification(juce::Justification::left));
 }
 
 void BallPitAudioProcessorEditor::resized()
