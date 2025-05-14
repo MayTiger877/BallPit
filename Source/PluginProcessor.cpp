@@ -364,7 +364,6 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		pit.update(timePassed);
 	}
 
-	// --- Begin improved quantization implementation ---
 	double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm;
 	double secondsPerDivision = (secondsPerBeat * quantizationDivision / 4.0); // 1 division = 1/quantizationDivision of a measure
 	std::vector<PendingMidiEvent> eventsToAdd;
@@ -378,7 +377,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 				if (pendingIt->message.isNoteOn())
 				{
 					midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
-					int noteDurationSamples = static_cast<int>(0.250 * m_sampleRate); // 250ms
+					int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate);
 
 					int offSample = pendingIt->samplePosition + noteDurationSamples;
 					if (offSample < m_samplesPerBlock)
@@ -415,7 +414,6 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		}
 	}
 
-	// Handle incoming messages in current buffer
 	for (const auto& metadata : midiBuffer)
 	{
 		auto msg = metadata.getMessage();
@@ -440,7 +438,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			pendingEvents.push_back({ msg, finalSamplePos });
 		}
 
-		int noteDurationSamples = static_cast<int>(0.250 * m_sampleRate); // 250ms
+		int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate);
 		int noteOffPos = finalSamplePos + noteDurationSamples;
 
 		if (noteOffPos < m_samplesPerBlock)
@@ -455,8 +453,6 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			pendingEvents.push_back({ noteOff, futureSample });
 		}
 	}
-	// --- End improved quantization implementation ---
-
 
 	midiBuffer.clear();
 }
@@ -549,35 +545,35 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		std::string ballXVelocityId = "ballXVelocity" + std::to_string(i);
 		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
 
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, 10.0f));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, 10.0f));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", 5.0f, 25.0f, 0.5f));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Velocity", 0.0f, 2000.0f, 20.0f));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", 0.0f, 360.0f, 1.0f));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballXVelocityId, "XVelocity", 0.0f, 10.0f, 1.0f));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballYVelocityId, "YVelocity", 0.0f, 10.0f, 1.0f));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, BALL_X_SLIDER_STEP));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, BALL_Y_SLIDER_STEP));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", BALL_RADIUS_MIN, BALL_RADIUS_MAX, BALL_RADIUS_STEP));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Velocity", BALL_VELOCITY_MIN, BALL_VELOCITY_MAX, BALL_VELOCITY_STEP));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", BALL_ANGLE_MIN, BALL_ANGLE_MAX, BALL_ANGLE_STEP));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballXVelocityId, "XVelocity", BALL_X_VELOCITY_MIN, BALL_X_VELOCITY_MAX, BALL_X_VELOCITY_STEP));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballYVelocityId, "YVelocity", BALL_Y_VELOCITY_MIN, BALL_Y_VELOCITY_MAX, BALL_Y_VELOCITY_STEP));
 	}
 
 	std::string edgePhaseId = "edgePhase";
-	params.add(std::make_unique<juce::AudioParameterFloat>(edgePhaseId, "Edge Phase", 0.0f, 360.0f, 0.0f));
+	params.add(std::make_unique<juce::AudioParameterFloat>(edgePhaseId, "Edge Phase", EDGE_PHASE_MIN, EDGE_PHASE_MAX, EDGE_PHASE_STEP));
 
 	std::string edgeDenomenatorId = "edgeDenomenator";
-	params.add(std::make_unique<juce::AudioParameterFloat>(edgeDenomenatorId, "Edge Denomenator", 1.0f, 8.0f, 1.0f));
+	params.add(std::make_unique<juce::AudioParameterFloat>(edgeDenomenatorId, "Edge Denomenator", EDGE_DENOMINATOR_MIN, EDGE_DENOMINATOR_MAX, EDGE_DENOMINATOR_STEP));
 
 	std::string edgeRangeId = "edgeRange";
-	params.add(std::make_unique<juce::AudioParameterFloat>(edgeRangeId, "Edge Range", 1.0f, 8.0f, 1.0f));
+	params.add(std::make_unique<juce::AudioParameterFloat>(edgeRangeId, "Edge Range", EDGE_RANGE_MIN, EDGE_RANGE_MAX, EDGE_RANGE_STEP));
 
 	std::string scaleKindId = "scaleChoice";
-	params.add(std::make_unique<juce::AudioParameterChoice>(scaleKindId, "Scale", getScaleOptions(), 5));
+	params.add(std::make_unique<juce::AudioParameterChoice>(scaleKindId, "Scale", getScaleOptions(), SCALE_DEFAULT));
 	
 	std::string rootNoteId = "rootNote";
-	params.add(std::make_unique<juce::AudioParameterInt>(rootNoteId, "Root Note", 0, 11, 0));
+	params.add(std::make_unique<juce::AudioParameterInt>(rootNoteId, "Root Note", ROOT_NOTE_C, ROOT_NOTE_B, ROOT_NOTE_DEFAULT));
 
 	std::string edgeTypeID = "edgeType";
-	params.add(std::make_unique<juce::AudioParameterChoice>(edgeTypeID, "Edge Type", getEdgeTypes(), 0));
+	params.add(std::make_unique<juce::AudioParameterChoice>(edgeTypeID, "Edge Type", getEdgeTypes(), EDGE_TYPE_DEFAULT));
 
 	std::string ballsPositioningTypeId = "ballsPositioningType";
-	params.add(std::make_unique<juce::AudioParameterChoice>(ballsPositioningTypeId, "BallsPositioning", getBallsPositioningTypes(), 0));
+	params.add(std::make_unique<juce::AudioParameterChoice>(ballsPositioningTypeId, "BallsPositioning", getBallsPositioningTypes(), BALLS_POSITIONING_DEFAULT));
 
 	std::string snapToGridId = "snapToGrid";
 	params.add(std::make_unique<juce::AudioParameterBool>(snapToGridId, "Snap To Grid", false));
@@ -589,7 +585,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	params.add(std::make_unique<juce::AudioParameterBool>(quantizationId, "Quantization", true));
 
 	std::string quantizationDivisionID = "quantizationDivision";
-	params.add(std::make_unique<juce::AudioParameterChoice>(quantizationDivisionID, "Quantization Division", getQuantizationDivisionTypes(), 1));
+	params.add(std::make_unique<juce::AudioParameterChoice>(quantizationDivisionID, "Quantization Division", getQuantizationDivisionTypes(), QUANTIZATION_DIV_DEFAULT));
 	
 	return params;
 }
