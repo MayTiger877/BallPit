@@ -13,6 +13,7 @@
 #include "Pit.h"
 #include "Scales.h"
 #include "PresetManagerGUI.h"
+#include "MyCostumeDial.h"
 
 //==============================================================================
 /**
@@ -123,6 +124,8 @@ private:
 	juce::Point<double> lastBall1Position, lastBall2Position, lastBall3Position = { 0.0, 0.0 };
 
 	juce::ValueTree GUIState;
+
+	MyCostumeDial m_costumeDialLAF;
 
 	juce::TextButton openPresetManager;
 	PresetPanel presetPanel;

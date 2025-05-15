@@ -110,6 +110,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 {
 	if (audioProcessor.getWasGUIUploaded() == true) { saveGUIState(); }
+	quantizationSlider.setLookAndFeel(nullptr);
 }
 
 void BallPitAudioProcessorEditor::saveGUIState()
@@ -743,6 +744,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	// Quantization Slider
 	quantizationSlider.setBounds(QUANTIZATION_KNOB_BOUNDS);
 	quantizationSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+	quantizationSlider.setLookAndFeel(&this->m_costumeDialLAF);
 	quantizationSlider.setDoubleClickReturnValue(true, QUANTIZATION_DOUBLE_CLICK_VALUE);
 	quantizationSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 	quantizationSlider.setValue(QUANTIZATION_DEFAULT);
