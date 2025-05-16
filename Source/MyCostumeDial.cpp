@@ -9,6 +9,9 @@
 */
 
 #include "MyCostumeDial.h"
+MyCostumeDial::MyCostumeDial()
+{
+}
 using namespace juce;
 
 
@@ -22,50 +25,17 @@ void MyCostumeDial::drawRotarySlider(Graphics& g, int x, int y, int width, int h
 
     auto radius = jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f;
     auto toAngle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+    auto realAngle = juce::jmap<float>(sliderPos, 0.0, 1.0, 45.0, 315.0) - 270;
     auto lineW = jmin(8.0f, radius * 0.5f);
     auto arcRadius = radius - lineW * 0.5f;
+    float angleInRadians = (realAngle) * (PI / 180.0f); // (angle-90) is the actual knob direction
 
-    Path backgroundArc;
-    backgroundArc.addCentredArc(bounds.getCentreX(),
-        bounds.getCentreY(),
-        arcRadius,
-        arcRadius,
-        0.0f,
-        rotaryStartAngle,
-        rotaryEndAngle,
-        true);
+    float endX = bounds.getCentreX() + (0.9 * radius) * cos(angleInRadians);
+    float endY = bounds.getCentreY() + (0.9 * radius) * sin(angleInRadians);
 
-    g.setColour(outline);
-    g.strokePath(backgroundArc, PathStrokeType(lineW, PathStrokeType::curved, PathStrokeType::rounded));
+    g.setColour(fill);
+    g.fillEllipse(bounds);
+    g.setColour(juce::Colours::white);
+    g.drawLine(bounds.getCentreX(), bounds.getCentreY(), endX, endY);
 
-    if (slider.isEnabled())
-    {
-        Path valueArc;
-        valueArc.addCentredArc(bounds.getCentreX(),
-            bounds.getCentreY(),
-            arcRadius,
-            arcRadius,
-            0.0f,
-            rotaryStartAngle,
-            toAngle,
-            true);
-
-        g.setColour(fill);
-        g.strokePath(valueArc, PathStrokeType(lineW, PathStrokeType::curved, PathStrokeType::rounded));
-    }
-
-    auto thumbWidth = lineW * 2.0f;
-    Point<float> thumbPoint(bounds.getCentreX() + arcRadius * std::cos(toAngle - MathConstants<float>::halfPi),
-        bounds.getCentreY() + arcRadius * std::sin(toAngle - MathConstants<float>::halfPi));
-
-    g.setColour(MythumbColourId);
-    g.fillEllipse(Rectangle<float>(thumbWidth, thumbWidth).withCentre(thumbPoint));
-}
-
-MyCostumeDial::MyCostumeDial()
-{
-}
-
-MyCostumeDial::~MyCostumeDial()
-{
 }

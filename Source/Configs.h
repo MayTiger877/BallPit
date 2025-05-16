@@ -18,6 +18,7 @@
 
 #define SECONDS_IN_MINUTE 60.0
 
+#define PI 3.14159265
 
 //-----------------------------------------------------------------------
 // defaults values for the BallPit multiverse

@@ -10,12 +10,12 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "Configs.h"
 
 class MyCostumeDial : public juce::LookAndFeel_V4
 {
 public:
 	MyCostumeDial();
-	~MyCostumeDial();
 
     void drawRotarySlider(juce::Graphics&, int x, int y, int width, int height,
                           float sliderPosProportional, float rotaryStartAngle,

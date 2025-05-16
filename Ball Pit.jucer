@@ -12,8 +12,9 @@
               file="Source/CostumeComboBox.cpp"/>
         <FILE id="IBzvoF" name="CostumeComboBox.h" compile="0" resource="0"
               file="Source/CostumeComboBox.h"/>
-        <FILE id="RFuLch" name="CostumeDial.cpp" compile="1" resource="0" file="Source/CostumeDial.cpp"/>
-        <FILE id="xNmbIY" name="CostumeDial.h" compile="0" resource="0" file="Source/CostumeDial.h"/>
+        <FILE id="RFuLch" name="MyCostumeDial.cpp" compile="1" resource="0"
+              file="Source/MyCostumeDial.cpp"/>
+        <FILE id="xNmbIY" name="MyCostumeDial.h" compile="0" resource="0" file="Source/MyCostumeDial.h"/>
       </GROUP>
       <GROUP id="{B5E23962-ACFB-637A-A3DD-F70199680309}" name="PresetManager">
         <FILE id="HVPnkB" name="PresetManagerBackend.cpp" compile="1" resource="0"
