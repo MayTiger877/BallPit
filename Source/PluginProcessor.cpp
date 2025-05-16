@@ -582,7 +582,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	params.add(std::make_unique<juce::AudioParameterBool>(collisionId, "Collision", true));
 
 	std::string quantizationId = "quantization";
-	params.add(std::make_unique<juce::AudioParameterBool>(quantizationId, "Quantization", true));
+	params.add(std::make_unique<juce::AudioParameterFloat>(quantizationId, "Quantization", QUANTIZATION_MIN, QUANTIZATION_MAX, QUANTIZATION_DEFAULT));
 
 	std::string quantizationDivisionID = "quantizationDivision";
 	params.add(std::make_unique<juce::AudioParameterChoice>(quantizationDivisionID, "Quantization Division", getQuantizationDivisionTypes(), QUANTIZATION_DIV_DEFAULT));

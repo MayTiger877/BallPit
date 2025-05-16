@@ -9,6 +9,7 @@
 */
 
 #include "MyCostumeDial.h"
+
 MyCostumeDial::MyCostumeDial()
 {
 }
@@ -18,24 +19,29 @@ using namespace juce;
 void MyCostumeDial::drawRotarySlider(Graphics& g, int x, int y, int width, int height, float sliderPos,
                                      const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider)
 {
-    auto outline = MyrotarySliderOutlineColourId;
-    auto fill = MyrotarySliderFillColourId;
-
     auto bounds = Rectangle<int>(x, y, width, height).toFloat().reduced(10);
+    float radius = jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f;
+    float angle =  rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+    float rx = bounds.getCentreX() - radius;
+    float ry = bounds.getCentreY() - radius;
 
-    auto radius = jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f;
-    auto toAngle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-    auto realAngle = juce::jmap<float>(sliderPos, 0.0, 1.0, 45.0, 315.0) - 270;
-    auto lineW = jmin(8.0f, radius * 0.5f);
-    auto arcRadius = radius - lineW * 0.5f;
-    float angleInRadians = (realAngle) * (PI / 180.0f); // (angle-90) is the actual knob direction
 
-    float endX = bounds.getCentreX() + (0.9 * radius) * cos(angleInRadians);
-    float endY = bounds.getCentreY() + (0.9 * radius) * sin(angleInRadians);
-
-    g.setColour(fill);
+    g.setColour(MyrotarySliderFillColourId);
     g.fillEllipse(bounds);
-    g.setColour(juce::Colours::white);
-    g.drawLine(bounds.getCentreX(), bounds.getCentreY(), endX, endY);
+    g.setColour(juce::Colours::black);
+    g.fillEllipse(bounds.expanded(1.0f));
+    g.setColour(MyrotarySliderFillColourId.darker(0.2f));
+    g.fillEllipse(bounds.reduced(1.0f));
+    g.setColour(MyrotarySliderFillColourId.darker(0.4f));
+    g.fillEllipse(bounds.reduced(2.0f));
+    g.setColour(MyrotarySliderFillColourId.darker(0.7f));
+    g.fillEllipse(bounds.reduced(4.0f));
 
+    juce::Path line;
+    g.setColour(MyrotarySliderFillColourId.brighter(0.7f));
+    line.addRectangle(0, -radius + 6, 2.0f, radius * 0.8);
+    g.fillPath(line, juce::AffineTransform::rotation(angle).translated(bounds.getCentreX(), bounds.getCentreY()));
+
+    if (sliderPos == 0.5f)
+        DBG("sliderPos is " << std::to_string(sliderPos));
 }

@@ -65,12 +65,12 @@
 #define BALLS_TAB_1_BOUNDS juce::Rectangle<int>(BALLS_TABS_BOUNDS.getX() + 3, BALLS_TABS_BOUNDS.getY() + 55, 68, 43)
 #define BALLS_TAB_2_BOUNDS juce::Rectangle<int>(BALLS_TABS_BOUNDS.getX() + 3, BALLS_TABS_BOUNDS.getY() + 105, 68, 43)
 
-#define BALL_X_KNOB_BOUNDS juce::Rectangle<int>(640, 522, 55, 55)
-#define BALL_Y_KNOB_BOUNDS juce::Rectangle<int>(740, 522, 55, 55)
+#define BALL_X_KNOB_BOUNDS juce::Rectangle<int>(635, 522, 55, 55)
+#define BALL_Y_KNOB_BOUNDS juce::Rectangle<int>(725, 522, 55, 55)
 #define ADD_REMOVE_BUTTON_BOUNDS juce::Rectangle<int>(505, 512, 80, 25)
-#define BALL_SPEED_KNOB_BOUNDS juce::Rectangle<int>(490, 595, 55, 55)
-#define BALL_DIRECTION_KNOB_BOUNDS juce::Rectangle<int>(600, 595, 55, 55)
-#define BALL_SIZE_KNOB_BOUNDS juce::Rectangle<int>(710, 595, 55, 55)
+#define BALL_SPEED_KNOB_BOUNDS juce::Rectangle<int>(520, 595, 55, 55)
+#define BALL_DIRECTION_KNOB_BOUNDS juce::Rectangle<int>(635, 595, 55, 55)
+#define BALL_SIZE_KNOB_BOUNDS juce::Rectangle<int>(725, 595, 55, 55)
 #define BALL_X_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(490, 595, 55, 55)
 #define BALL_Y_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(600, 595, 55, 55)
 
@@ -103,7 +103,7 @@
 #define VOLUME_VARIATION_KNOB_BOUNDS juce::Rectangle<int>(170, 510, 55, 55)
 #define SNAP_TO_GRID_BUTTON_BOUNDS juce::Rectangle<int>(290, 525, 110, 35)
 #define COLLISION_BUTTON_BOUNDS juce::Rectangle<int>(40, 600, 90, 25)
-#define BALLS_POSITIONING_TYPE_BUTTON_BOUNDS juce::Rectangle<int>(185, 600, 90, 25)
+#define BALLS_POSITIONING_TYPE_BUTTON_BOUNDS juce::Rectangle<int>(190, 600, 90, 25)
 
 
 //-----------------------------------------------------------------------
@@ -116,14 +116,12 @@
 #define BALL_X_DEFAULT_1 (PIT_MIN_X + 50.0f)
 #define BALL_X_DEFAULT_2 (PIT_MIN_X + 50.0f + 130.0f)
 #define BALL_X_DEFAULT_3 (PIT_MIN_X + 50.0f + 260.0f)
-#define BALL_X_DOUBLE_CLICK_VALUE 50.0f
 
 // Y Slider
 #define BALL_Y_SLIDER_MIN PIT_MIN_Y   // Already defined elsewhere
 #define BALL_Y_SLIDER_MAX PIT_MAX_Y   // Already defined elsewhere
 #define BALL_Y_SLIDER_STEP 10.0f
 #define BALL_Y_DEFAULT 200.0f
-#define BALL_Y_DOUBLE_CLICK_VALUE 50.0f
 
 //-----------------------------------------------------------------------
 // Ball Direction Values
@@ -200,7 +198,7 @@
 #define QUANTIZATION_MAX 1.0
 #define QUANTIZATION_STEP 0.01
 #define QUANTIZATION_DEFAULT 0.0
-#define QUANTIZATION_DOUBLE_CLICK_VALUE 10.0f
+#define QUANTIZATION_DOUBLE_CLICK_VALUE 0.5f
 
 //-----------------------------------------------------------------------
 // Scale IDs

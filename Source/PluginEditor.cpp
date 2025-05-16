@@ -111,6 +111,16 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 {
 	if (audioProcessor.getWasGUIUploaded() == true) { saveGUIState(); }
 	quantizationSlider.setLookAndFeel(nullptr);
+	for (int i = 0; i < 3; i++)
+	{
+		ballsSlidersAndAttachments[i].xSlider.setLookAndFeel(nullptr);
+		ballsSlidersAndAttachments[i].ySlider.setLookAndFeel(nullptr);
+		ballsSlidersAndAttachments[i].velocitySlider.setLookAndFeel(nullptr);
+		//ballsSlidersAndAttachments[i].angleSlider.setLookAndFeel(nullptr);;
+		ballsSlidersAndAttachments[i].radiusSlider.setLookAndFeel(nullptr);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setLookAndFeel(nullptr);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setLookAndFeel(nullptr);
+	}
 }
 
 void BallPitAudioProcessorEditor::saveGUIState()
@@ -509,20 +519,22 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].xSlider.setBounds(BALL_X_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].xSlider.setValue(BALL_X_DEFAULT_1 + (i * 130.0f));
 		ballsSlidersAndAttachments[i].xSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].xSlider.setDoubleClickReturnValue(true, BALL_X_DOUBLE_CLICK_VALUE);
+		ballsSlidersAndAttachments[i].xSlider.setDoubleClickReturnValue(true, BALL_X_DEFAULT_1 + (i * 130.0f));
 		ballsSlidersAndAttachments[i].xSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].xSlider.setRange(BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, BALL_X_SLIDER_STEP);
 		ballsSlidersAndAttachments[i].xSlider.toFront(false);
+		ballsSlidersAndAttachments[i].xSlider.setLookAndFeel(&this->m_costumeDialLAF);
 		addChildComponent(ballsSlidersAndAttachments[i].xSlider);
 
 		// Y Slider
 		ballsSlidersAndAttachments[i].ySlider.setBounds(BALL_Y_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].ySlider.setValue(BALL_Y_DEFAULT);
 		ballsSlidersAndAttachments[i].ySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballsSlidersAndAttachments[i].ySlider.setDoubleClickReturnValue(true, BALL_Y_DOUBLE_CLICK_VALUE);
+		ballsSlidersAndAttachments[i].ySlider.setDoubleClickReturnValue(true, BALL_Y_DEFAULT);
 		ballsSlidersAndAttachments[i].ySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].ySlider.setRange(BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, BALL_Y_SLIDER_STEP);
 		ballsSlidersAndAttachments[i].ySlider.toFront(false);
+		ballsSlidersAndAttachments[i].ySlider.setLookAndFeel(&this->m_costumeDialLAF);
 		addChildComponent(ballsSlidersAndAttachments[i].ySlider);
 
 		// Angle Slider
@@ -534,6 +546,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].angleSlider.setRotaryParameters(0, 2 * juce::MathConstants<double>::pi, false);
 		ballsSlidersAndAttachments[i].angleSlider.setRange(BALL_ANGLE_MIN, BALL_ANGLE_MAX, BALL_ANGLE_STEP);
 		ballsSlidersAndAttachments[i].angleSlider.toFront(false);
+		//ballsSlidersAndAttachments[i].angleSlider.setLookAndFeel(&this->m_costumeDialLAF);
 		addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
 
 		// Velocity Slider
@@ -544,6 +557,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].velocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].velocitySlider.setRange(BALL_VELOCITY_MIN, BALL_VELOCITY_MAX, BALL_VELOCITY_STEP);
 		ballsSlidersAndAttachments[i].velocitySlider.toFront(false);
+		ballsSlidersAndAttachments[i].velocitySlider.setLookAndFeel(&this->m_costumeDialLAF);
 		addChildComponent(ballsSlidersAndAttachments[i].velocitySlider);
 
 		// Radius Slider
@@ -553,7 +567,9 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].radiusSlider.setDoubleClickReturnValue(true, BALL_RADIUS_DOUBLE_CLICK_VALUE);
 		ballsSlidersAndAttachments[i].radiusSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].radiusSlider.setRange(BALL_RADIUS_MIN, BALL_RADIUS_MAX, BALL_RADIUS_STEP);
+		ballsSlidersAndAttachments[i].radiusSlider.setLookAndFeel(&this->m_costumeDialLAF);
 		ballsSlidersAndAttachments[i].radiusSlider.toFront(false);
+		ballsSlidersAndAttachments[i].radiusSlider.setLookAndFeel(&this->m_costumeDialLAF);
 		addChildComponent(ballsSlidersAndAttachments[i].radiusSlider);
 
 		// X Velocity Slider
@@ -564,6 +580,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].xVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setRange(BALL_X_VELOCITY_MIN, BALL_X_VELOCITY_MAX, BALL_X_VELOCITY_STEP);
 		ballsSlidersAndAttachments[i].xVelocitySlider.toFront(false);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setLookAndFeel(&this->m_costumeDialLAF);
 		ballsSlidersAndAttachments[i].xVelocitySlider.onValueChange = [this, i]()
 			{
 				ballsSlidersAndAttachments[i].xVelocitySlider.setValue(
@@ -581,6 +598,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].yVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setRange(BALL_Y_VELOCITY_MIN, BALL_Y_VELOCITY_MAX, BALL_Y_VELOCITY_STEP);
 		ballsSlidersAndAttachments[i].yVelocitySlider.toFront(false);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setLookAndFeel(&this->m_costumeDialLAF);
 		ballsSlidersAndAttachments[i].yVelocitySlider.onValueChange = [this, i]()
 			{
 				ballsSlidersAndAttachments[i].yVelocitySlider.setValue(
@@ -744,6 +762,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	// Quantization Slider
 	quantizationSlider.setBounds(QUANTIZATION_KNOB_BOUNDS);
 	quantizationSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+	//quantizationSlider.setRotaryParameters(5 / 4 * juce::MathConstants<double>::pi, 7 / 4 * juce::MathConstants<double>::pi, false);
 	quantizationSlider.setLookAndFeel(&this->m_costumeDialLAF);
 	quantizationSlider.setDoubleClickReturnValue(true, QUANTIZATION_DOUBLE_CLICK_VALUE);
 	quantizationSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
