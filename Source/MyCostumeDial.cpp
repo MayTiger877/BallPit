@@ -17,12 +17,16 @@ MyCostumeDial::MyCostumeDial()
 void MyCostumeDial::drawRotarySlider(Graphics& g, int x, int y, int width, int height, float sliderPos,
                                      const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider)
 {
+    if (slider.getSliderStyle() == Slider::SliderStyle::MayT_DirectionKnob)
+    {
+        // TODO...
+    }
+
     auto bounds = Rectangle<int>(x, y, width, height).toFloat().reduced(10);
     float radius = jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f;
     float angle =  rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
     float rx = bounds.getCentreX() - radius;
     float ry = bounds.getCentreY() - radius;
-
 
     g.setColour(MyrotarySliderFillColourId);
     g.fillEllipse(bounds);

@@ -28,15 +28,14 @@ void MyCostumeComboBox::drawComboBox(juce::Graphics& g, int width, int height, b
 
     g.setColour(MyrotarySliderFillColourId);
     g.drawRoundedRectangle(boxBounds.toFloat().reduced(0.5f, 0.5f), cornerSize, 1.0f);
+}
+// ------------------------------------------------------------------------------------------------------------------------------------------------
 
-    // arrow- do i want it??
-    /*Rectangle<int> arrowZone(width - 30, 0, 20, height);
-    Path path;
-    path.startNewSubPath((float)arrowZone.getX() + 3.0f, (float)arrowZone.getCentreY() - 2.0f);
-    path.lineTo((float)arrowZone.getCentreX(), (float)arrowZone.getCentreY() + 3.0f);
-    path.lineTo((float)arrowZone.getRight() - 3.0f, (float)arrowZone.getCentreY() - 2.0f);
-    g.setColour(box.(ComboBox::arrowColourId).withAlpha((box.isEnabled() ? 0.9f : 0.2f)));
-    g.strokePath(path, PathStrokeType(2.0f));*/
+void MyCostumeComboBox::positionComboBoxText(ComboBox& box, Label& label) // to get eid of the stupid arrow padding!!! 
+{
+    label.setBounds(1, 1, box.getWidth() - 1, box.getHeight() - 2);
+
+    label.setFont(getComboBoxFont(box));
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -84,19 +83,6 @@ void MyCostumeComboBox::drawPopupMenuItem(Graphics& g, const Rectangle<int>& are
 
         g.setFont(font);
 
-        // Tick is ugly
-        /*auto iconArea = r.removeFromLeft(roundToInt(maxFontHeight)).toFloat();
-        if (icon != nullptr)
-        {
-            icon->drawWithin(g, iconArea, RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize, 1.0f);
-            r.removeFromLeft(roundToInt(maxFontHeight * 0.5f));
-        }
-        else if (isTicked)
-        {
-            auto tick = getTickShape(1.0f);
-            g.fillPath(tick, tick.getTransformToScaleToFit(iconArea.reduced(iconArea.getWidth() / 5, 0).toFloat(), true));
-        }*/
-
         if (hasSubMenu)
         {
             auto arrowH = 0.6f * getPopupMenuFont().getAscent();
@@ -121,8 +107,8 @@ void MyCostumeComboBox::drawPopupMenuItem(Graphics& g, const Rectangle<int>& are
             f2.setHeight(f2.getHeight() * 0.75f);
             f2.setHorizontalScale(0.95f);
             g.setFont(f2);
-
-            g.drawText(shortcutKeyText, r, Justification::centredRight, true);
+            g.setColour(BUTTON_BG_COLOUR.brighter());
+            g.drawText(shortcutKeyText, r, Justification::centred, true);
         }
     }
 }

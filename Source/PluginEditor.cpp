@@ -115,7 +115,7 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 		ballsSlidersAndAttachments[i].xSlider.setLookAndFeel(nullptr);
 		ballsSlidersAndAttachments[i].ySlider.setLookAndFeel(nullptr);
 		ballsSlidersAndAttachments[i].velocitySlider.setLookAndFeel(nullptr);
-		//ballsSlidersAndAttachments[i].angleSlider.setLookAndFeel(nullptr);;
+		ballsSlidersAndAttachments[i].angleSlider.setLookAndFeel(nullptr);
 		ballsSlidersAndAttachments[i].radiusSlider.setLookAndFeel(nullptr);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setLookAndFeel(nullptr);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setLookAndFeel(nullptr);
@@ -293,13 +293,13 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		// Angle Slider
 		ballsSlidersAndAttachments[i].angleSlider.setBounds(BALL_DIRECTION_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].angleSlider.setValue(BALL_ANGLE_DEFAULT_1 + (i * 60.0f));
-		ballsSlidersAndAttachments[i].angleSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballsSlidersAndAttachments[i].angleSlider.setSliderStyle(juce::Slider::MayT_DirectionKnob);
 		ballsSlidersAndAttachments[i].angleSlider.setDoubleClickReturnValue(true, BALL_ANGLE_DOUBLE_CLICK_VALUE);
 		ballsSlidersAndAttachments[i].angleSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].angleSlider.setRotaryParameters(0, 2 * juce::MathConstants<double>::pi, false);
 		ballsSlidersAndAttachments[i].angleSlider.setRange(BALL_ANGLE_MIN, BALL_ANGLE_MAX, BALL_ANGLE_STEP);
 		ballsSlidersAndAttachments[i].angleSlider.toFront(false);
-		//ballsSlidersAndAttachments[i].angleSlider.setLookAndFeel(&this->m_costumeDialLAF);
+		ballsSlidersAndAttachments[i].angleSlider.setLookAndFeel(&this->m_costumeDialLAF);
 		addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
 
 		// Velocity Slider
@@ -523,7 +523,6 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	// Quantization Slider
 	quantizationSlider.setBounds(QUANTIZATION_KNOB_BOUNDS);
 	quantizationSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-	//quantizationSlider.setRotaryParameters(5 / 4 * juce::MathConstants<double>::pi, 7 / 4 * juce::MathConstants<double>::pi, false);
 	quantizationSlider.setLookAndFeel(&this->m_costumeDialLAF);
 	quantizationSlider.setDoubleClickReturnValue(true, QUANTIZATION_DOUBLE_CLICK_VALUE);
 	quantizationSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -538,6 +537,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	quantizationDivisionComboBox.addItem("1/8", QUANTIZATION_DIV_1_8);
 	quantizationDivisionComboBox.addItem("1/4", QUANTIZATION_DIV_1_4);
 	quantizationDivisionComboBox.setSelectedId(QUANTIZATION_DIV_DEFAULT);
+	
 	quantizationDivisionComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(quantizationDivisionComboBox);
 
