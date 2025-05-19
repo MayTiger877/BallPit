@@ -38,6 +38,8 @@
 
 #define BUTTON_BG_COLOUR juce::Colour::fromRGB(25, 78, 113).darker(0.1f)
 
+#define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(25, 78, 113).brighter()
+
 //-----------------------------------------------------------------------
 // Sizes and positions map
 

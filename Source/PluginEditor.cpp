@@ -387,6 +387,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		};
 	startStopButton.setBounds(START_STOP_BUTTON_BOUNDS);
 	startStopButton.setColour(juce::TextButton::ColourIds::buttonColourId, BUTTON_BG_COLOUR);
+	startStopButton.setColour(juce::TextButton::ColourIds::textColourOffId, BUTTON_TEXT_COLOUR);
 	addAndMakeVisible(startStopButton);
 
 	// Add/Remove Ball Button
@@ -406,6 +407,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		};
 	addRemoveBallButton.setBounds(ADD_REMOVE_BUTTON_BOUNDS);
 	addRemoveBallButton.setColour(juce::TextButton::ColourIds::buttonColourId, BUTTON_BG_COLOUR);
+	addRemoveBallButton.setColour(juce::TextButton::ColourIds::textColourOffId, BUTTON_TEXT_COLOUR);
 	addAndMakeVisible(addRemoveBallButton);
 
 	// Edge Phase Slider
@@ -456,6 +458,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	scaleChoiceComboBox.addItem("Pentatonic", SCALE_PENTATONIC);
 	scaleChoiceComboBox.addItem("Minor Pentatonic", SCALE_MINOR_PENTATONIC);
 	scaleChoiceComboBox.setSelectedId(SCALE_DEFAULT);
+	scaleChoiceComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	scaleChoiceComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(scaleChoiceComboBox);
 
@@ -474,6 +477,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	rootNoteComboBox.addItem("A#", ROOT_NOTE_ASHARP);
 	rootNoteComboBox.addItem("B", ROOT_NOTE_B);
 	rootNoteComboBox.setSelectedId(ROOT_NOTE_DEFAULT);
+	rootNoteComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	rootNoteComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(rootNoteComboBox);
 
@@ -484,6 +488,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgeTypeComboBox.addItem("Ping pong", EDGE_TYPE_PING_PONG);
 	edgeTypeComboBox.addItem("Random", EDGE_TYPE_RANDOM);
 	edgeTypeComboBox.setSelectedId(EDGE_TYPE_DEFAULT);
+	edgeTypeComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	edgeTypeComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(edgeTypeComboBox);
 	edgeTypeComboBox.addListener(this); // SPACIAL
@@ -493,6 +498,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	ballsPositioningTypeComboBox.addItem("Chaos", BALLS_POSITIONING_CHAOS);
 	ballsPositioningTypeComboBox.addItem("By Tempo", BALLS_POSITIONING_BY_TEMPO);
 	ballsPositioningTypeComboBox.setSelectedId(BALLS_POSITIONING_DEFAULT);
+	ballsPositioningTypeComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	ballsPositioningTypeComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(ballsPositioningTypeComboBox);
 	ballsPositioningTypeComboBox.addListener(this); // SPACIAL
@@ -537,7 +543,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	quantizationDivisionComboBox.addItem("1/8", QUANTIZATION_DIV_1_8);
 	quantizationDivisionComboBox.addItem("1/4", QUANTIZATION_DIV_1_4);
 	quantizationDivisionComboBox.setSelectedId(QUANTIZATION_DIV_DEFAULT);
-	
+	quantizationDivisionComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	quantizationDivisionComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(quantizationDivisionComboBox);
 
@@ -557,6 +563,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 			}
 		};
 	openPresetManager.setColour(juce::TextButton::ColourIds::buttonColourId, BUTTON_BG_COLOUR);
+	openPresetManager.setColour(juce::TextButton::ColourIds::textColourOffId, BUTTON_TEXT_COLOUR);
 	addAndMakeVisible(openPresetManager);
 }
 
