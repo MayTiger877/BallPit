@@ -36,6 +36,7 @@
 
 #define NOTE_MIDI_DURATION 0.250 //ms
 
+#define BUTTON_BG_COLOUR juce::Colour::fromRGB(25, 78, 113).darker(0.1f)
 
 //-----------------------------------------------------------------------
 // Sizes and positions map
@@ -74,13 +75,13 @@
 #define BALL_X_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(490, 595, 55, 55)
 #define BALL_Y_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(600, 595, 55, 55)
 
-#define EDGE_PHASE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 130, 100, 25)
-#define EDGE_DENOMENATOR_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 185 , 100, 25)
-#define EDGE_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 240, 100, 25)
+#define EDGE_PHASE_SLIDER_BOUNDS juce::Rectangle<int>(40, 130, 100, 25)
+#define EDGE_DENOMENATOR_SLIDER_BOUNDS juce::Rectangle<int>(40, 165 , 150, 50)
+#define EDGE_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 240, 100, 20)
 
-#define SCALE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 340, 100, 25)
-#define RANGE_COMBOBOX_BOUNDS     juce::Rectangle<int>(40, 395, 100, 25)
-#define ROOT_NOTE_COMBOBOX_BOUNDS     juce::Rectangle<int>(40, 450, 100, 25)
+#define SCALE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 340, 100, 20)
+#define RANGE_SLIDER_BOUNDS     juce::Rectangle<int>(40, 375, 150, 50)
+#define ROOT_NOTE_COMBOBOX_BOUNDS     juce::Rectangle<int>(40, 450, 100, 20)
 
 #define EDGE_LAYOUT_DICE_BOUNDS juce::Rectangle<int>(182, 68, 20, 20)
 #define EDGE_RANDOM_DICE_MIN_X EDGE_LAYOUT_DICE_BOUNDS.getX()
@@ -97,13 +98,13 @@
 #define START_STOP_BUTTON_BOUNDS juce::Rectangle<int>(43, 13, 100, 25)
 #define PRESET_MANAGER_MENU_BUTTON_BOUNDS juce::Rectangle<int>(675, 13, 100, 25)
 
-#define QUANTIZATION_DIVISION_COMBOBOX_BOUNDS juce::Rectangle<int>(15, 535, 75, 25)
-#define QUANTIZATION_KNOB_BOUNDS juce::Rectangle<int>(100, 522, 55, 55)
+#define QUANTIZATION_DIVISION_COMBOBOX_BOUNDS juce::Rectangle<int>(15, 535, 60, 20)
+#define QUANTIZATION_KNOB_BOUNDS juce::Rectangle<int>(90, 522, 55, 55)
 
 #define VOLUME_VARIATION_KNOB_BOUNDS juce::Rectangle<int>(170, 510, 55, 55)
 #define SNAP_TO_GRID_BUTTON_BOUNDS juce::Rectangle<int>(290, 525, 110, 35)
 #define COLLISION_BUTTON_BOUNDS juce::Rectangle<int>(40, 600, 90, 25)
-#define BALLS_POSITIONING_TYPE_BUTTON_BOUNDS juce::Rectangle<int>(190, 600, 90, 25)
+#define BALLS_POSITIONING_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(190, 600, 90, 20)
 
 
 //-----------------------------------------------------------------------

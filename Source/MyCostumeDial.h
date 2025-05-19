@@ -12,6 +12,8 @@
 #include <JuceHeader.h>
 #include "Configs.h"
 
+using namespace juce;
+
 class MyCostumeDial : public juce::LookAndFeel_V4
 {
 public:
@@ -20,6 +22,10 @@ public:
     void drawRotarySlider(juce::Graphics&, int x, int y, int width, int height,
                           float sliderPosProportional, float rotaryStartAngle,
                           float rotaryEndAngle, juce::Slider&) override;
+
+    void drawLinearSlider(Graphics&, int x, int y, int width, int height,
+                          float sliderPos, float minSliderPos, float maxSliderPos,
+                          Slider::SliderStyle, Slider&) override;
 
 private:
 

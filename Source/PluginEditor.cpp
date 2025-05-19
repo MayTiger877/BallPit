@@ -110,7 +110,6 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 {
 	if (audioProcessor.getWasGUIUploaded() == true) { saveGUIState(); }
-	quantizationSlider.setLookAndFeel(nullptr);
 	for (int i = 0; i < 3; i++)
 	{
 		ballsSlidersAndAttachments[i].xSlider.setLookAndFeel(nullptr);
@@ -121,6 +120,15 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 		ballsSlidersAndAttachments[i].xVelocitySlider.setLookAndFeel(nullptr);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setLookAndFeel(nullptr);
 	}
+	scaleChoiceComboBox.setLookAndFeel(nullptr);
+	edgeTypeComboBox.setLookAndFeel(nullptr);
+	rootNoteComboBox.setLookAndFeel(nullptr);
+	ballsPositioningTypeComboBox.setLookAndFeel(nullptr);
+	quantizationDivisionComboBox.setLookAndFeel(nullptr);
+	quantizationSlider.setLookAndFeel(nullptr);
+
+	edgeDenomenatorSlider.setLookAndFeel(nullptr);
+	edgeRangeSlider.setLookAndFeel(nullptr);
 }
 
 void BallPitAudioProcessorEditor::saveGUIState()
@@ -255,262 +263,7 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 	}
 }
 
-//void BallPitAudioProcessorEditor::initiateComponents()
-//{
-//	for (int i = 0; i < 3; i++)
-//	{
-//		ballsSlidersAndAttachments[i].xSlider.setBounds(BALL_X_KNOB_BOUNDS);
-//		ballsSlidersAndAttachments[i].xSlider.setValue(PIT_MIN_X + 50 + (i * 130.0f));
-//		ballsSlidersAndAttachments[i].xSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-//		ballsSlidersAndAttachments[i].xSlider.setDoubleClickReturnValue(true, 50.0f);
-//		ballsSlidersAndAttachments[i].xSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-//		ballsSlidersAndAttachments[i].xSlider.setRange(BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, 10.0f);
-//		ballsSlidersAndAttachments[i].xSlider.toFront(false);
-//		addChildComponent(ballsSlidersAndAttachments[i].xSlider);
-//
-//		ballsSlidersAndAttachments[i].ySlider.setBounds(BALL_Y_KNOB_BOUNDS);
-//		ballsSlidersAndAttachments[i].ySlider.setValue(200.0f);
-//		ballsSlidersAndAttachments[i].ySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-//		ballsSlidersAndAttachments[i].ySlider.setDoubleClickReturnValue(true, 50.0f);
-//		ballsSlidersAndAttachments[i].ySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-//		ballsSlidersAndAttachments[i].ySlider.setRange(BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, 10.0f);
-//		ballsSlidersAndAttachments[i].ySlider.toFront(false);
-//		addChildComponent(ballsSlidersAndAttachments[i].ySlider);
-//
-//		ballsSlidersAndAttachments[i].angleSlider.setBounds(BALL_DIRECTION_KNOB_BOUNDS);
-//		ballsSlidersAndAttachments[i].angleSlider.setValue(0.0f + (i * 60.0f));
-//		ballsSlidersAndAttachments[i].angleSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-//		ballsSlidersAndAttachments[i].angleSlider.setDoubleClickReturnValue(true, 0.0f);
-//		ballsSlidersAndAttachments[i].angleSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-//		ballsSlidersAndAttachments[i].angleSlider.setRotaryParameters(0, 2*juce::MathConstants<double>::pi, false);
-//		ballsSlidersAndAttachments[i].angleSlider.setRange(0.0f, 360.0f, 1.0f);
-//		ballsSlidersAndAttachments[i].angleSlider.toFront(false);
-//		addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
-//
-//		ballsSlidersAndAttachments[i].velocitySlider.setBounds(BALL_SPEED_KNOB_BOUNDS);
-//		ballsSlidersAndAttachments[i].velocitySlider.setValue(400.0f);
-//		ballsSlidersAndAttachments[i].velocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-//		ballsSlidersAndAttachments[i].velocitySlider.setDoubleClickReturnValue(true, 400.0f);
-//		ballsSlidersAndAttachments[i].velocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-//		ballsSlidersAndAttachments[i].velocitySlider.setRange(0.0f, 2000.0f, 20.0f);
-//		ballsSlidersAndAttachments[i].velocitySlider.toFront(false);
-//		addChildComponent(ballsSlidersAndAttachments[i].velocitySlider);
-//
-//		ballsSlidersAndAttachments[i].radiusSlider.setBounds(BALL_SIZE_KNOB_BOUNDS);
-//		ballsSlidersAndAttachments[i].radiusSlider.setValue(10.0f);
-//		ballsSlidersAndAttachments[i].radiusSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-//		ballsSlidersAndAttachments[i].radiusSlider.setDoubleClickReturnValue(true, 10.0f);
-//		ballsSlidersAndAttachments[i].radiusSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-//		ballsSlidersAndAttachments[i].radiusSlider.setRange(10.0f, 25.0f, 0.5f);
-//		ballsSlidersAndAttachments[i].radiusSlider.toFront(false);
-//		addChildComponent(ballsSlidersAndAttachments[i].radiusSlider);
-//
-//		ballsSlidersAndAttachments[i].xVelocitySlider.setBounds(BALL_X_VELOCITY_KNOB_BOUNDS);
-//		ballsSlidersAndAttachments[i].xVelocitySlider.setValue(1.0f);
-//		ballsSlidersAndAttachments[i].xVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-//		ballsSlidersAndAttachments[i].xVelocitySlider.setDoubleClickReturnValue(true, 1.0f);
-//		ballsSlidersAndAttachments[i].xVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-//		ballsSlidersAndAttachments[i].xVelocitySlider.setRange(0.0f, 10.0f, 1.0f);
-//		ballsSlidersAndAttachments[i].xVelocitySlider.toFront(false);
-//		ballsSlidersAndAttachments[i].xVelocitySlider.onValueChange = [this, i]()
-//		{
-//			ballsSlidersAndAttachments[i].xVelocitySlider.setValue(
-//				static_cast<int>(ballsSlidersAndAttachments[i].xVelocitySlider.getValue() + 0.5),
-//				juce::dontSendNotification
-//			);
-//		};
-//		addChildComponent(ballsSlidersAndAttachments[i].xVelocitySlider);
-//
-//		ballsSlidersAndAttachments[i].yVelocitySlider.setBounds(BALL_Y_VELOCITY_KNOB_BOUNDS);
-//		ballsSlidersAndAttachments[i].yVelocitySlider.setValue(1.0f);
-//		ballsSlidersAndAttachments[i].yVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-//		ballsSlidersAndAttachments[i].yVelocitySlider.setDoubleClickReturnValue(true, 1.0f);
-//		ballsSlidersAndAttachments[i].yVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-//		ballsSlidersAndAttachments[i].yVelocitySlider.setRange(0.0f, 10.0f, 1.0f);
-//		ballsSlidersAndAttachments[i].yVelocitySlider.toFront(false);
-//		ballsSlidersAndAttachments[i].yVelocitySlider.onValueChange = [this, i]()
-//		{
-//			ballsSlidersAndAttachments[i].yVelocitySlider.setValue(
-//				static_cast<int>(ballsSlidersAndAttachments[i].yVelocitySlider.getValue() + 0.5),
-//				juce::dontSendNotification
-//			);
-//		};
-//		addChildComponent(ballsSlidersAndAttachments[i].yVelocitySlider);
-//	}
-//	
-//	ballsSlidersAndAttachments[0].xSlider.setVisible(true);
-//	ballsSlidersAndAttachments[0].ySlider.setVisible(true);
-//	ballsSlidersAndAttachments[0].angleSlider.setVisible(true);
-//	ballsSlidersAndAttachments[0].radiusSlider.setVisible(true);
-//	ballsSlidersAndAttachments[0].velocitySlider.setVisible(true);
-//	ballsSlidersAndAttachments[0].xVelocitySlider.setVisible(false);
-//	ballsSlidersAndAttachments[0].yVelocitySlider.setVisible(false);
-//	
-//	startStopButton.setButtonText("Start");
-//	startStopButton.onClick = [this]()
-//	{
-//		audioProcessor.togglePlayState();
-//		if (audioProcessor.getPit().areBallsMoving())
-//		{
-//			startStopButton.setButtonText("Stop");
-//		}
-//		else
-//		{
-//			startStopButton.setButtonText("Start");
-//		}
-//	};
-//	startStopButton.setBounds(START_STOP_BUTTON_BOUNDS);
-//	addAndMakeVisible(startStopButton);
-//
-//	addRemoveBallButton.setButtonText("Add");
-//	addRemoveBallButton.onClick = [this]()
-//	{
-//		if (audioProcessor.getPit().getBalls()[this->currentBallFocused]->isActive() == true)
-//		{
-//			addRemoveBallButton.setButtonText("Add");
-//			audioProcessor.getPit().getBalls()[this->currentBallFocused]->setActive(false);
-//		}
-//		else
-//		{
-//			addRemoveBallButton.setButtonText("Remove");
-//			audioProcessor.getPit().getBalls()[this->currentBallFocused]->setActive(true);
-//		}
-//	};
-//	addRemoveBallButton.setBounds(ADD_REMOVE_BUTTON_BOUNDS);
-//	addAndMakeVisible(addRemoveBallButton);
-//
-//	edgePhaseSlider.setBounds(EDGE_PHASE_COMBOBOX_BOUNDS);
-//	edgePhaseSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
-//	edgePhaseSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
-//	edgePhaseSlider.setRange(0, 360, 5);
-//	edgePhaseSlider.setValue(0);
-//	addAndMakeVisible(edgePhaseSlider);
-//	
-//	edgeDenomenatorSlider.setBounds(EDGE_DENOMENATOR_COMBOBOX_BOUNDS);
-//	edgeDenomenatorSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
-//	edgeDenomenatorSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
-//	edgeDenomenatorSlider.setRange(1, 8, 1);
-//	edgeDenomenatorSlider.setValue(1);
-//	addAndMakeVisible(edgeDenomenatorSlider);
-//
-//	edgeRangeSlider.setBounds(RANGE_COMBOBOX_BOUNDS);
-//	edgeRangeSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
-//	edgeRangeSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
-//	edgeRangeSlider.setRange(1, 8, 1);
-//	edgeRangeSlider.setValue(2);
-//	addAndMakeVisible(edgeRangeSlider);
-//
-//	scaleChoiceComboBox.setBounds(SCALE_COMBOBOX_BOUNDS);
-//	scaleChoiceComboBox.addItem("Chromatic", 1);
-//	scaleChoiceComboBox.addItem("Octatonic", 2);
-//	scaleChoiceComboBox.addItem("Dominant Diminished", 3);
-//	scaleChoiceComboBox.addItem("Diminished", 4);
-//	scaleChoiceComboBox.addItem("Major", 5);
-//	scaleChoiceComboBox.addItem("Minor", 6);
-//	scaleChoiceComboBox.addItem("Melodic Minor", 7);
-//	scaleChoiceComboBox.addItem("Harmonic Minor", 8);
-//	scaleChoiceComboBox.addItem("Gypsy", 9);
-//	scaleChoiceComboBox.addItem("Symetrical", 10);
-//	scaleChoiceComboBox.addItem("Enigmatic", 11);
-//	scaleChoiceComboBox.addItem("Arabian", 12);
-//	scaleChoiceComboBox.addItem("Hungarian", 13);
-//	scaleChoiceComboBox.addItem("Whole Tone", 14);
-//	scaleChoiceComboBox.addItem("Augmented", 15);
-//	scaleChoiceComboBox.addItem("Blues Major", 16);
-//	scaleChoiceComboBox.addItem("Blues Minor", 17);
-//	scaleChoiceComboBox.addItem("Pentatonic", 18);
-//	scaleChoiceComboBox.addItem("Minor Pentatonic", 19);
-//	scaleChoiceComboBox.setSelectedId(5);
-//	addAndMakeVisible(scaleChoiceComboBox);
-//
-//	rootNoteComboBox.setBounds(ROOT_NOTE_COMBOBOX_BOUNDS);
-//	rootNoteComboBox.addItem("C",  1);
-//	rootNoteComboBox.addItem("C#", 2);
-//	rootNoteComboBox.addItem("D",  3);
-//	rootNoteComboBox.addItem("D#", 4);
-//	rootNoteComboBox.addItem("E",  5);
-//	rootNoteComboBox.addItem("F",  6);
-//	rootNoteComboBox.addItem("F#", 7);
-//	rootNoteComboBox.addItem("G",  8);
-//	rootNoteComboBox.addItem("G#", 9);
-//	rootNoteComboBox.addItem("A",  10);
-//	rootNoteComboBox.addItem("A#", 11);
-//	rootNoteComboBox.addItem("B",  12);
-//	rootNoteComboBox.setSelectedId(1);
-//	addAndMakeVisible(rootNoteComboBox);
-//
-//	edgeTypeComboBox.setBounds(EDGE_TYPE_COMBOBOX_BOUNDS);
-//	edgeTypeComboBox.addItem("Cyclic up", 1);
-//	edgeTypeComboBox.addItem("Cyclic down", 2);
-//	edgeTypeComboBox.addItem("Ping pong", 3);
-//	edgeTypeComboBox.addItem("Random", 4);
-//	edgeTypeComboBox.setSelectedId(1);
-//	addAndMakeVisible(edgeTypeComboBox);
-//	edgeTypeComboBox.addListener(this); // SPACIAL
-//
-//	ballsPositioningTypeComboBox.setBounds(BALLS_POSITIONING_TYPE_BUTTON_BOUNDS);
-//	ballsPositioningTypeComboBox.addItem("Chaos", 1);
-//	ballsPositioningTypeComboBox.addItem("By Tempo", 2);
-//	ballsPositioningTypeComboBox.setSelectedId(1);
-//	addAndMakeVisible(ballsPositioningTypeComboBox);
-//	ballsPositioningTypeComboBox.addListener(this); // SPACIAL
-//
-//
-//	snapToGridButton.setBounds(SNAP_TO_GRID_BUTTON_BOUNDS);
-//	snapToGridButton.setToggleState(false, juce::dontSendNotification);
-//	snapToGridButton.setButtonText("Snap To Grid");
-//	snapToGridButton.onClick = [this]()
-//		{
-//			if (snapToGridButton.getToggleState() == true)
-//			{
-//				changeXAndYToSnapToGrid();
-//			}
-//			else
-//			{
-//				changeXAndYToFree();
-//			}
-//		};
-//	addAndMakeVisible(snapToGridButton);
-//
-//	collisionButton.setBounds(COLLISION_BUTTON_BOUNDS);
-//	collisionButton.setToggleState(true, juce::dontSendNotification);
-//	collisionButton.setButtonText("Collision");
-//	addAndMakeVisible(collisionButton);
-//
-//	quantizationSlider.setBounds(QUANTIZATION_KNOB_BOUNDS);
-//	quantizationSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-//	quantizationSlider.setDoubleClickReturnValue(true, 10.0f);
-//	quantizationSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-//	quantizationSlider.setValue(0.0);
-//	quantizationSlider.setRange(0.0, 1.0, 0.01);
-//	addAndMakeVisible(quantizationSlider);
-//
-//	quantizationDivisionComboBox.setBounds(QUANTIZATION_DIVISION_COMBOBOX_BOUNDS);
-//	quantizationDivisionComboBox.addItem("1/32", 32);
-//	quantizationDivisionComboBox.addItem("1/16", 16);
-//	quantizationDivisionComboBox.addItem("1/8", 8);
-//	quantizationDivisionComboBox.addItem("1/4", 4);
-//	quantizationDivisionComboBox.setSelectedId(32);
-//	addAndMakeVisible(quantizationDivisionComboBox);
-//
-//	openPresetManager.setButtonText("Presets");
-//	openPresetManager.setBounds(PRESET_MANAGER_MENU_BUTTON_BOUNDS);
-//	openPresetManager.onClick = [this]()
-//		{
-//			if (presetPanel.isVisible())
-//			{
-//				presetPanel.setVisible(false);
-//			}
-//			else
-//			{
-//				presetPanel.setVisible(true);
-//				presetPanel.toFront(true); // Bring the presetPanel to the front
-//			}
-//		};
-//	addAndMakeVisible(openPresetManager);
-//
-//	
-//}
+
 void BallPitAudioProcessorEditor::initiateComponents()
 {
 	for (int i = 0; i < 3; i++)
@@ -633,6 +386,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 			}
 		};
 	startStopButton.setBounds(START_STOP_BUTTON_BOUNDS);
+	startStopButton.setColour(juce::TextButton::ColourIds::buttonColourId, BUTTON_BG_COLOUR);
 	addAndMakeVisible(startStopButton);
 
 	// Add/Remove Ball Button
@@ -651,30 +405,33 @@ void BallPitAudioProcessorEditor::initiateComponents()
 			}
 		};
 	addRemoveBallButton.setBounds(ADD_REMOVE_BUTTON_BOUNDS);
+	addRemoveBallButton.setColour(juce::TextButton::ColourIds::buttonColourId, BUTTON_BG_COLOUR);
 	addAndMakeVisible(addRemoveBallButton);
 
 	// Edge Phase Slider
-	edgePhaseSlider.setBounds(EDGE_PHASE_COMBOBOX_BOUNDS);
-	edgePhaseSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
-	edgePhaseSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
+	edgePhaseSlider.setBounds(EDGE_PHASE_SLIDER_BOUNDS);
+	edgePhaseSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+	edgePhaseSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 	edgePhaseSlider.setRange(EDGE_PHASE_MIN, EDGE_PHASE_MAX, EDGE_PHASE_STEP);
 	edgePhaseSlider.setValue(EDGE_PHASE_DEFAULT);
 	addAndMakeVisible(edgePhaseSlider);
 
 	// Edge Denominator Slider
-	edgeDenomenatorSlider.setBounds(EDGE_DENOMENATOR_COMBOBOX_BOUNDS);
-	edgeDenomenatorSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
-	edgeDenomenatorSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
+	edgeDenomenatorSlider.setBounds(EDGE_DENOMENATOR_SLIDER_BOUNDS);
+	edgeDenomenatorSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+	edgeDenomenatorSlider.setLookAndFeel(&this->m_costumeDialLAF);
+	edgeDenomenatorSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 	edgeDenomenatorSlider.setRange(EDGE_DENOMINATOR_MIN, EDGE_DENOMINATOR_MAX, EDGE_DENOMINATOR_STEP);
 	edgeDenomenatorSlider.setValue(EDGE_DENOMINATOR_DEFAULT);
 	addAndMakeVisible(edgeDenomenatorSlider);
 
 	// Edge Range Slider
-	edgeRangeSlider.setBounds(RANGE_COMBOBOX_BOUNDS);
-	edgeRangeSlider.setSliderStyle(juce::Slider::SliderStyle::IncDecButtons);
-	edgeRangeSlider.setTextBoxStyle(juce::Slider::TextBoxRight, true, 50, 30);
+	edgeRangeSlider.setBounds(RANGE_SLIDER_BOUNDS);
+	edgeRangeSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+	edgeRangeSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 	edgeRangeSlider.setRange(EDGE_RANGE_MIN, EDGE_RANGE_MAX, EDGE_RANGE_STEP);
 	edgeRangeSlider.setValue(EDGE_RANGE_DEFAULT);
+	edgeRangeSlider.setLookAndFeel(&this->m_costumeDialLAF);
 	addAndMakeVisible(edgeRangeSlider);
 
 	// Scale Choice ComboBox
@@ -699,6 +456,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	scaleChoiceComboBox.addItem("Pentatonic", SCALE_PENTATONIC);
 	scaleChoiceComboBox.addItem("Minor Pentatonic", SCALE_MINOR_PENTATONIC);
 	scaleChoiceComboBox.setSelectedId(SCALE_DEFAULT);
+	scaleChoiceComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(scaleChoiceComboBox);
 
 	// Root Note ComboBox
@@ -716,6 +474,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	rootNoteComboBox.addItem("A#", ROOT_NOTE_ASHARP);
 	rootNoteComboBox.addItem("B", ROOT_NOTE_B);
 	rootNoteComboBox.setSelectedId(ROOT_NOTE_DEFAULT);
+	rootNoteComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(rootNoteComboBox);
 
 	// Edge Type ComboBox
@@ -725,14 +484,16 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgeTypeComboBox.addItem("Ping pong", EDGE_TYPE_PING_PONG);
 	edgeTypeComboBox.addItem("Random", EDGE_TYPE_RANDOM);
 	edgeTypeComboBox.setSelectedId(EDGE_TYPE_DEFAULT);
+	edgeTypeComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(edgeTypeComboBox);
 	edgeTypeComboBox.addListener(this); // SPACIAL
 
 	// Balls Positioning Type ComboBox
-	ballsPositioningTypeComboBox.setBounds(BALLS_POSITIONING_TYPE_BUTTON_BOUNDS);
+	ballsPositioningTypeComboBox.setBounds(BALLS_POSITIONING_TYPE_COMBOBOX_BOUNDS);
 	ballsPositioningTypeComboBox.addItem("Chaos", BALLS_POSITIONING_CHAOS);
 	ballsPositioningTypeComboBox.addItem("By Tempo", BALLS_POSITIONING_BY_TEMPO);
 	ballsPositioningTypeComboBox.setSelectedId(BALLS_POSITIONING_DEFAULT);
+	ballsPositioningTypeComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(ballsPositioningTypeComboBox);
 	ballsPositioningTypeComboBox.addListener(this); // SPACIAL
 
@@ -777,6 +538,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	quantizationDivisionComboBox.addItem("1/8", QUANTIZATION_DIV_1_8);
 	quantizationDivisionComboBox.addItem("1/4", QUANTIZATION_DIV_1_4);
 	quantizationDivisionComboBox.setSelectedId(QUANTIZATION_DIV_DEFAULT);
+	quantizationDivisionComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(quantizationDivisionComboBox);
 
 	// Preset Manager Button
@@ -794,6 +556,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 				presetPanel.toFront(true); // Bring the presetPanel to the front
 			}
 		};
+	openPresetManager.setColour(juce::TextButton::ColourIds::buttonColourId, BUTTON_BG_COLOUR);
 	addAndMakeVisible(openPresetManager);
 }
 

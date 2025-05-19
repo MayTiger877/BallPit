@@ -14,6 +14,7 @@
 #include "Scales.h"
 #include "PresetManagerGUI.h"
 #include "MyCostumeDial.h"
+#include "CostumeComboBox.h"
 
 //==============================================================================
 /**
@@ -126,6 +127,7 @@ private:
 	juce::ValueTree GUIState;
 
 	MyCostumeDial m_costumeDialLAF;
+	MyCostumeComboBox m_costumeComboBoxLAF;
 
 	juce::TextButton openPresetManager;
 	PresetPanel presetPanel;
