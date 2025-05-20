@@ -122,6 +122,7 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 	}
 	scaleChoiceComboBox.setLookAndFeel(nullptr);
 	edgeTypeComboBox.setLookAndFeel(nullptr);
+	edgePhaseSlider.setLookAndFeel(nullptr);
 	rootNoteComboBox.setLookAndFeel(nullptr);
 	ballsPositioningTypeComboBox.setLookAndFeel(nullptr);
 	quantizationDivisionComboBox.setLookAndFeel(nullptr);
@@ -412,10 +413,12 @@ void BallPitAudioProcessorEditor::initiateComponents()
 
 	// Edge Phase Slider
 	edgePhaseSlider.setBounds(EDGE_PHASE_SLIDER_BOUNDS);
-	edgePhaseSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+	edgePhaseSlider.setSliderStyle(juce::Slider::SliderStyle::MayT_PhaseKnob);
 	edgePhaseSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+	quantizationSlider.setDoubleClickReturnValue(true, PHASE_DOUBLE_CLICK_VALUE);
 	edgePhaseSlider.setRange(EDGE_PHASE_MIN, EDGE_PHASE_MAX, EDGE_PHASE_STEP);
 	edgePhaseSlider.setValue(EDGE_PHASE_DEFAULT);
+	edgePhaseSlider.setLookAndFeel(&m_costumeDialLAF);
 	addAndMakeVisible(edgePhaseSlider);
 
 	// Edge Denominator Slider

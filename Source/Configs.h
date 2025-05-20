@@ -36,9 +36,9 @@
 
 #define NOTE_MIDI_DURATION 0.250 //ms
 
-#define BUTTON_BG_COLOUR juce::Colour::fromRGB(25, 78, 113).darker(0.1f)
+#define BUTTON_BG_COLOUR juce::Colour::fromRGB(25, 78, 113)
 
-#define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(25, 78, 113).brighter()
+#define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(25, 78, 113).brighter(0.5f)
 
 //-----------------------------------------------------------------------
 // Sizes and positions map
@@ -77,7 +77,7 @@
 #define BALL_X_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(490, 595, 55, 55)
 #define BALL_Y_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(600, 595, 55, 55)
 
-#define EDGE_PHASE_SLIDER_BOUNDS juce::Rectangle<int>(40, 130, 100, 25)
+#define EDGE_PHASE_SLIDER_BOUNDS juce::Rectangle<int>(30, 105, 180, 55)
 #define EDGE_DENOMENATOR_SLIDER_BOUNDS juce::Rectangle<int>(40, 165 , 150, 50)
 #define EDGE_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(40, 240, 90, 20)
 
@@ -176,6 +176,7 @@
 #define EDGE_PHASE_MIN 0
 #define EDGE_PHASE_MAX 360
 #define EDGE_PHASE_STEP 5
+#define PHASE_DOUBLE_CLICK_VALUE 0
 #define EDGE_PHASE_DEFAULT 0
 
 //-----------------------------------------------------------------------

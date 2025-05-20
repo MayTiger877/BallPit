@@ -107,7 +107,7 @@ void MyCostumeComboBox::drawPopupMenuItem(Graphics& g, const Rectangle<int>& are
             f2.setHeight(f2.getHeight() * 0.75f);
             f2.setHorizontalScale(0.95f);
             g.setFont(f2);
-            g.setColour(BUTTON_BG_COLOUR.brighter());
+            g.setColour(BUTTON_BG_COLOUR);
             g.drawText(shortcutKeyText, r, Justification::centred, true);
         }
     }
