@@ -509,7 +509,6 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	// Snap To Grid Button
 	snapToGridButton.setBounds(SNAP_TO_GRID_BUTTON_BOUNDS);
 	snapToGridButton.setToggleState(false, juce::dontSendNotification);
-	snapToGridButton.setButtonText("Snap To Grid");
 	snapToGridButton.onClick = [this]()
 		{
 			if (snapToGridButton.getToggleState() == true)
@@ -526,7 +525,6 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	// Collision Button
 	collisionButton.setBounds(COLLISION_BUTTON_BOUNDS);
 	collisionButton.setToggleState(true, juce::dontSendNotification);
-	collisionButton.setButtonText("Collision");
 	addAndMakeVisible(collisionButton);
 
 	// Quantization Slider
