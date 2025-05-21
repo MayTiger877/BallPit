@@ -13,10 +13,21 @@
 #include "Configs.h"
 using namespace juce;
 
-class CostumeToggleButoonLAF : public LookAndFeel_V4
+class MyCostumeSnapToGridLAF : public LookAndFeel_V4
 {
 public:
-    CostumeToggleButoonLAF();
+    MyCostumeSnapToGridLAF();
+
+    void drawToggleButton(Graphics&, ToggleButton&,
+        bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
+};
+
+// ------------------------------------------------------------------------------------------
+
+class MyCostumeCollisionLAF : public LookAndFeel_V4
+{
+public:
+    MyCostumeCollisionLAF();
 
     void drawToggleButton(Graphics&, ToggleButton&,
         bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;

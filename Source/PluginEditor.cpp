@@ -136,6 +136,7 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 	edgeRangeSlider.setLookAndFeel(nullptr);
 
 	snapToGridButton.setLookAndFeel(nullptr);
+	collisionButton.setLookAndFeel(nullptr);
 }
 
 void BallPitAudioProcessorEditor::saveGUIState()
@@ -534,6 +535,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	// Collision Button
 	collisionButton.setBounds(COLLISION_BUTTON_BOUNDS);
 	collisionButton.setToggleState(true, juce::dontSendNotification);
+	collisionButton.setLookAndFeel(&this->m_costumeCollisionLAF);
 	addAndMakeVisible(collisionButton);
 
 	// Quantization Slider

@@ -132,7 +132,8 @@ private:
 
 	MyCostumeDial m_costumeDialLAF;
 	MyCostumeComboBox m_costumeComboBoxLAF;
-	CostumeToggleButoonLAF m_costumeToggleButoonLAF;
+	MyCostumeSnapToGridLAF m_costumeToggleButoonLAF;
+	MyCostumeCollisionLAF m_costumeCollisionLAF;
 
 	juce::TextButton openPresetManager;
 	PresetPanel presetPanel;
