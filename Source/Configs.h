@@ -34,7 +34,7 @@
 
 #define DEFAULT_BALL_VELOCITY 5.0
 
-#define NOTE_MIDI_DURATION 0.250 //ms
+#define NOTE_MIDI_DURATION 0.200 //ms
 
 #define BUTTON_BG_COLOUR juce::Colour::fromRGB(25, 78, 113)
 
@@ -103,7 +103,7 @@
 #define QUANTIZATION_DIVISION_COMBOBOX_BOUNDS juce::Rectangle<int>(30, 535, 45, 20)
 #define QUANTIZATION_KNOB_BOUNDS juce::Rectangle<int>(80, 515, 55, 55)
 
-#define VOLUME_VARIATION_KNOB_BOUNDS juce::Rectangle<int>(170, 510, 55, 55)
+#define VOLUME_VARIATION_KNOB_BOUNDS juce::Rectangle<int>(160, 520, 120, 55)
 #define SNAP_TO_GRID_BUTTON_BOUNDS juce::Rectangle<int>(340, 525, 70, 35)
 #define COLLISION_BUTTON_BOUNDS juce::Rectangle<int>(43, 600, 90, 25)
 #define BALLS_POSITIONING_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(190, 600, 85, 20)
@@ -269,3 +269,12 @@
 #define QUANTIZATION_DIV_1_8 8
 #define QUANTIZATION_DIV_1_4 4
 #define QUANTIZATION_DIV_DEFAULT QUANTIZATION_DIV_1_32
+
+//-----------------------------------------------------------------------
+// volumeVariation Values
+
+#define VOLUME_VARIATION_MIN 0.0
+#define VOLUME_VARIATION_MAX 1.0
+#define VOLUME_VARIATION_STEP 0.05
+#define VOLUME_VARIATION_DEFAULT 0.0
+#define VOLUME_VARIATION_DOUBLE_CLICK_VALUE 0.0f

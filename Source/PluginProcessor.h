@@ -86,6 +86,8 @@ public:
 	void setXYVelocityByTempo(float& xVelocity, float& yVelocity, float ballRadius);
 	void updateQuantization();
 
+	float getVariedNoteVelocity(int currentNoteVelocity);
+
 	void setWasGUIUpdatedToTrue() { this->wasGUIUpdated = true; }
 
 	Service::PresetManager& getPresetManager() { return *presetManager; }
@@ -128,6 +130,6 @@ public:
 	"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "ballYVelocity1",
 	"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "ballYVelocity2",
 	"edgePhase", "edgeDenomenator", "edgeRange", "scaleChoice", "rootNote", "edgeType",
-	"ballsPositioningType", "snapToGrid", "collision", "quantization", "quantizationDivision",
+	"ballsPositioningType", "snapToGrid", "collision", "quantization", "quantizationDivision", "volumeVariation",
 	};
 };

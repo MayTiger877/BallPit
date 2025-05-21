@@ -316,6 +316,15 @@ void BallPitAudioProcessor::updateQuantization()
 	}
 }
 
+float BallPitAudioProcessor::getVariedNoteVelocity(int currentNoteVelocity)
+{
+	float volumeVariation = valueTreeState.getRawParameterValue("volumeVariation")->load();
+	int velocityToAdd = (rand() % 100) - 50;
+	velocityToAdd = std::round((velocityToAdd * volumeVariation));
+
+	return (float)jmin((velocityToAdd + currentNoteVelocity), 127);
+}
+
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	buffer.clear();
@@ -376,6 +385,8 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			{
 				if (pendingIt->message.isNoteOn())
 				{
+					float var = getVariedNoteVelocity(pendingIt->message.getVelocity());
+					pendingIt->message.setVelocity(var/127);
 					midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
 					int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate);
 
@@ -426,8 +437,12 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		// Convert quantized time to sample position relative to block enntry time
 		int quantizedSamplePosAbsolute = static_cast<int>(quantizedTimeSec * m_sampleRate);
 		int quantizedSamplePosRelative = quantizedSamplePosAbsolute - static_cast<int>(clockTimeSeconds * m_sampleRate);
-
 		int finalSamplePos = static_cast<int>((1.0 - quantizationpercent) * metadata.samplePosition + quantizationpercent * quantizedSamplePosRelative);
+		
+		// add volume variation
+		float var = getVariedNoteVelocity(msg.getVelocity());
+		msg.setVelocity(var/127);
+
 		if (finalSamplePos < m_samplesPerBlock)
 		{
 			midiMessages.addEvent(msg, finalSamplePos);
@@ -586,6 +601,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 
 	std::string quantizationDivisionID = "quantizationDivision";
 	params.add(std::make_unique<juce::AudioParameterChoice>(quantizationDivisionID, "Quantization Division", getQuantizationDivisionTypes(), QUANTIZATION_DIV_DEFAULT));
+
+	std::string volumeVariationId = "volumeVariation";
+	params.add(std::make_unique<juce::AudioParameterFloat>(volumeVariationId, "volumeVariation", VOLUME_VARIATION_MIN, VOLUME_VARIATION_MAX, VOLUME_VARIATION_DEFAULT));
 	
 	return params;
 }

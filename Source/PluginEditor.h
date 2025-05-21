@@ -110,6 +110,9 @@ private:
 	juce::ToggleButton collisionButton;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> collisionAttachment;
 
+	juce::Slider volumeVariationSlider;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volumeVariationAttachment;
+
 
 	juce::Colour edgeColors[8] = {
 		juce::Colours::red,

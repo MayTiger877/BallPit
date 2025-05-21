@@ -19,27 +19,6 @@ void MyCostumeDial::drawRotarySlider(Graphics& g, int x, int y, int width, int h
 {
     if (slider.getSliderStyle() == Slider::SliderStyle::MayT_PhaseKnob)
     {
-        /*
-        float radius = jmin(knobBounds.getWidth(), knobBounds.getHeight()) / 2.0f;
-        float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-        float rx = knobBounds.getCentreX() - radius;
-        float ry = knobBounds.getCentreY() - radius;
-        g.setColour(MyrotarySliderFillColourId);
-        g.fillEllipse(knobBounds);
-        g.setColour(juce::Colours::black);
-        g.fillEllipse(knobBounds.expanded(1.0f));
-        g.setColour(MyrotarySliderFillColourId.darker(0.2f));
-        g.fillEllipse(knobBounds.reduced(1.0f));
-        g.setColour(MyrotarySliderFillColourId.darker(0.4f));
-        g.fillEllipse(knobBounds.reduced(2.0f));
-        g.setColour(MyrotarySliderFillColourId.darker(0.7f));
-        g.fillEllipse(knobBounds.reduced(4.0f));
-
-        juce::Path line;
-        line.addRectangle(0, -radius + 6, 2.0f, radius * 0.8);
-        g.fillPath(line, juce::AffineTransform::rotation(angle).translated(knobBounds.getCentreX(), knobBounds.getCentreY()));*/
-
-        //auto knobBounds = Rectangle<int>(x, y + (height / 4.5), width / 3.5, width / 3.5).toFloat().reduced(10);
         juce::Path sinus;
         float sinusX = x + 10;
         float sinusY = y + (height * 0.4) + 5;
@@ -73,6 +52,33 @@ void MyCostumeDial::drawRotarySlider(Graphics& g, int x, int y, int width, int h
     //{
     //    // TODO...
     //}
+    else if (slider.getSliderStyle() == Slider::SliderStyle::MayT_VariationKnob)
+    {
+        float lineBegin = x + 5;
+        float lineY = y + 15;
+
+        g.setColour(BUTTON_BG_COLOUR.darker(0.2f));
+        g.drawLine(lineBegin, lineY,  x + width - 5, lineY, 8.0f);
+        for (int i = 0; i < 6; i++)
+        {
+            g.setColour(BUTTON_BG_COLOUR.darker(0.2f));
+            g.drawLine(lineBegin + i * (width - 10) / 5, y + 4, lineBegin + i * (width - 10) / 5, y + 26, 3.0f);
+            g.setColour(BUTTON_BG_COLOUR.darker(0.7f));
+            g.drawLine(lineBegin + i * (width - 10) / 5, y + 4, lineBegin + i * (width - 10) / 5, y + 26, 1.0f);
+        }
+        g.setColour(BUTTON_BG_COLOUR.darker(0.4f));
+        g.drawLine(lineBegin, lineY, x + width - 5, lineY, 4.0f);
+        g.setColour(BUTTON_BG_COLOUR.darker(0.7f));
+        g.drawLine(lineBegin, lineY, x + width - 5, lineY, 2.0f);
+
+        g.setColour(BUTTON_BG_COLOUR.brighter(0.2f));
+        float barLength = sliderPos * (x + width - 5 - lineBegin);
+        float lineMiddle = (lineBegin + x + width - 5) / 2;
+        g.drawLine(lineMiddle - barLength / 2 , lineY, lineMiddle + barLength / 2, lineY, 6.0f);
+
+        g.drawText("-", x + 2, y + height - 35, 20, 25, juce::Justification::left);
+        g.drawText("+", x + width - 10, y + height - 35, 20, 25, juce::Justification::left);
+    }
     else
     {
         auto bounds = Rectangle<int>(x, y, width, height).toFloat().reduced(10);

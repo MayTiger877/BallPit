@@ -90,6 +90,9 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	std::string quantizationDivisionID = "quantizationDivision";
 	quantizationDivisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, quantizationDivisionID, quantizationDivisionComboBox);
 
+	std::string volumeVariationID = "volumeVariation";
+	volumeVariationAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, volumeVariationID, volumeVariationSlider);
+
 	audioProcessor.addChangeListener(this); // Register as listener
 
 	addChildComponent(&presetPanel);
@@ -127,6 +130,7 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 	ballsPositioningTypeComboBox.setLookAndFeel(nullptr);
 	quantizationDivisionComboBox.setLookAndFeel(nullptr);
 	quantizationSlider.setLookAndFeel(nullptr);
+	volumeVariationSlider.setLookAndFeel(nullptr);
 
 	edgeDenomenatorSlider.setLookAndFeel(nullptr);
 	edgeRangeSlider.setLookAndFeel(nullptr);
@@ -163,6 +167,7 @@ void BallPitAudioProcessorEditor::saveGUIState()
 	GUIState.setProperty("snapToGrid", snapToGridButton.getToggleState(), nullptr);
 	GUIState.setProperty("quantization", quantizationSlider.getValue(), nullptr);
 	GUIState.setProperty("quantization", quantizationDivisionComboBox.getSelectedItemIndex(), nullptr);
+	GUIState.setProperty("volumeVariation", volumeVariationSlider.getValue(), nullptr);
 
 	audioProcessor.saveGUIState(GUIState);
 	audioProcessor.removeChangeListener(this);
@@ -202,6 +207,7 @@ void BallPitAudioProcessorEditor::loadGUIState()
 	collisionButton.setToggleState(GUIState.getProperty("collision"), juce::dontSendNotification);
 	quantizationSlider.setValue(GUIState.getProperty("quantization"), juce::dontSendNotification);
 	quantizationDivisionComboBox.setSelectedItemIndex(GUIState.getProperty("quantizationDivision"), juce::dontSendNotification);
+	volumeVariationSlider.setValue(GUIState.getProperty("volumeVariation"), juce::dontSendNotification);
 }
 
 void BallPitAudioProcessorEditor::displayKnobsByTab()
@@ -415,7 +421,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgePhaseSlider.setBounds(EDGE_PHASE_SLIDER_BOUNDS);
 	edgePhaseSlider.setSliderStyle(juce::Slider::SliderStyle::MayT_PhaseKnob);
 	edgePhaseSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-	quantizationSlider.setDoubleClickReturnValue(true, PHASE_DOUBLE_CLICK_VALUE);
+	edgePhaseSlider.setDoubleClickReturnValue(true, PHASE_DOUBLE_CLICK_VALUE);
 	edgePhaseSlider.setRange(EDGE_PHASE_MIN, EDGE_PHASE_MAX, EDGE_PHASE_STEP);
 	edgePhaseSlider.setValue(EDGE_PHASE_DEFAULT);
 	edgePhaseSlider.setLookAndFeel(&m_costumeDialLAF);
@@ -547,6 +553,16 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	quantizationDivisionComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	quantizationDivisionComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	addAndMakeVisible(quantizationDivisionComboBox);
+
+	// volumeVariation Slider
+	volumeVariationSlider.setBounds(VOLUME_VARIATION_KNOB_BOUNDS);
+	volumeVariationSlider.setSliderStyle(juce::Slider::SliderStyle::MayT_VariationKnob);
+	volumeVariationSlider.setLookAndFeel(&this->m_costumeDialLAF);
+	volumeVariationSlider.setDoubleClickReturnValue(true, VOLUME_VARIATION_DOUBLE_CLICK_VALUE);
+	volumeVariationSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+	volumeVariationSlider.setValue(VOLUME_VARIATION_DEFAULT);
+	volumeVariationSlider.setRange(VOLUME_VARIATION_MIN, VOLUME_VARIATION_MAX, VOLUME_VARIATION_STEP);
+	addAndMakeVisible(volumeVariationSlider);
 
 	// Preset Manager Button
 	openPresetManager.setButtonText("Presets");
