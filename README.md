@@ -12,5 +12,9 @@ Version 2:
 
 ![Plugin Preview](Screenshot_2.png)
 
+Version 3:
+
+![Plugin Preview](Screenshot_3.png)
+
 
 Currently don't have a dedicated CMake pipeline so building plugin through Projucer.
