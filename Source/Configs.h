@@ -63,6 +63,10 @@
 #define PIT_CORNER_BL juce::Rectangle<float>(PIT_MIN_X - (PIT_CORNER_THICKNESS / 4), PIT_MAX_Y - (3 * PIT_CORNER_THICKNESS / 4), PIT_CORNER_THICKNESS, PIT_CORNER_THICKNESS)
 #define PIT_CORNER_BR juce::Rectangle<float>(PIT_MAX_X - (3 * PIT_CORNER_THICKNESS / 4), PIT_MAX_Y - (3 * PIT_CORNER_THICKNESS / 4), PIT_CORNER_THICKNESS, PIT_CORNER_THICKNESS)
 
+#define BALL_1_COLOUR juce::Colours::blue
+#define BALL_2_COLOUR juce::Colours::crimson
+#define BALL_3_COLOUR juce::Colours::orange
+
 #define BALLS_TABS_BOUNDS juce::Rectangle<int>(417, 491, 413, 157)
 #define BALLS_TAB_0_BOUNDS juce::Rectangle<int>(BALLS_TABS_BOUNDS.getX() + 3, BALLS_TABS_BOUNDS.getY() + 5, 68, 43)
 #define BALLS_TAB_1_BOUNDS juce::Rectangle<int>(BALLS_TABS_BOUNDS.getX() + 3, BALLS_TABS_BOUNDS.getY() + 55, 68, 43)
@@ -104,7 +108,7 @@
 #define QUANTIZATION_KNOB_BOUNDS juce::Rectangle<int>(80, 515, 55, 55)
 
 #define VOLUME_VARIATION_KNOB_BOUNDS juce::Rectangle<int>(160, 520, 120, 55)
-#define SNAP_TO_GRID_BUTTON_BOUNDS juce::Rectangle<int>(340, 525, 70, 35)
+#define SNAP_TO_GRID_BUTTON_BOUNDS juce::Rectangle<int>(320, 515, 60, 60)
 #define COLLISION_BUTTON_BOUNDS juce::Rectangle<int>(43, 600, 90, 25)
 #define BALLS_POSITIONING_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(190, 600, 85, 20)
 

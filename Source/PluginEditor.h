@@ -13,8 +13,9 @@
 #include "Pit.h"
 #include "Scales.h"
 #include "PresetManagerGUI.h"
-#include "MyCostumeDial.h"
+#include "CostumeDial.h"
 #include "CostumeComboBox.h"
+#include "CostumeToggleButton.h"
 
 //==============================================================================
 /**
@@ -131,6 +132,7 @@ private:
 
 	MyCostumeDial m_costumeDialLAF;
 	MyCostumeComboBox m_costumeComboBoxLAF;
+	CostumeToggleButoonLAF m_costumeToggleButoonLAF;
 
 	juce::TextButton openPresetManager;
 	PresetPanel presetPanel;

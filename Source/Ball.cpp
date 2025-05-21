@@ -55,13 +55,13 @@ void Ball::draw(juce::Graphics& g) const
 	switch (ballIndex)
 	{
 		case 0:
-			ballColor = juce::Colours::blue;
+			ballColor = BALL_1_COLOUR;
 			break;
 		case 1:
-			ballColor = juce::Colours::crimson;
+			ballColor = BALL_2_COLOUR;
 			break;
 		case 2:
-			ballColor = juce::Colours::orange;
+			ballColor = BALL_3_COLOUR;
 			break;
 	default:
 		break;

@@ -134,6 +134,8 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 
 	edgeDenomenatorSlider.setLookAndFeel(nullptr);
 	edgeRangeSlider.setLookAndFeel(nullptr);
+
+	snapToGridButton.setLookAndFeel(nullptr);
 }
 
 void BallPitAudioProcessorEditor::saveGUIState()
@@ -515,6 +517,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	// Snap To Grid Button
 	snapToGridButton.setBounds(SNAP_TO_GRID_BUTTON_BOUNDS);
 	snapToGridButton.setToggleState(false, juce::dontSendNotification);
+	snapToGridButton.setLookAndFeel(&this->m_costumeToggleButoonLAF);
 	snapToGridButton.onClick = [this]()
 		{
 			if (snapToGridButton.getToggleState() == true)
