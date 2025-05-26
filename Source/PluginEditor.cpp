@@ -112,6 +112,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 		loadGUIState();
 	}
 
+	content.setInterceptsMouseClicks(false, true);
 	addAndMakeVisible(content);
 }
 
@@ -578,11 +579,11 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	content.addAndMakeVisible(volumeVariationSlider);
 
 	// size percantage ComboBox
-	sizePercentageComboBox.setBounds(SIZE_PERCANTAGE_COMBOBOX_BOUNDS);
+	sizePercentageComboBox.setBounds(SIZE_PERCENTAGE_COMBOBOX_BOUNDS);
 	sizePercentageComboBox.addItem("100%", 1);
 	sizePercentageComboBox.addItem("125%", 2);
 	sizePercentageComboBox.addItem("150%", 3);
-	sizePercentageComboBox.setSelectedId(SIZE_PERCANTAGE_DEFAULT);
+	sizePercentageComboBox.setSelectedId(SIZE_PERCENTAGE_DEFAULT);
 	sizePercentageComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	sizePercentageComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	content.addAndMakeVisible(sizePercentageComboBox);
@@ -614,11 +615,11 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 {
 	g.fillAll(juce::Colours::black);
 
-	g.addTransform(juce::AffineTransform::scale(sizePercantage));
+	g.addTransform(juce::AffineTransform::scale(sizePercentage));
 	// draw background 
 	if (backgroundDrawable != nullptr)
 	{
-		backgroundDrawable->setBounds(getLocalBounds() / sizePercantage);
+		backgroundDrawable->setBounds(getLocalBounds() / sizePercentage);
 		backgroundDrawable->draw(g, 1.0f);
 	}
 
@@ -701,19 +702,20 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 		int selectedSize = sizePercentageComboBox.getSelectedItemIndex();
 		if (selectedSize == 1)
 		{
-			this->sizePercantage = SIZE_PERCANTAGE_125;
+			this->sizePercentage = SIZE_PERCENTAGE_125;
 		}
 		else if (selectedSize == 2)
 		{
-			this->sizePercantage = SIZE_PERCANTAGE_150;
+			this->sizePercentage = SIZE_PERCENTAGE_150;
 		}
 		else
 		{
-			this->sizePercantage = SIZE_PERCANTAGE_100;
+			this->sizePercentage = SIZE_PERCENTAGE_100;
 		}
 
-		content.setTransform(juce::AffineTransform::scale(sizePercantage));
-		setSize((int)(APP_WINDOW_WIDTH * sizePercantage), (int)(APP_WINDOW_HIGHT * sizePercantage));
+		content.setTransform(juce::AffineTransform::scale(sizePercentage));
+		setSize((int)(APP_WINDOW_WIDTH * sizePercentage), (int)(APP_WINDOW_HIGHT * sizePercentage));
+		this->audioProcessor.getPit().setBallsSizePercentage(sizePercentage);
 		resized();
 	}
 }
@@ -800,12 +802,12 @@ void BallPitAudioProcessorEditor::changeXAndYToFree()
 	}
 }
 
-static bool isMouseOverEdgeDice(const juce::MouseEvent& event)
+static bool isMouseOverEdgeDice(const juce::MouseEvent& event, float sizePercentage)
 {
-	if (event.position.x > EDGE_RANDOM_DICE_MIN_X &&
-		event.position.x < EDGE_RANDOM_DICE_MAX_X &&
-		event.position.y > EDGE_RANDOM_DICE_MIN_Y &&
-		event.position.y < EDGE_RANDOM_DICE_MAX_Y)
+	if (event.position.x > EDGE_RANDOM_DICE_MIN_X * sizePercentage &&
+		event.position.x < EDGE_RANDOM_DICE_MAX_X * sizePercentage &&
+		event.position.y > EDGE_RANDOM_DICE_MIN_Y * sizePercentage &&
+		event.position.y < EDGE_RANDOM_DICE_MAX_Y * sizePercentage)
 	{
 		return true;
 	}
@@ -813,12 +815,12 @@ static bool isMouseOverEdgeDice(const juce::MouseEvent& event)
 	return false;
 }
 
-static bool isMouseOverScaleDice(const juce::MouseEvent& event)
+static bool isMouseOverScaleDice(const juce::MouseEvent& event, float sizePercentage)
 {
-	if (event.position.x > SCALE_RANDOM_DICE_MIN_X &&
-		event.position.x < SCALE_RANDOM_DICE_MAX_X &&
-		event.position.y > SCALE_RANDOM_DICE_MIN_Y &&
-		event.position.y < SCALE_RANDOM_DICE_MAX_Y)
+	if (event.position.x > SCALE_RANDOM_DICE_MIN_X * sizePercentage &&
+		event.position.x < SCALE_RANDOM_DICE_MAX_X * sizePercentage &&
+		event.position.y > SCALE_RANDOM_DICE_MIN_Y * sizePercentage &&
+		event.position.y < SCALE_RANDOM_DICE_MAX_Y * sizePercentage)
 	{
 		return true;
 	}
@@ -826,23 +828,23 @@ static bool isMouseOverScaleDice(const juce::MouseEvent& event)
 	return false;
 }
 
-static int isMouseOverTab(const juce::MouseEvent& event)
+static int isMouseOverTab(const juce::MouseEvent& event, float sizePercentage)
 {
-	if (event.position.x > BALLS_TAB_0_BOUNDS.getX() &&
-		event.position.x < BALLS_TAB_0_BOUNDS.getX() + BALLS_TAB_0_BOUNDS.getWidth())
+	if (event.position.x > BALLS_TAB_0_BOUNDS.getX() * sizePercentage &&
+		event.position.x < (BALLS_TAB_0_BOUNDS.getX() + BALLS_TAB_0_BOUNDS.getWidth()) * sizePercentage)
 	{
-		if (event.position.y > BALLS_TAB_0_BOUNDS.getY() &&
-			event.position.y < BALLS_TAB_0_BOUNDS.getY() + BALLS_TAB_0_BOUNDS.getHeight())
+		if (event.position.y > BALLS_TAB_0_BOUNDS.getY() * sizePercentage &&
+			event.position.y < (BALLS_TAB_0_BOUNDS.getY() + BALLS_TAB_0_BOUNDS.getHeight()) * sizePercentage)
 		{
 			return 0;
 		}
-		else if (event.position.y > BALLS_TAB_1_BOUNDS.getY() &&
-				 event.position.y < BALLS_TAB_1_BOUNDS.getY() + BALLS_TAB_1_BOUNDS.getHeight())
+		else if (event.position.y > BALLS_TAB_1_BOUNDS.getY() * sizePercentage &&
+				 event.position.y < (BALLS_TAB_1_BOUNDS.getY() + BALLS_TAB_1_BOUNDS.getHeight()) * sizePercentage)
 		{
 			return 1;
 		}
-		else if (event.position.y > BALLS_TAB_2_BOUNDS.getY() &&
-				 event.position.y < BALLS_TAB_2_BOUNDS.getY() + BALLS_TAB_2_BOUNDS.getHeight())
+		else if (event.position.y > BALLS_TAB_2_BOUNDS.getY() * sizePercentage &&
+				 event.position.y < (BALLS_TAB_2_BOUNDS.getY() + BALLS_TAB_2_BOUNDS.getHeight()) * sizePercentage)
 		{
 			return 2;
 		}
@@ -860,7 +862,7 @@ void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 	float result = MOUSE_NOT_IN_BALL;
 	for (const auto& ball : this->audioProcessor.getPit().getBalls())
 	{
-		result = ball->isMouseInsineBall(event.position);
+		result = ball->isMouseInsideBall(event.position);
 		if (result != MOUSE_NOT_IN_BALL)
 		{
 			ballBeingDragged.first = ball->getBallIndex();
@@ -876,21 +878,21 @@ void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 	ballBeingDragged.first = MOUSE_NOT_IN_BALL;
 	ballBeingDragged.second = MOUSE_NOT_IN_BALL;
 	
-	if (isMouseOverEdgeDice(event))
+	if (isMouseOverEdgeDice(event, sizePercentage))
 	{
 		mouseOverEdgeDice = true;
 		return;
 	}
 	mouseOverEdgeDice = false;
 
-	if (isMouseOverScaleDice(event))
+	if (isMouseOverScaleDice(event, sizePercentage))
 	{
 		mouseOverScaleDice = true;
 		return;
 	}
 	mouseOverScaleDice = false;
 
-	mouseOverTab = isMouseOverTab(event);
+	mouseOverTab = isMouseOverTab(event, sizePercentage);
 	if (mouseOverTab != MOUSE_NOT_IN_TAB)
 	{
 		return;
@@ -958,8 +960,8 @@ void BallPitAudioProcessorEditor::mouseDrag(const juce::MouseEvent& event)
 {
 	if ((mouseIsDragging) && (ballBeingDragged.first > MOUSE_NOT_IN_BALL))
 	{
-		ballsSlidersAndAttachments[ballBeingDragged.first].xSlider.setValue(event.position.getX(), juce::sendNotification);
-		ballsSlidersAndAttachments[ballBeingDragged.first].ySlider.setValue(event.position.getY(), juce::sendNotification);
+		ballsSlidersAndAttachments[ballBeingDragged.first].xSlider.setValue(event.position.getX() / sizePercentage, juce::sendNotification);
+		ballsSlidersAndAttachments[ballBeingDragged.first].ySlider.setValue(event.position.getY() / sizePercentage, juce::sendNotification);
 
 		repaint();
 	}

@@ -43,11 +43,11 @@
 //-----------------------------------------------------------------------
 // Sizes and positions map
 
-#define SIZE_PERCANTAGE_COMBOBOX_BOUNDS juce::Rectangle<int>(570, 13, 100, 25)
-#define SIZE_PERCANTAGE_100 1.0f
-#define SIZE_PERCANTAGE_125 1.25f
-#define SIZE_PERCANTAGE_150 1.5f
-#define SIZE_PERCANTAGE_DEFAULT SIZE_PERCANTAGE_100
+#define SIZE_PERCENTAGE_COMBOBOX_BOUNDS juce::Rectangle<int>(570, 13, 100, 25)
+#define SIZE_PERCENTAGE_100 1.0f
+#define SIZE_PERCENTAGE_125 1.25f
+#define SIZE_PERCENTAGE_150 1.5f
+#define SIZE_PERCENTAGE_DEFAULT SIZE_PERCENTAGE_100
 
 #define APP_WINDOW_WIDTH (836)
 #define APP_WINDOW_HIGHT (654)

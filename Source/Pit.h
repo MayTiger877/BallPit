@@ -30,6 +30,7 @@ public:
 	}
 
 	bool areBallsMoving() const { return isMoving; }
+	void setBallsSizePercentage(float newSizePercentage);
 
 	void setCollision(bool newcollisionState) { isCollisionOn = newcollisionState; }
 	

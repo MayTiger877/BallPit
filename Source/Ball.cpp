@@ -352,9 +352,9 @@ void Ball::resolveCollision(Ball& other)
 	}
 }
 
-float Ball::isMouseInsineBall(juce::Point<float> mousePosition) const
+float Ball::isMouseInsideBall(juce::Point<float> mousePosition) const
 {
-	juce::Point<float> ballPosition(this->x, this->y);
+	juce::Point<float> ballPosition(this->x * sizePercentage, this->y * sizePercentage);
 	float distance = mousePosition.getDistanceFrom(ballPosition);
 	return (distance <= radius) ? distance : MOUSE_NOT_IN_BALL;
 }

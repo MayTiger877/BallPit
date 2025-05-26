@@ -138,7 +138,7 @@ private:
 	MyCostumeCollisionLAF m_costumeCollisionLAF;
 
 	juce::Component content;
-	float sizePercantage = 1.0f;
+	float sizePercentage = 1.0f;
 
 	juce::TextButton openPresetManager;
 	PresetPanel presetPanel;

@@ -56,8 +56,10 @@ public:
 
     void draw(juce::Graphics& g) const;
 
-	float isMouseInsineBall(juce::Point<float> mousePosition) const;
+	float isMouseInsideBall(juce::Point<float> mousePosition) const;
     void setIsMouseOverBall(bool newIsMouseOverBall) { this->isMouseOverBall = newIsMouseOverBall; }
+
+    void setsizePercentage(float newsizePercentage) { this->sizePercentage = newsizePercentage; }
 
 private:
     // pit coordinates- stupid simple
@@ -77,6 +79,7 @@ private:
     juce::Path ballArrow;
 
     double sampleRate;
+    float sizePercentage = 1.0f;
     bool isMoving = false;
     bool isMouseOverBall = false;
     

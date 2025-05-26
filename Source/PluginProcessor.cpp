@@ -611,7 +611,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	params.add(std::make_unique<juce::AudioParameterFloat>(volumeVariationId, "volumeVariation", VOLUME_VARIATION_MIN, VOLUME_VARIATION_MAX, VOLUME_VARIATION_DEFAULT));
 	
 	std::string sizePercentageID = "sizePercentage";
-	params.add(std::make_unique<juce::AudioParameterChoice>(sizePercentageID, "size Percentage", getsizePercentageTypes(), SIZE_PERCANTAGE_DEFAULT));
+	params.add(std::make_unique<juce::AudioParameterChoice>(sizePercentageID, "size Percentage", getsizePercentageTypes(), SIZE_PERCENTAGE_DEFAULT));
 	return params;
 }
 
