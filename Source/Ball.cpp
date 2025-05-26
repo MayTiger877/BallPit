@@ -101,7 +101,7 @@ void Ball::draw(juce::Graphics& g) const
 		float endY = y + (20.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * sin(angleInRadians);
 		float arrowThickness = (2.5f + (radius / 6.0f));
 		float arrowHeadWidth = (6.0f + (radius / 3.0f) + arrowLenghtMultiplierByVelocity / 3.0);
-		float arrowHeadLength = (8.0f + (radius / 8.0f));
+		float arrowHeadLength = (8.0f + (radius / 8.0f) + arrowLenghtMultiplierByVelocity / 3.0);
 		juce::Line<float> line(startX, startY, endX, endY);
 		startX = x + (3.0f + mouseOnMagnifier + radius) * cos(angleInRadians);
 		endX = x + (24.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * cos(angleInRadians);
@@ -207,7 +207,7 @@ void Ball::edgeBounce()
 	HitPossition currentHitPos = LEFT;
 	float yBeforeCorrection = -1;
 	
-	if ((x - radius <= minX || x + radius >= maxX) && (speedX != 0))// TODO - make this if better to cover radius when positioning balls
+	if ((x - radius <= minX || x + radius >= maxX) && (speedX != 0))
 	{
 		if (x - radius <= minX)
 		{

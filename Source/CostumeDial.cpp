@@ -48,10 +48,24 @@ void MyCostumeDial::drawRotarySlider(Graphics& g, int x, int y, int width, int h
         g.setColour(BUTTON_TEXT_COLOUR);
         g.drawText(displayPhase, x + width - 55, y + height - 28, 50, 25, juce::Justification::left);
     }
-    //else if (slider.getSliderStyle() == Slider::SliderStyle::MayT_DirectionKnob)
-    //{
-    //    // TODO...
-    //}
+    else if (slider.getSliderStyle() == Slider::SliderStyle::MayT_DirectionKnob)
+    {
+        auto bounds = Rectangle<int>(x, y, width, height).toFloat().reduced(10);
+        float radius = jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f;
+        float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+        float rx = bounds.getCentreX() - radius;
+        float ry = bounds.getCentreY() - radius;
+
+        g.setColour(MyrotarySliderFillColourId.darker(0.7f));
+        g.fillEllipse(bounds.reduced(1.0f));
+        g.setColour(juce::Colours::black);
+        g.drawEllipse(bounds.expanded(0.1f), 1.0f);
+
+        juce::Path line;
+        g.setColour(juce::Colours::red.brighter(0.7f));
+        line.addRectangle(0, -radius + 6, 2.0f, radius * 0.2);
+        g.fillPath(line, juce::AffineTransform::rotation(angle).translated(bounds.getCentreX(), bounds.getCentreY()));
+    }
     else if (slider.getSliderStyle() == Slider::SliderStyle::MayT_VariationKnob)
     {
         float lineBegin = x + 5;

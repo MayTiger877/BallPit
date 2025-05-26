@@ -110,7 +110,7 @@
 #define VOLUME_VARIATION_KNOB_BOUNDS juce::Rectangle<int>(160, 520, 120, 55)
 #define SNAP_TO_GRID_BUTTON_BOUNDS juce::Rectangle<int>(320, 515, 60, 60)
 #define COLLISION_BUTTON_BOUNDS juce::Rectangle<int>(30, 600, 90, 40)
-#define BALLS_POSITIONING_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(190, 600, 85, 20)
+#define BALLS_POSITIONING_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(210, 610, 85, 20)
 
 
 //-----------------------------------------------------------------------
