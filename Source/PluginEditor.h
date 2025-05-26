@@ -114,6 +114,8 @@ private:
 	juce::Slider volumeVariationSlider;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volumeVariationAttachment;
 
+	juce::ComboBox sizePercentageComboBox;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> sizePercentageAttachment;
 
 	juce::Colour edgeColors[8] = {
 		juce::Colours::red,
@@ -134,6 +136,9 @@ private:
 	MyCostumeComboBox m_costumeComboBoxLAF;
 	MyCostumeSnapToGridLAF m_costumeToggleButoonLAF;
 	MyCostumeCollisionLAF m_costumeCollisionLAF;
+
+	juce::Component content;
+	float sizePercantage = 1.0f;
 
 	juce::TextButton openPresetManager;
 	PresetPanel presetPanel;

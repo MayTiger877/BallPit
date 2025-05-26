@@ -93,9 +93,12 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	std::string volumeVariationID = "volumeVariation";
 	volumeVariationAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, volumeVariationID, volumeVariationSlider);
 
+	std::string sizePercentageID = "sizePercentage";
+	sizePercentageAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, sizePercentageID, sizePercentageComboBox);
+	
 	audioProcessor.addChangeListener(this); // Register as listener
 
-	addChildComponent(&presetPanel);
+	content.addChildComponent(&presetPanel);
 
 	initiateComponents();
 
@@ -108,6 +111,8 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	{
 		loadGUIState();
 	}
+
+	addAndMakeVisible(content);
 }
 
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
@@ -131,6 +136,7 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 	quantizationDivisionComboBox.setLookAndFeel(nullptr);
 	quantizationSlider.setLookAndFeel(nullptr);
 	volumeVariationSlider.setLookAndFeel(nullptr);
+	sizePercentageComboBox.setLookAndFeel(nullptr);
 
 	edgeDenomenatorSlider.setLookAndFeel(nullptr);
 	edgeRangeSlider.setLookAndFeel(nullptr);
@@ -171,6 +177,7 @@ void BallPitAudioProcessorEditor::saveGUIState()
 	GUIState.setProperty("quantization", quantizationSlider.getValue(), nullptr);
 	GUIState.setProperty("quantization", quantizationDivisionComboBox.getSelectedItemIndex(), nullptr);
 	GUIState.setProperty("volumeVariation", volumeVariationSlider.getValue(), nullptr);
+	GUIState.setProperty("sizePercentage", sizePercentageComboBox.getSelectedItemIndex(), nullptr);
 
 	audioProcessor.saveGUIState(GUIState);
 	audioProcessor.removeChangeListener(this);
@@ -211,6 +218,7 @@ void BallPitAudioProcessorEditor::loadGUIState()
 	quantizationSlider.setValue(GUIState.getProperty("quantization"), juce::dontSendNotification);
 	quantizationDivisionComboBox.setSelectedItemIndex(GUIState.getProperty("quantizationDivision"), juce::dontSendNotification);
 	volumeVariationSlider.setValue(GUIState.getProperty("volumeVariation"), juce::dontSendNotification);
+	sizePercentageComboBox.setSelectedItemIndex(GUIState.getProperty("sizePercentage"), juce::dontSendNotification);
 }
 
 void BallPitAudioProcessorEditor::displayKnobsByTab()
@@ -287,7 +295,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].xSlider.setRange(BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, BALL_X_SLIDER_STEP);
 		ballsSlidersAndAttachments[i].xSlider.toFront(false);
 		ballsSlidersAndAttachments[i].xSlider.setLookAndFeel(&this->m_costumeDialLAF);
-		addChildComponent(ballsSlidersAndAttachments[i].xSlider);
+		content.addChildComponent(ballsSlidersAndAttachments[i].xSlider);
 
 		// Y Slider
 		ballsSlidersAndAttachments[i].ySlider.setBounds(BALL_Y_KNOB_BOUNDS);
@@ -298,7 +306,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].ySlider.setRange(BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, BALL_Y_SLIDER_STEP);
 		ballsSlidersAndAttachments[i].ySlider.toFront(false);
 		ballsSlidersAndAttachments[i].ySlider.setLookAndFeel(&this->m_costumeDialLAF);
-		addChildComponent(ballsSlidersAndAttachments[i].ySlider);
+		content.addChildComponent(ballsSlidersAndAttachments[i].ySlider);
 
 		// Angle Slider
 		ballsSlidersAndAttachments[i].angleSlider.setBounds(BALL_DIRECTION_KNOB_BOUNDS);
@@ -310,7 +318,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].angleSlider.setRange(BALL_ANGLE_MIN, BALL_ANGLE_MAX, BALL_ANGLE_STEP);
 		ballsSlidersAndAttachments[i].angleSlider.toFront(false);
 		ballsSlidersAndAttachments[i].angleSlider.setLookAndFeel(&this->m_costumeDialLAF);
-		addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
+		content.addChildComponent(ballsSlidersAndAttachments[i].angleSlider);
 
 		// Velocity Slider
 		ballsSlidersAndAttachments[i].velocitySlider.setBounds(BALL_SPEED_KNOB_BOUNDS);
@@ -321,7 +329,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].velocitySlider.setRange(BALL_VELOCITY_MIN, BALL_VELOCITY_MAX, BALL_VELOCITY_STEP);
 		ballsSlidersAndAttachments[i].velocitySlider.toFront(false);
 		ballsSlidersAndAttachments[i].velocitySlider.setLookAndFeel(&this->m_costumeDialLAF);
-		addChildComponent(ballsSlidersAndAttachments[i].velocitySlider);
+		content.addChildComponent(ballsSlidersAndAttachments[i].velocitySlider);
 
 		// Radius Slider
 		ballsSlidersAndAttachments[i].radiusSlider.setBounds(BALL_SIZE_KNOB_BOUNDS);
@@ -333,7 +341,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].radiusSlider.setLookAndFeel(&this->m_costumeDialLAF);
 		ballsSlidersAndAttachments[i].radiusSlider.toFront(false);
 		ballsSlidersAndAttachments[i].radiusSlider.setLookAndFeel(&this->m_costumeDialLAF);
-		addChildComponent(ballsSlidersAndAttachments[i].radiusSlider);
+		content.addChildComponent(ballsSlidersAndAttachments[i].radiusSlider);
 
 		// X Velocity Slider
 		ballsSlidersAndAttachments[i].xVelocitySlider.setBounds(BALL_X_VELOCITY_KNOB_BOUNDS);
@@ -351,7 +359,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 					juce::dontSendNotification
 				);
 			};
-		addChildComponent(ballsSlidersAndAttachments[i].xVelocitySlider);
+		content.addChildComponent(ballsSlidersAndAttachments[i].xVelocitySlider);
 
 		// Y Velocity Slider
 		ballsSlidersAndAttachments[i].yVelocitySlider.setBounds(BALL_Y_VELOCITY_KNOB_BOUNDS);
@@ -369,7 +377,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 					juce::dontSendNotification
 				);
 			};
-		addChildComponent(ballsSlidersAndAttachments[i].yVelocitySlider);
+		content.addChildComponent(ballsSlidersAndAttachments[i].yVelocitySlider);
 	}
 
 	// Set initial visibility for ball 0
@@ -398,7 +406,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	startStopButton.setBounds(START_STOP_BUTTON_BOUNDS);
 	startStopButton.setColour(juce::TextButton::ColourIds::buttonColourId, BUTTON_BG_COLOUR);
 	startStopButton.setColour(juce::TextButton::ColourIds::textColourOffId, BUTTON_TEXT_COLOUR);
-	addAndMakeVisible(startStopButton);
+	content.addAndMakeVisible(startStopButton);
 
 	// Add/Remove Ball Button
 	addRemoveBallButton.setButtonText("Add");
@@ -418,7 +426,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	addRemoveBallButton.setBounds(ADD_REMOVE_BUTTON_BOUNDS);
 	addRemoveBallButton.setColour(juce::TextButton::ColourIds::buttonColourId, BUTTON_BG_COLOUR);
 	addRemoveBallButton.setColour(juce::TextButton::ColourIds::textColourOffId, BUTTON_TEXT_COLOUR);
-	addAndMakeVisible(addRemoveBallButton);
+	content.addAndMakeVisible(addRemoveBallButton);
 
 	// Edge Phase Slider
 	edgePhaseSlider.setBounds(EDGE_PHASE_SLIDER_BOUNDS);
@@ -428,7 +436,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgePhaseSlider.setRange(EDGE_PHASE_MIN, EDGE_PHASE_MAX, EDGE_PHASE_STEP);
 	edgePhaseSlider.setValue(EDGE_PHASE_DEFAULT);
 	edgePhaseSlider.setLookAndFeel(&m_costumeDialLAF);
-	addAndMakeVisible(edgePhaseSlider);
+	content.addAndMakeVisible(edgePhaseSlider);
 
 	// Edge Denominator Slider
 	edgeDenomenatorSlider.setBounds(EDGE_DENOMENATOR_SLIDER_BOUNDS);
@@ -437,7 +445,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgeDenomenatorSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 	edgeDenomenatorSlider.setRange(EDGE_DENOMINATOR_MIN, EDGE_DENOMINATOR_MAX, EDGE_DENOMINATOR_STEP);
 	edgeDenomenatorSlider.setValue(EDGE_DENOMINATOR_DEFAULT);
-	addAndMakeVisible(edgeDenomenatorSlider);
+	content.addAndMakeVisible(edgeDenomenatorSlider);
 
 	// Edge Range Slider
 	edgeRangeSlider.setBounds(RANGE_SLIDER_BOUNDS);
@@ -446,7 +454,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgeRangeSlider.setRange(EDGE_RANGE_MIN, EDGE_RANGE_MAX, EDGE_RANGE_STEP);
 	edgeRangeSlider.setValue(EDGE_RANGE_DEFAULT);
 	edgeRangeSlider.setLookAndFeel(&this->m_costumeDialLAF);
-	addAndMakeVisible(edgeRangeSlider);
+	content.addAndMakeVisible(edgeRangeSlider);
 
 	// Scale Choice ComboBox
 	scaleChoiceComboBox.setBounds(SCALE_COMBOBOX_BOUNDS);
@@ -472,7 +480,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	scaleChoiceComboBox.setSelectedId(SCALE_DEFAULT);
 	scaleChoiceComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	scaleChoiceComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
-	addAndMakeVisible(scaleChoiceComboBox);
+	content.addAndMakeVisible(scaleChoiceComboBox);
 
 	// Root Note ComboBox
 	rootNoteComboBox.setBounds(ROOT_NOTE_COMBOBOX_BOUNDS);
@@ -491,7 +499,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	rootNoteComboBox.setSelectedId(ROOT_NOTE_DEFAULT);
 	rootNoteComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	rootNoteComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
-	addAndMakeVisible(rootNoteComboBox);
+	content.addAndMakeVisible(rootNoteComboBox);
 
 	// Edge Type ComboBox
 	edgeTypeComboBox.setBounds(EDGE_TYPE_COMBOBOX_BOUNDS);
@@ -502,7 +510,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	edgeTypeComboBox.setSelectedId(EDGE_TYPE_DEFAULT);
 	edgeTypeComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	edgeTypeComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
-	addAndMakeVisible(edgeTypeComboBox);
+	content.addAndMakeVisible(edgeTypeComboBox);
 	edgeTypeComboBox.addListener(this); // SPACIAL
 
 	// Balls Positioning Type ComboBox
@@ -512,7 +520,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	ballsPositioningTypeComboBox.setSelectedId(BALLS_POSITIONING_DEFAULT);
 	ballsPositioningTypeComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	ballsPositioningTypeComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
-	addAndMakeVisible(ballsPositioningTypeComboBox);
+	content.addAndMakeVisible(ballsPositioningTypeComboBox);
 	ballsPositioningTypeComboBox.addListener(this); // SPACIAL
 
 	// Snap To Grid Button
@@ -530,13 +538,13 @@ void BallPitAudioProcessorEditor::initiateComponents()
 				changeXAndYToFree();
 			}
 		};
-	addAndMakeVisible(snapToGridButton);
+	content.addAndMakeVisible(snapToGridButton);
 
 	// Collision Button
 	collisionButton.setBounds(COLLISION_BUTTON_BOUNDS);
 	collisionButton.setToggleState(true, juce::dontSendNotification);
 	collisionButton.setLookAndFeel(&this->m_costumeCollisionLAF);
-	addAndMakeVisible(collisionButton);
+	content.addAndMakeVisible(collisionButton);
 
 	// Quantization Slider
 	quantizationSlider.setBounds(QUANTIZATION_KNOB_BOUNDS);
@@ -546,7 +554,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	quantizationSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 	quantizationSlider.setValue(QUANTIZATION_DEFAULT);
 	quantizationSlider.setRange(QUANTIZATION_MIN, QUANTIZATION_MAX, QUANTIZATION_STEP);
-	addAndMakeVisible(quantizationSlider);
+	content.addAndMakeVisible(quantizationSlider);
 
 	// Quantization Division ComboBox
 	quantizationDivisionComboBox.setBounds(QUANTIZATION_DIVISION_COMBOBOX_BOUNDS);
@@ -557,7 +565,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	quantizationDivisionComboBox.setSelectedId(QUANTIZATION_DIV_DEFAULT);
 	quantizationDivisionComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 	quantizationDivisionComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
-	addAndMakeVisible(quantizationDivisionComboBox);
+	content.addAndMakeVisible(quantizationDivisionComboBox);
 
 	// volumeVariation Slider
 	volumeVariationSlider.setBounds(VOLUME_VARIATION_KNOB_BOUNDS);
@@ -567,7 +575,18 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	volumeVariationSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 	volumeVariationSlider.setValue(VOLUME_VARIATION_DEFAULT);
 	volumeVariationSlider.setRange(VOLUME_VARIATION_MIN, VOLUME_VARIATION_MAX, VOLUME_VARIATION_STEP);
-	addAndMakeVisible(volumeVariationSlider);
+	content.addAndMakeVisible(volumeVariationSlider);
+
+	// size percantage ComboBox
+	sizePercentageComboBox.setBounds(SIZE_PERCANTAGE_COMBOBOX_BOUNDS);
+	sizePercentageComboBox.addItem("100%", 1);
+	sizePercentageComboBox.addItem("125%", 2);
+	sizePercentageComboBox.addItem("150%", 3);
+	sizePercentageComboBox.setSelectedId(SIZE_PERCANTAGE_DEFAULT);
+	sizePercentageComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
+	sizePercentageComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
+	content.addAndMakeVisible(sizePercentageComboBox);
+	sizePercentageComboBox.addListener(this); // SPACIAL
 
 	// Preset Manager Button
 	openPresetManager.setButtonText("Presets");
@@ -586,7 +605,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		};
 	openPresetManager.setColour(juce::TextButton::ColourIds::buttonColourId, BUTTON_BG_COLOUR);
 	openPresetManager.setColour(juce::TextButton::ColourIds::textColourOffId, BUTTON_TEXT_COLOUR);
-	addAndMakeVisible(openPresetManager);
+	content.addAndMakeVisible(openPresetManager);
 }
 
 //==============================================================================
@@ -595,10 +614,11 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 {
 	g.fillAll(juce::Colours::black);
 
+	g.addTransform(juce::AffineTransform::scale(sizePercantage));
 	// draw background 
 	if (backgroundDrawable != nullptr)
 	{
-		backgroundDrawable->setBounds(getLocalBounds());
+		backgroundDrawable->setBounds(getLocalBounds() / sizePercantage);
 		backgroundDrawable->draw(g, 1.0f);
 	}
 
@@ -646,6 +666,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 
 void BallPitAudioProcessorEditor::resized()
 {
+	content.setBounds(0, 0, APP_WINDOW_WIDTH, APP_WINDOW_HIGHT); // or whatever your original design size was
 }
 
 void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
@@ -674,6 +695,26 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 		}
 
 		repaint();
+	}
+	else if (comboBoxThatHasChanged == &sizePercentageComboBox)
+	{
+		int selectedSize = sizePercentageComboBox.getSelectedItemIndex();
+		if (selectedSize == 1)
+		{
+			this->sizePercantage = SIZE_PERCANTAGE_125;
+		}
+		else if (selectedSize == 2)
+		{
+			this->sizePercantage = SIZE_PERCANTAGE_150;
+		}
+		else
+		{
+			this->sizePercantage = SIZE_PERCANTAGE_100;
+		}
+
+		content.setTransform(juce::AffineTransform::scale(sizePercantage));
+		setSize((int)(APP_WINDOW_WIDTH * sizePercantage), (int)(APP_WINDOW_HIGHT * sizePercantage));
+		resized();
 	}
 }
 

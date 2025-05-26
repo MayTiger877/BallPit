@@ -546,6 +546,11 @@ juce::StringArray getQuantizationDivisionTypes()
 	return { "1/32", "1/16", "1/8", "1/4" };
 }
 
+juce::StringArray getsizePercentageTypes()
+{
+	return { "100%", "125%", "150%"};
+}
+
 juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::createParameters()
 {
 	juce::AudioProcessorValueTreeState::ParameterLayout params;
@@ -605,6 +610,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	std::string volumeVariationId = "volumeVariation";
 	params.add(std::make_unique<juce::AudioParameterFloat>(volumeVariationId, "volumeVariation", VOLUME_VARIATION_MIN, VOLUME_VARIATION_MAX, VOLUME_VARIATION_DEFAULT));
 	
+	std::string sizePercentageID = "sizePercentage";
+	params.add(std::make_unique<juce::AudioParameterChoice>(sizePercentageID, "size Percentage", getsizePercentageTypes(), SIZE_PERCANTAGE_DEFAULT));
 	return params;
 }
 
