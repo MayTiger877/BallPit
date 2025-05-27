@@ -10,7 +10,7 @@ on:
 
 env:
   BUILD_TYPE: Release
-  JUCE_VERSION: 7.0.12  # Update this to match your JUCE version
+  JUCE_VERSION: 8.0.7  # Update this to match your JUCE version
 
 jobs:
   build:
