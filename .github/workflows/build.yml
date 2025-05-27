@@ -20,22 +20,25 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - name: Windows
+            os: windows-latest
+            artifact_name: "Ball-Pit-Windows"
+            build_path: "Builds/VisualStudio2022"
+            vst3_path: "Builds/VisualStudio2022/x64/Release/VST3/Ball Pit.vst3"
           - name: Linux
             os: ubuntu-latest
-            generator: "Unix Makefiles"
             artifact_name: "Ball-Pit-Linux"
+            build_path: "Builds/LinuxMakefile"
             vst3_path: "Builds/LinuxMakefile/build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
           - name: macOS
             os: macos-latest
-            generator: "Xcode"
             artifact_name: "Ball-Pit-macOS"
-            vst3_path: "Builds/MacOSX/build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
+            build_path: "Builds/MacOSX"
+            vst3_path: "Builds/MacOSX/build/Release/Ball Pit.vst3"
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        submodules: recursive
 
     - name: Install Linux dependencies
       if: runner.os == 'Linux'
@@ -50,7 +53,6 @@ jobs:
           libx11-dev \
           libxcomposite-dev \
           libxcursor-dev \
-          libxcursor-dev \
           libxext-dev \
           libxinerama-dev \
           libxrandr-dev \
@@ -59,15 +61,16 @@ jobs:
           libglu1-mesa-dev \
           mesa-common-dev
 
-    - name: Install macOS dependencies
-      if: runner.os == 'macOS'
-      run: |
-        # No additional dependencies needed for basic JUCE build on macOS
+    - name: Setup MSVC (Windows)
+      if: runner.os == 'Windows'
+      uses: microsoft/setup-msbuild@v2
 
     - name: Download and setup JUCE
+      shell: bash
       run: |
-        # Download JUCE (JUCE 8.x uses different download URLs)
-        if [ "$RUNNER_OS" == "Linux" ]; then
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          curl -L -o juce.zip https://github.com/juce-framework/JUCE/releases/download/${{ env.JUCE_VERSION }}/juce-${{ env.JUCE_VERSION }}-windows.zip
+        elif [ "$RUNNER_OS" == "Linux" ]; then
           curl -L -o juce.zip https://github.com/juce-framework/JUCE/releases/download/${{ env.JUCE_VERSION }}/juce-${{ env.JUCE_VERSION }}-linux.zip
         elif [ "$RUNNER_OS" == "macOS" ]; then
           curl -L -o juce.zip https://github.com/juce-framework/JUCE/releases/download/${{ env.JUCE_VERSION }}/juce-${{ env.JUCE_VERSION }}-osx.zip
@@ -76,59 +79,54 @@ jobs:
         unzip juce.zip
         mv JUCE* JUCE
 
+    - name: Build Projucer (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        cd JUCE/extras/Projucer/Builds/VisualStudio2022
+        msbuild Projucer.sln -p:Configuration=Release -p:Platform=x64
+
     - name: Build Projucer (Linux)
       if: runner.os == 'Linux'
       run: |
         cd JUCE/extras/Projucer/Builds/LinuxMakefile
-        make CONFIG=Release
+        make CONFIG=Release -j$(nproc)
 
     - name: Build Projucer (macOS)
       if: runner.os == 'macOS'
       run: |
         cd JUCE/extras/Projucer/Builds/MacOSX
-        xcodebuild -configuration Release
+        xcodebuild -configuration Release -jobs $(sysctl -n hw.ncpu)
 
-    - name: Generate build files with Projucer (Linux)
+    - name: Add platform exports and regenerate project (Windows)
+      if: runner.os == 'Windows'
+      shell: bash
+      run: |
+        # The project already has VS2022 export, just regenerate
+        ./JUCE/extras/Projucer/Builds/VisualStudio2022/x64/Release/App/Projucer.exe --resave "Ball Pit.jucer"
+
+    - name: Add platform exports and regenerate project (Linux)
       if: runner.os == 'Linux'
       run: |
-        # Since you have JuceLibraryCode, your project might already be set up
-        # But we still need to add Linux export and regenerate
-        cat > add_linux_export.py << 'EOF'
+        # Add Linux export if it doesn't exist, then regenerate
+        python3 << 'EOF'
         import xml.etree.ElementTree as ET
-        import sys
-
-        # Load the .jucer file
+        
         tree = ET.parse('Ball Pit.jucer')
         root = tree.getroot()
-
-        # Find the EXPORTFORMATS element
         exportformats = root.find('EXPORTFORMATS')
-        if exportformats is None:
-            print("EXPORTFORMATS not found")
-            sys.exit(1)
-
-        # Check if LINUX_MAKE already exists
-        if exportformats.find('LINUX_MAKE') is not None:
-            print("Linux export already exists")
-        else:
-            # Create Linux Makefile export
+        
+        if exportformats.find('LINUX_MAKE') is None:
             linux_make = ET.SubElement(exportformats, 'LINUX_MAKE')
             linux_make.set('targetFolder', 'Builds/LinuxMakefile')
-
-            # Add configurations
+            
             configs = ET.SubElement(linux_make, 'CONFIGURATIONS')
             
-            debug_config = ET.SubElement(configs, 'CONFIGURATION')
-            debug_config.set('isDebug', '1')
-            debug_config.set('name', 'Debug')
-            debug_config.set('targetName', 'Ball Pit')
+            for config_name, is_debug in [('Debug', '1'), ('Release', '0')]:
+                config = ET.SubElement(configs, 'CONFIGURATION')
+                config.set('isDebug', is_debug)
+                config.set('name', config_name)
+                config.set('targetName', 'Ball Pit')
             
-            release_config = ET.SubElement(configs, 'CONFIGURATION')
-            release_config.set('isDebug', '0')
-            release_config.set('name', 'Release')
-            release_config.set('targetName', 'Ball Pit')
-
-            # Add module paths - point to our downloaded JUCE
             modulepaths = ET.SubElement(linux_make, 'MODULEPATHS')
             modules = [
                 'juce_audio_basics', 'juce_audio_devices', 'juce_audio_plugin_client',
@@ -141,57 +139,35 @@ jobs:
                 modulepath = ET.SubElement(modulepaths, 'MODULEPATH')
                 modulepath.set('id', module)
                 modulepath.set('path', '../JUCE/modules')
-
-            # Save the modified file
+            
             tree.write('Ball Pit.jucer', encoding='UTF-8', xml_declaration=True)
-            print("Added Linux export to .jucer file")
         EOF
-
-        python3 add_linux_export.py
         
-        # Regenerate with Projucer
-        JUCE/extras/Projucer/Builds/LinuxMakefile/build/Projucer --resave "Ball Pit.jucer"
+        ./JUCE/extras/Projucer/Builds/LinuxMakefile/build/Projucer --resave "Ball Pit.jucer"
 
-    - name: Generate build files with Projucer (macOS)
+    - name: Add platform exports and regenerate project (macOS)
       if: runner.os == 'macOS'
       run: |
-        # Add macOS Xcode export to the .jucer file
-        cat > add_macos_export.py << 'EOF'
+        # Add macOS export if it doesn't exist, then regenerate
+        python3 << 'EOF'
         import xml.etree.ElementTree as ET
-        import sys
-
-        # Load the .jucer file
+        
         tree = ET.parse('Ball Pit.jucer')
         root = tree.getroot()
-
-        # Find the EXPORTFORMATS element
         exportformats = root.find('EXPORTFORMATS')
-        if exportformats is None:
-            print("EXPORTFORMATS not found")
-            sys.exit(1)
-
-        # Check if XCODE_MAC already exists
-        if exportformats.find('XCODE_MAC') is not None:
-            print("macOS export already exists")
-        else:
-            # Create Xcode Mac export
+        
+        if exportformats.find('XCODE_MAC') is None:
             xcode_mac = ET.SubElement(exportformats, 'XCODE_MAC')
             xcode_mac.set('targetFolder', 'Builds/MacOSX')
-
-            # Add configurations
+            
             configs = ET.SubElement(xcode_mac, 'CONFIGURATIONS')
             
-            debug_config = ET.SubElement(configs, 'CONFIGURATION')
-            debug_config.set('isDebug', '1')
-            debug_config.set('name', 'Debug')
-            debug_config.set('targetName', 'Ball Pit')
+            for config_name, is_debug in [('Debug', '1'), ('Release', '0')]:
+                config = ET.SubElement(configs, 'CONFIGURATION')
+                config.set('isDebug', is_debug)
+                config.set('name', config_name)
+                config.set('targetName', 'Ball Pit')
             
-            release_config = ET.SubElement(configs, 'CONFIGURATION')
-            release_config.set('isDebug', '0')
-            release_config.set('name', 'Release')
-            release_config.set('targetName', 'Ball Pit')
-
-            # Add module paths - point to our downloaded JUCE
             modulepaths = ET.SubElement(xcode_mac, 'MODULEPATHS')
             modules = [
                 'juce_audio_basics', 'juce_audio_devices', 'juce_audio_plugin_client',
@@ -204,47 +180,53 @@ jobs:
                 modulepath = ET.SubElement(modulepaths, 'MODULEPATH')
                 modulepath.set('id', module)
                 modulepath.set('path', '../JUCE/modules')
-
-            # Save the modified file
+            
             tree.write('Ball Pit.jucer', encoding='UTF-8', xml_declaration=True)
-            print("Added macOS export to .jucer file")
         EOF
-
-        python3 add_macos_export.py
         
-        # Regenerate with Projucer
-        JUCE/extras/Projucer/Builds/MacOSX/build/Release/Projucer.app/Contents/MacOS/Projucer --resave "Ball Pit.jucer"
+        ./JUCE/extras/Projucer/Builds/MacOSX/build/Release/Projucer.app/Contents/MacOS/Projucer --resave "Ball Pit.jucer"
 
-    - name: Build plugin (Linux)
+    - name: Build VST3 (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        cd "${{ matrix.build_path }}"
+        msbuild "Ball Pit.sln" -p:Configuration=Release -p:Platform=x64
+
+    - name: Build VST3 (Linux)
       if: runner.os == 'Linux'
       run: |
-        cd Builds/LinuxMakefile
-        make CONFIG=Release
+        cd "${{ matrix.build_path }}"
+        make CONFIG=Release -j$(nproc)
 
-    - name: Build plugin (macOS)
+    - name: Build VST3 (macOS)
       if: runner.os == 'macOS'
       run: |
-        cd Builds/MacOSX
-        xcodebuild -configuration Release
+        cd "${{ matrix.build_path }}"
+        xcodebuild -configuration Release -jobs $(sysctl -n hw.ncpu)
 
-    - name: Create artifact directory
-      run: mkdir -p artifacts
-
-    - name: Copy VST3 to artifacts (Linux)
-      if: runner.os == 'Linux'
+    - name: Create artifacts
       run: |
-        cp -r "${{ matrix.vst3_path }}" artifacts/
-        # Create a zip for easier distribution
-        cd artifacts
-        zip -r "Ball-Pit-Linux.zip" "Ball Pit.vst3"
+        mkdir -p artifacts
+        if [ -d "${{ matrix.vst3_path }}" ]; then
+          cp -r "${{ matrix.vst3_path }}" artifacts/
+        elif [ -f "${{ matrix.vst3_path }}" ]; then
+          cp "${{ matrix.vst3_path }}" artifacts/
+        else
+          echo "VST3 not found at expected path: ${{ matrix.vst3_path }}"
+          find . -name "*.vst3" -type d 2>/dev/null || find . -name "*.vst3" -type f 2>/dev/null || true
+          exit 1
+        fi
+      shell: bash
 
-    - name: Copy VST3 to artifacts (macOS)
-      if: runner.os == 'macOS'
+    - name: Package artifacts
       run: |
-        cp -r "${{ matrix.vst3_path }}" artifacts/
-        # Create a zip for easier distribution
         cd artifacts
-        zip -r "Ball-Pit-macOS.zip" "Ball Pit.vst3"
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          7z a "${{ matrix.artifact_name }}.zip" "Ball Pit.vst3"
+        else
+          zip -r "${{ matrix.artifact_name }}.zip" "Ball Pit.vst3"
+        fi
+      shell: bash
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -255,11 +237,8 @@ jobs:
 
     - name: Upload to release (if release)
       if: github.event_name == 'release'
-      uses: actions/upload-release-asset@v1
+      uses: softprops/action-gh-release@v2
+      with:
+        files: artifacts/${{ matrix.artifact_name }}.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./artifacts/${{ matrix.artifact_name }}.zip
-        asset_name: ${{ matrix.artifact_name }}.zip
-        asset_content_type: application/zip
