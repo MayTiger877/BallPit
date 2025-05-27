@@ -103,10 +103,27 @@ jobs:
             PRODUCT_NAME "Ball Pit"
         )
         
-        # Add source files (adjust these paths to match your actual source files)
+        # Add all source files
         target_sources(Ball_Pit PRIVATE
-            Source/PluginProcessor.cpp
+            Source/Ball.cpp
+            Source/CostumeComboBox.cpp
+            Source/CostumeDial.cpp
+            Source/CostumeToggleButton.cpp
+            Source/Edge.cpp
+            Source/Pit.cpp
             Source/PluginEditor.cpp
+            Source/PluginProcessor.cpp
+            Source/PresetManagerBackend.cpp
+            Source/Scales.cpp
+        )
+        
+        # Add Resources directory
+        juce_add_binary_data(BallPitData SOURCES
+            Resources/Ball_tab_0.svg
+            Resources/Ball_tab_1.svg
+            Resources/Ball_tab_2.svg
+            Resources/ByKnobs.svg
+            Resources/ByTempo.svg
         )
         
         # Compile definitions
@@ -116,10 +133,21 @@ jobs:
             JUCE_VST3_CAN_REPLACE_VST2=0
         )
         
-        # Link JUCE modules
+        # Link JUCE modules and binary data
         target_link_libraries(Ball_Pit PRIVATE
+            BallPitData
             juce::juce_audio_utils
             juce::juce_audio_plugin_client
+            juce::juce_audio_processors
+            juce::juce_audio_devices
+            juce::juce_gui_extra
+            juce::juce_gui_basics
+            juce::juce_graphics
+            juce::juce_core
+            juce::juce_data_structures
+            juce::juce_events
+            juce::juce_audio_formats
+            juce::juce_audio_basics
         PUBLIC
             juce::juce_recommended_config_flags
             juce::juce_recommended_lto_flags
