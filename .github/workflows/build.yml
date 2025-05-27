@@ -144,7 +144,7 @@ jobs:
             for module in modules:
                 modulepath = ET.SubElement(modulepaths, 'MODULEPATH')
                 modulepath.set('id', module)
-                modulepath.set('path', '../JUCE/modules')
+                modulepath.set('path', '../../JUCE/modules')
             
             tree.write('Ball Pit.jucer', encoding='UTF-8', xml_declaration=True)
         EOF
@@ -185,7 +185,7 @@ jobs:
             for module in modules:
                 modulepath = ET.SubElement(modulepaths, 'MODULEPATH')
                 modulepath.set('id', module)
-                modulepath.set('path', '../JUCE/modules')
+                modulepath.set('path', '../../JUCE/modules')
             
             tree.write('Ball Pit.jucer', encoding='UTF-8', xml_declaration=True)
         EOF
