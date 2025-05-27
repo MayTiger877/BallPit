@@ -23,18 +23,15 @@ jobs:
           - name: Windows
             os: windows-latest
             artifact_name: "Ball-Pit-Windows"
-            build_path: "Builds/VisualStudio2022"
-            vst3_path: "Builds/VisualStudio2022/x64/Release/VST3/Ball Pit.vst3"
+            vst3_path: "build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
           - name: Linux
             os: ubuntu-latest
             artifact_name: "Ball-Pit-Linux"
-            build_path: "Builds/LinuxMakefile"
-            vst3_path: "Builds/LinuxMakefile/build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
+            vst3_path: "build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
           - name: macOS
             os: macos-latest
             artifact_name: "Ball-Pit-macOS"
-            build_path: "Builds/MacOSX"
-            vst3_path: "Builds/MacOSX/build/Release/Ball Pit.vst3"
+            vst3_path: "build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
 
     steps:
     - name: Checkout repository
@@ -61,10 +58,6 @@ jobs:
           libglu1-mesa-dev \
           mesa-common-dev
 
-    - name: Setup MSVC (Windows)
-      if: runner.os == 'Windows'
-      uses: microsoft/setup-msbuild@v2
-
     - name: Download and setup JUCE
       shell: bash
       run: |
@@ -85,130 +78,62 @@ jobs:
           fi
         done
 
-    - name: Build Projucer (Windows)
-      if: runner.os == 'Windows'
+    - name: Create CMakeLists.txt
       run: |
-        cd JUCE/extras/Projucer/Builds/VisualStudio2022
-        msbuild Projucer.sln -p:Configuration=Release -p:Platform=x64
-
-    - name: Build Projucer (Linux)
-      if: runner.os == 'Linux'
-      run: |
-        cd JUCE/extras/Projucer/Builds/LinuxMakefile
-        make CONFIG=Release -j$(nproc)
-
-    - name: Build Projucer (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        cd JUCE/extras/Projucer/Builds/MacOSX
-        xcodebuild -configuration Release -jobs $(sysctl -n hw.ncpu)
-
-    - name: Add platform exports and regenerate project (Windows)
-      if: runner.os == 'Windows'
-      shell: bash
-      run: |
-        # The project already has VS2022 export, just regenerate
-        ./JUCE/extras/Projucer/Builds/VisualStudio2022/x64/Release/App/Projucer.exe --resave "Ball Pit.jucer"
-
-    - name: Add platform exports and regenerate project (Linux)
-      if: runner.os == 'Linux'
-      run: |
-        # Add Linux export if it doesn't exist, then regenerate
-        python3 << 'EOF'
-        import xml.etree.ElementTree as ET
+        cat > CMakeLists.txt << 'EOF'
+        cmake_minimum_required(VERSION 3.22)
         
-        tree = ET.parse('Ball Pit.jucer')
-        root = tree.getroot()
-        exportformats = root.find('EXPORTFORMATS')
+        project(BallPit VERSION 1.0.0)
         
-        if exportformats.find('LINUX_MAKE') is None:
-            linux_make = ET.SubElement(exportformats, 'LINUX_MAKE')
-            linux_make.set('targetFolder', 'Builds/LinuxMakefile')
-            
-            configs = ET.SubElement(linux_make, 'CONFIGURATIONS')
-            
-            for config_name, is_debug in [('Debug', '1'), ('Release', '0')]:
-                config = ET.SubElement(configs, 'CONFIGURATION')
-                config.set('isDebug', is_debug)
-                config.set('name', config_name)
-                config.set('targetName', 'Ball Pit')
-            
-            modulepaths = ET.SubElement(linux_make, 'MODULEPATHS')
-            modules = [
-                'juce_audio_basics', 'juce_audio_devices', 'juce_audio_plugin_client',
-                'juce_audio_processors', 'juce_audio_utils', 'juce_core',
-                'juce_data_structures', 'juce_events', 'juce_gui_basics',
-                'juce_midi_ci', 'juce_gui_extra', 'juce_graphics', 'juce_audio_formats'
-            ]
-            
-            for module in modules:
-                modulepath = ET.SubElement(modulepaths, 'MODULEPATH')
-                modulepath.set('id', module)
-                modulepath.set('path', '../../JUCE/modules')
-            
-            tree.write('Ball Pit.jucer', encoding='UTF-8', xml_declaration=True)
+        # Add JUCE
+        add_subdirectory(JUCE)
+        
+        # Create the plugin target
+        juce_add_plugin(Ball_Pit
+            COMPANY_NAME "Your Company"
+            IS_SYNTH FALSE
+            NEEDS_MIDI_INPUT FALSE
+            NEEDS_MIDI_OUTPUT FALSE
+            IS_MIDI_EFFECT FALSE
+            EDITOR_WANTS_KEYBOARD_FOCUS FALSE
+            COPY_PLUGIN_AFTER_BUILD TRUE
+            PLUGIN_MANUFACTURER_CODE Juce
+            PLUGIN_CODE Demo
+            FORMATS VST3
+            PRODUCT_NAME "Ball Pit"
+        )
+        
+        # Add source files (adjust these paths to match your actual source files)
+        target_sources(Ball_Pit PRIVATE
+            Source/PluginProcessor.cpp
+            Source/PluginEditor.cpp
+        )
+        
+        # Compile definitions
+        target_compile_definitions(Ball_Pit PUBLIC
+            JUCE_WEB_BROWSER=0
+            JUCE_USE_CURL=0
+            JUCE_VST3_CAN_REPLACE_VST2=0
+        )
+        
+        # Link JUCE modules
+        target_link_libraries(Ball_Pit PRIVATE
+            juce::juce_audio_utils
+            juce::juce_audio_plugin_client
+        PUBLIC
+            juce::juce_recommended_config_flags
+            juce::juce_recommended_lto_flags
+            juce::juce_recommended_warning_flags
+        )
         EOF
-        
-        ./JUCE/extras/Projucer/Builds/LinuxMakefile/build/Projucer --resave "Ball Pit.jucer"
 
-    - name: Add platform exports and regenerate project (macOS)
-      if: runner.os == 'macOS'
+    - name: Configure CMake
       run: |
-        # Add macOS export if it doesn't exist, then regenerate
-        python3 << 'EOF'
-        import xml.etree.ElementTree as ET
-        
-        tree = ET.parse('Ball Pit.jucer')
-        root = tree.getroot()
-        exportformats = root.find('EXPORTFORMATS')
-        
-        if exportformats.find('XCODE_MAC') is None:
-            xcode_mac = ET.SubElement(exportformats, 'XCODE_MAC')
-            xcode_mac.set('targetFolder', 'Builds/MacOSX')
-            
-            configs = ET.SubElement(xcode_mac, 'CONFIGURATIONS')
-            
-            for config_name, is_debug in [('Debug', '1'), ('Release', '0')]:
-                config = ET.SubElement(configs, 'CONFIGURATION')
-                config.set('isDebug', is_debug)
-                config.set('name', config_name)
-                config.set('targetName', 'Ball Pit')
-            
-            modulepaths = ET.SubElement(xcode_mac, 'MODULEPATHS')
-            modules = [
-                'juce_audio_basics', 'juce_audio_devices', 'juce_audio_plugin_client',
-                'juce_audio_processors', 'juce_audio_utils', 'juce_core',
-                'juce_data_structures', 'juce_events', 'juce_gui_basics',
-                'juce_midi_ci', 'juce_gui_extra', 'juce_graphics', 'juce_audio_formats'
-            ]
-            
-            for module in modules:
-                modulepath = ET.SubElement(modulepaths, 'MODULEPATH')
-                modulepath.set('id', module)
-                modulepath.set('path', '../../JUCE/modules')
-            
-            tree.write('Ball Pit.jucer', encoding='UTF-8', xml_declaration=True)
-        EOF
-        
-        ./JUCE/extras/Projucer/Builds/MacOSX/build/Release/Projucer.app/Contents/MacOS/Projucer --resave "Ball Pit.jucer"
+        cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
-    - name: Build VST3 (Windows)
-      if: runner.os == 'Windows'
+    - name: Build with CMake
       run: |
-        cd "${{ matrix.build_path }}"
-        msbuild "Ball Pit.sln" -p:Configuration=Release -p:Platform=x64
-
-    - name: Build VST3 (Linux)
-      if: runner.os == 'Linux'
-      run: |
-        cd "${{ matrix.build_path }}"
-        make CONFIG=Release -j$(nproc)
-
-    - name: Build VST3 (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        cd "${{ matrix.build_path }}"
-        xcodebuild -configuration Release -jobs $(sysctl -n hw.ncpu)
+        cmake --build build --config ${{ env.BUILD_TYPE }} --parallel
 
     - name: Create artifacts
       run: |
@@ -219,7 +144,7 @@ jobs:
           cp "${{ matrix.vst3_path }}" artifacts/
         else
           echo "VST3 not found at expected path: ${{ matrix.vst3_path }}"
-          find . -name "*.vst3" -type d 2>/dev/null || find . -name "*.vst3" -type f 2>/dev/null || true
+          find build -name "*.vst3" -type d 2>/dev/null || find build -name "*.vst3" -type f 2>/dev/null || true
           exit 1
         fi
       shell: bash
