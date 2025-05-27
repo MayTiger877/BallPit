@@ -1,0 +1,272 @@
+name: Build VST3 Plugin
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+env:
+  BUILD_TYPE: Release
+  JUCE_VERSION: 7.0.12  # Update this to match your JUCE version
+
+jobs:
+  build:
+    name: Build on ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux
+            os: ubuntu-latest
+            generator: "Unix Makefiles"
+            artifact_name: "Ball-Pit-Linux"
+            vst3_path: "Builds/LinuxMakefile/build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
+          - name: macOS
+            os: macos-latest
+            generator: "Xcode"
+            artifact_name: "Ball-Pit-macOS"
+            vst3_path: "Builds/MacOSX/build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install Linux dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libasound2-dev \
+          libjack-jackd2-dev \
+          ladspa-sdk \
+          libcurl4-openssl-dev \
+          libfreetype6-dev \
+          libx11-dev \
+          libxcomposite-dev \
+          libxcursor-dev \
+          libxcursor-dev \
+          libxext-dev \
+          libxinerama-dev \
+          libxrandr-dev \
+          libxrender-dev \
+          libwebkit2gtk-4.0-dev \
+          libglu1-mesa-dev \
+          mesa-common-dev
+
+    - name: Install macOS dependencies
+      if: runner.os == 'macOS'
+      run: |
+        # No additional dependencies needed for basic JUCE build on macOS
+
+    - name: Download and setup JUCE
+      run: |
+        # Download JUCE
+        curl -L -o juce.zip https://github.com/juce-framework/JUCE/releases/download/${{ env.JUCE_VERSION }}/juce-${{ env.JUCE_VERSION }}-linux.zip
+        unzip juce.zip
+        mv JUCE-${{ env.JUCE_VERSION }} JUCE
+        
+        # Make Projucer executable (Linux/macOS)
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          chmod +x JUCE/extras/Projucer/Builds/LinuxMakefile/build/Projucer
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          chmod +x JUCE/extras/Projucer/Builds/MacOSX/build/Debug/Projucer.app/Contents/MacOS/Projucer
+        fi
+
+    - name: Build Projucer (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        cd JUCE/extras/Projucer/Builds/LinuxMakefile
+        make CONFIG=Release
+
+    - name: Build Projucer (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        cd JUCE/extras/Projucer/Builds/MacOSX
+        xcodebuild -configuration Release
+
+    - name: Generate build files with Projucer (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        # Add Linux Makefile export to the .jucer file
+        JUCE/extras/Projucer/Builds/LinuxMakefile/build/Projucer --resave "Ball Pit.jucer"
+        
+        # We need to manually add the Linux export since it's not in the .jucer file
+        # Create a script to add the Linux export
+        cat > add_linux_export.py << 'EOF'
+        import xml.etree.ElementTree as ET
+        import sys
+
+        # Load the .jucer file
+        tree = ET.parse('Ball Pit.jucer')
+        root = tree.getroot()
+
+        # Find the EXPORTFORMATS element
+        exportformats = root.find('EXPORTFORMATS')
+        if exportformats is None:
+            print("EXPORTFORMATS not found")
+            sys.exit(1)
+
+        # Check if LINUX_MAKE already exists
+        if exportformats.find('LINUX_MAKE') is not None:
+            print("Linux export already exists")
+            sys.exit(0)
+
+        # Create Linux Makefile export
+        linux_make = ET.SubElement(exportformats, 'LINUX_MAKE')
+        linux_make.set('targetFolder', 'Builds/LinuxMakefile')
+
+        # Add configurations
+        configs = ET.SubElement(linux_make, 'CONFIGURATIONS')
+        
+        debug_config = ET.SubElement(configs, 'CONFIGURATION')
+        debug_config.set('isDebug', '1')
+        debug_config.set('name', 'Debug')
+        debug_config.set('targetName', 'Ball Pit')
+        
+        release_config = ET.SubElement(configs, 'CONFIGURATION')
+        release_config.set('isDebug', '0')
+        release_config.set('name', 'Release')
+        release_config.set('targetName', 'Ball Pit')
+
+        # Add module paths
+        modulepaths = ET.SubElement(linux_make, 'MODULEPATHS')
+        modules = [
+            'juce_audio_basics', 'juce_audio_devices', 'juce_audio_plugin_client',
+            'juce_audio_processors', 'juce_audio_utils', 'juce_core',
+            'juce_data_structures', 'juce_events', 'juce_gui_basics',
+            'juce_midi_ci', 'juce_gui_extra', 'juce_graphics', 'juce_audio_formats'
+        ]
+        
+        for module in modules:
+            modulepath = ET.SubElement(modulepaths, 'MODULEPATH')
+            modulepath.set('id', module)
+            modulepath.set('path', '../JUCE/modules')
+
+        # Save the modified file
+        tree.write('Ball Pit.jucer', encoding='UTF-8', xml_declaration=True)
+        print("Added Linux export to .jucer file")
+        EOF
+
+        python3 add_linux_export.py
+        
+        # Regenerate with the new export
+        JUCE/extras/Projucer/Builds/LinuxMakefile/build/Projucer --resave "Ball Pit.jucer"
+
+    - name: Generate build files with Projucer (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        # Add macOS Xcode export to the .jucer file
+        cat > add_macos_export.py << 'EOF'
+        import xml.etree.ElementTree as ET
+        import sys
+
+        # Load the .jucer file
+        tree = ET.parse('Ball Pit.jucer')
+        root = tree.getroot()
+
+        # Find the EXPORTFORMATS element
+        exportformats = root.find('EXPORTFORMATS')
+        if exportformats is None:
+            print("EXPORTFORMATS not found")
+            sys.exit(1)
+
+        # Check if XCODE_MAC already exists
+        if exportformats.find('XCODE_MAC') is not None:
+            print("macOS export already exists")
+            sys.exit(0)
+
+        # Create Xcode Mac export
+        xcode_mac = ET.SubElement(exportformats, 'XCODE_MAC')
+        xcode_mac.set('targetFolder', 'Builds/MacOSX')
+
+        # Add configurations
+        configs = ET.SubElement(xcode_mac, 'CONFIGURATIONS')
+        
+        debug_config = ET.SubElement(configs, 'CONFIGURATION')
+        debug_config.set('isDebug', '1')
+        debug_config.set('name', 'Debug')
+        debug_config.set('targetName', 'Ball Pit')
+        
+        release_config = ET.SubElement(configs, 'CONFIGURATION')
+        release_config.set('isDebug', '0')
+        release_config.set('name', 'Release')
+        release_config.set('targetName', 'Ball Pit')
+
+        # Add module paths
+        modulepaths = ET.SubElement(xcode_mac, 'MODULEPATHS')
+        modules = [
+            'juce_audio_basics', 'juce_audio_devices', 'juce_audio_plugin_client',
+            'juce_audio_processors', 'juce_audio_utils', 'juce_core',
+            'juce_data_structures', 'juce_events', 'juce_gui_basics',
+            'juce_midi_ci', 'juce_gui_extra', 'juce_graphics', 'juce_audio_formats'
+        ]
+        
+        for module in modules:
+            modulepath = ET.SubElement(modulepaths, 'MODULEPATH')
+            modulepath.set('id', module)
+            modulepath.set('path', '../JUCE/modules')
+
+        # Save the modified file
+        tree.write('Ball Pit.jucer', encoding='UTF-8', xml_declaration=True)
+        print("Added macOS export to .jucer file")
+        EOF
+
+        python3 add_macos_export.py
+        
+        # Regenerate with the new export
+        JUCE/extras/Projucer/Builds/MacOSX/build/Release/Projucer.app/Contents/MacOS/Projucer --resave "Ball Pit.jucer"
+
+    - name: Build plugin (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        cd Builds/LinuxMakefile
+        make CONFIG=Release
+
+    - name: Build plugin (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        cd Builds/MacOSX
+        xcodebuild -configuration Release
+
+    - name: Create artifact directory
+      run: mkdir -p artifacts
+
+    - name: Copy VST3 to artifacts (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        cp -r "${{ matrix.vst3_path }}" artifacts/
+        # Create a zip for easier distribution
+        cd artifacts
+        zip -r "Ball-Pit-Linux.zip" "Ball Pit.vst3"
+
+    - name: Copy VST3 to artifacts (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        cp -r "${{ matrix.vst3_path }}" artifacts/
+        # Create a zip for easier distribution
+        cd artifacts
+        zip -r "Ball-Pit-macOS.zip" "Ball Pit.vst3"
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact_name }}
+        path: artifacts/
+        retention-days: 30
+
+    - name: Upload to release (if release)
+      if: github.event_name == 'release'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./artifacts/${{ matrix.artifact_name }}.zip
+        asset_name: ${{ matrix.artifact_name }}.zip
+        asset_content_type: application/zip
