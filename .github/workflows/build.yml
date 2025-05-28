@@ -1,0 +1,203 @@
+name: Build VST3 Plugin
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+env:
+  BUILD_TYPE: Release
+  JUCE_VERSION: 8.0.7
+
+jobs:
+  build:
+    name: Build on ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows
+            os: windows-latest
+            artifact_name: "Ball-Pit-Windows"
+            vst3_path: "build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
+          - name: Linux
+            os: ubuntu-latest
+            artifact_name: "Ball-Pit-Linux"
+            vst3_path: "build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
+          - name: macOS
+            os: macos-latest
+            artifact_name: "Ball-Pit-macOS"
+            vst3_path: "build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Linux dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libasound2-dev \
+          libjack-jackd2-dev \
+          ladspa-sdk \
+          libcurl4-openssl-dev \
+          libfreetype6-dev \
+          libx11-dev \
+          libxcomposite-dev \
+          libxcursor-dev \
+          libxext-dev \
+          libxinerama-dev \
+          libxrandr-dev \
+          libxrender-dev \
+          libwebkit2gtk-4.0-dev \
+          libglu1-mesa-dev \
+          mesa-common-dev
+
+    - name: Download and setup JUCE
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          curl -L -o juce.zip https://github.com/juce-framework/JUCE/releases/download/${{ env.JUCE_VERSION }}/juce-${{ env.JUCE_VERSION }}-windows.zip
+        elif [ "$RUNNER_OS" == "Linux" ]; then
+          curl -L -o juce.zip https://github.com/juce-framework/JUCE/releases/download/${{ env.JUCE_VERSION }}/juce-${{ env.JUCE_VERSION }}-linux.zip
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          curl -L -o juce.zip https://github.com/juce-framework/JUCE/releases/download/${{ env.JUCE_VERSION }}/juce-${{ env.JUCE_VERSION }}-osx.zip
+        fi
+        
+        unzip juce.zip
+        # Handle different possible folder names after extraction
+        for dir in JUCE* juce*; do
+          if [ -d "$dir" ] && [ "$dir" != "JUCE" ]; then
+            mv "$dir" JUCE
+            break
+          fi
+        done
+
+    - name: Create CMakeLists.txt
+      run: |
+        cat > CMakeLists.txt << 'EOF'
+        cmake_minimum_required(VERSION 3.22)
+        
+        project(BallPit VERSION 1.0.0)
+        
+        # Add JUCE
+        add_subdirectory(JUCE)
+        
+        # Create the plugin target
+        juce_add_plugin(Ball_Pit
+            COMPANY_NAME "Your Company"
+            IS_SYNTH FALSE
+            NEEDS_MIDI_INPUT FALSE
+            NEEDS_MIDI_OUTPUT FALSE
+            IS_MIDI_EFFECT FALSE
+            EDITOR_WANTS_KEYBOARD_FOCUS FALSE
+            COPY_PLUGIN_AFTER_BUILD TRUE
+            PLUGIN_MANUFACTURER_CODE Juce
+            PLUGIN_CODE Demo
+            FORMATS VST3
+            PRODUCT_NAME "Ball Pit"
+        )
+        
+        # Add all source files
+        target_sources(Ball_Pit PRIVATE
+            Source/Ball.cpp
+            Source/CostumeComboBox.cpp
+            Source/CostumeDial.cpp
+            Source/CostumeToggleButton.cpp
+            Source/Edge.cpp
+            Source/Pit.cpp
+            Source/PluginEditor.cpp
+            Source/PluginProcessor.cpp
+            Source/PresetManagerBackend.cpp
+            Source/Scales.cpp
+        )
+        
+        # Add Resources directory
+        juce_add_binary_data(BallPitData SOURCES
+            Resources/Ball_tab_0.svg
+            Resources/Ball_tab_1.svg
+            Resources/Ball_tab_2.svg
+            Resources/ByKnobs.svg
+            Resources/ByTempo.svg
+        )
+        
+        # Compile definitions
+        target_compile_definitions(Ball_Pit PUBLIC
+            JUCE_WEB_BROWSER=0
+            JUCE_USE_CURL=0
+            JUCE_VST3_CAN_REPLACE_VST2=0
+        )
+        
+        # Link JUCE modules and binary data
+        target_link_libraries(Ball_Pit PRIVATE
+            BallPitData
+            juce::juce_audio_utils
+            juce::juce_audio_plugin_client
+            juce::juce_audio_processors
+            juce::juce_audio_devices
+            juce::juce_gui_extra
+            juce::juce_gui_basics
+            juce::juce_graphics
+            juce::juce_core
+            juce::juce_data_structures
+            juce::juce_events
+            juce::juce_audio_formats
+            juce::juce_audio_basics
+        PUBLIC
+            juce::juce_recommended_config_flags
+            juce::juce_recommended_lto_flags
+            juce::juce_recommended_warning_flags
+        )
+        EOF
+
+    - name: Configure CMake
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+    - name: Build with CMake
+      run: |
+        cmake --build build --config ${{ env.BUILD_TYPE }} --parallel
+
+    - name: Create artifacts
+      run: |
+        mkdir -p artifacts
+        if [ -d "${{ matrix.vst3_path }}" ]; then
+          cp -r "${{ matrix.vst3_path }}" artifacts/
+        elif [ -f "${{ matrix.vst3_path }}" ]; then
+          cp "${{ matrix.vst3_path }}" artifacts/
+        else
+          echo "VST3 not found at expected path: ${{ matrix.vst3_path }}"
+          find build -name "*.vst3" -type d 2>/dev/null || find build -name "*.vst3" -type f 2>/dev/null || true
+          exit 1
+        fi
+      shell: bash
+
+    - name: Package artifacts
+      run: |
+        cd artifacts
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          7z a "${{ matrix.artifact_name }}.zip" "Ball Pit.vst3"
+        else
+          zip -r "${{ matrix.artifact_name }}.zip" "Ball Pit.vst3"
+        fi
+      shell: bash
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact_name }}
+        path: artifacts/
+        retention-days: 30
+
+    - name: Upload to release (if release)
+      if: github.event_name == 'release'
+      uses: softprops/action-gh-release@v2
+      with:
+        files: artifacts/${{ matrix.artifact_name }}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
