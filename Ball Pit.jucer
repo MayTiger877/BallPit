@@ -3,7 +3,7 @@
 <JUCERPROJECT id="rgLfjx" name="Ball Pit" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut"
               pluginFormats="buildVST3" pluginVST3Category="Generator,Instrument,Synth"
-              pluginVSTCategory="kPlugCategSynth" cppLanguageStandard="latest"
+              pluginVSTCategory="kPlugCategSynth" cppLanguageStandard="20"
               version="0.1.0">
   <MAINGROUP id="U9BnPz" name="Ball Pit">
     <GROUP id="{69F35049-CA00-8238-08A9-0404F25C31A4}" name="Source">

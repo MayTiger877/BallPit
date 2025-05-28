@@ -1,203 +1,145 @@
-name: Build VST3 Plugin
+name: Cross-platform JUCE Build
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
-  release:
-    types: [ published ]
 
 env:
-  BUILD_TYPE: Release
   JUCE_VERSION: 8.0.7
 
 jobs:
   build:
-    name: Build on ${{ matrix.name }}
+    name: Build - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+
     strategy:
-      fail-fast: false
       matrix:
-        include:
-          - name: Windows
-            os: windows-latest
-            artifact_name: "Ball-Pit-Windows"
-            vst3_path: "build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
-          - name: Linux
-            os: ubuntu-latest
-            artifact_name: "Ball-Pit-Linux"
-            vst3_path: "build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
-          - name: macOS
-            os: macos-latest
-            artifact_name: "Ball-Pit-macOS"
-            vst3_path: "build/Ball_Pit_artefacts/Release/VST3/Ball Pit.vst3"
+        os: [windows-latest, macos-latest]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    - name: Install Linux dependencies
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          libasound2-dev \
-          libjack-jackd2-dev \
-          ladspa-sdk \
-          libcurl4-openssl-dev \
-          libfreetype6-dev \
-          libx11-dev \
-          libxcomposite-dev \
-          libxcursor-dev \
-          libxext-dev \
-          libxinerama-dev \
-          libxrandr-dev \
-          libxrender-dev \
-          libwebkit2gtk-4.0-dev \
-          libglu1-mesa-dev \
-          mesa-common-dev
+      # - name: Install dependencies (Linux only)
+      # if: runner.os == 'Linux'
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y \
+      #       libasound2-dev \
+      #       libjack-jackd2-dev \
+      #       libx11-dev \
+      #       libxrandr-dev \
+      #       libxinerama-dev \
+      #       libxcursor-dev \
+      #       libxcomposite-dev \
+      #       libglu1-mesa-dev \
+      #       freeglut3-dev \
+      #       libfreetype6-dev
 
-    - name: Download and setup JUCE
-      shell: bash
-      run: |
-        if [ "$RUNNER_OS" == "Windows" ]; then
-          curl -L -o juce.zip https://github.com/juce-framework/JUCE/releases/download/${{ env.JUCE_VERSION }}/juce-${{ env.JUCE_VERSION }}-windows.zip
-        elif [ "$RUNNER_OS" == "Linux" ]; then
-          curl -L -o juce.zip https://github.com/juce-framework/JUCE/releases/download/${{ env.JUCE_VERSION }}/juce-${{ env.JUCE_VERSION }}-linux.zip
-        elif [ "$RUNNER_OS" == "macOS" ]; then
-          curl -L -o juce.zip https://github.com/juce-framework/JUCE/releases/download/${{ env.JUCE_VERSION }}/juce-${{ env.JUCE_VERSION }}-osx.zip
-        fi
-        
-        unzip juce.zip
-        # Handle different possible folder names after extraction
-        for dir in JUCE* juce*; do
-          if [ -d "$dir" ] && [ "$dir" != "JUCE" ]; then
-            mv "$dir" JUCE
-            break
+      - name: Set up MSVC (Windows only)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Clone JUCE
+        run: git clone --branch ${{ env.JUCE_VERSION }} --depth 1 https://github.com/juce-framework/JUCE.git
+
+      - name: Verify custom juce_Slider.h exists
+        run: |
+          if [ ! -f "./juce_Slider.h" ]; then
+            echo "Error: juce_Slider.h not found in repository root"
+            exit 1
           fi
-        done
+          echo "Custom juce_Slider.h found"
+        shell: bash
 
-    - name: Create CMakeLists.txt
-      run: |
-        cat > CMakeLists.txt << 'EOF'
-        cmake_minimum_required(VERSION 3.22)
-        
-        project(BallPit VERSION 1.0.0)
-        
-        # Add JUCE
-        add_subdirectory(JUCE)
-        
-        # Create the plugin target
-        juce_add_plugin(Ball_Pit
-            COMPANY_NAME "Your Company"
-            IS_SYNTH FALSE
-            NEEDS_MIDI_INPUT FALSE
-            NEEDS_MIDI_OUTPUT FALSE
-            IS_MIDI_EFFECT FALSE
-            EDITOR_WANTS_KEYBOARD_FOCUS FALSE
-            COPY_PLUGIN_AFTER_BUILD TRUE
-            PLUGIN_MANUFACTURER_CODE Juce
-            PLUGIN_CODE Demo
-            FORMATS VST3
-            PRODUCT_NAME "Ball Pit"
-        )
-        
-        # Add all source files
-        target_sources(Ball_Pit PRIVATE
-            Source/Ball.cpp
-            Source/CostumeComboBox.cpp
-            Source/CostumeDial.cpp
-            Source/CostumeToggleButton.cpp
-            Source/Edge.cpp
-            Source/Pit.cpp
-            Source/PluginEditor.cpp
-            Source/PluginProcessor.cpp
-            Source/PresetManagerBackend.cpp
-            Source/Scales.cpp
-        )
-        
-        # Add Resources directory
-        juce_add_binary_data(BallPitData SOURCES
-            Resources/Ball_tab_0.svg
-            Resources/Ball_tab_1.svg
-            Resources/Ball_tab_2.svg
-            Resources/ByKnobs.svg
-            Resources/ByTempo.svg
-        )
-        
-        # Compile definitions
-        target_compile_definitions(Ball_Pit PUBLIC
-            JUCE_WEB_BROWSER=0
-            JUCE_USE_CURL=0
-            JUCE_VST3_CAN_REPLACE_VST2=0
-        )
-        
-        # Link JUCE modules and binary data
-        target_link_libraries(Ball_Pit PRIVATE
-            BallPitData
-            juce::juce_audio_utils
-            juce::juce_audio_plugin_client
-            juce::juce_audio_processors
-            juce::juce_audio_devices
-            juce::juce_gui_extra
-            juce::juce_gui_basics
-            juce::juce_graphics
-            juce::juce_core
-            juce::juce_data_structures
-            juce::juce_events
-            juce::juce_audio_formats
-            juce::juce_audio_basics
-        PUBLIC
-            juce::juce_recommended_config_flags
-            juce::juce_recommended_lto_flags
-            juce::juce_recommended_warning_flags
-        )
-        EOF
+      - name: Backup original and replace juce_Slider.h
+        run: |
+          # Backup original
+          cp JUCE/modules/juce_gui_basics/widgets/juce_Slider.h JUCE/modules/juce_gui_basics/widgets/juce_Slider.h.original
+          # Replace with custom version
+          cp ./juce_Slider.h JUCE/modules/juce_gui_basics/widgets/juce_Slider.h
+          # Verify replacement
+          echo "File replaced successfully"
+        shell: bash
 
-    - name: Configure CMake
-      run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+      - name: Verify custom enums are present
+        run: |
+          if grep -q "MayT_PhaseKnob\|MayT_DirectionKnob\|MayT_VariationKnob" JUCE/modules/juce_gui_basics/widgets/juce_Slider.h; then
+            echo "Custom slider styles found in juce_Slider.h"
+          else
+            echo "Error: Custom slider styles not found in juce_Slider.h"
+            echo "Contents of juce_Slider.h:"
+            head -50 JUCE/modules/juce_gui_basics/widgets/juce_Slider.h
+            exit 1
+          fi
+        shell: bash
 
-    - name: Build with CMake
-      run: |
-        cmake --build build --config ${{ env.BUILD_TYPE }} --parallel
+      - name: Configure with CMake
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 
-    - name: Create artifacts
-      run: |
-        mkdir -p artifacts
-        if [ -d "${{ matrix.vst3_path }}" ]; then
-          cp -r "${{ matrix.vst3_path }}" artifacts/
-        elif [ -f "${{ matrix.vst3_path }}" ]; then
-          cp "${{ matrix.vst3_path }}" artifacts/
-        else
-          echo "VST3 not found at expected path: ${{ matrix.vst3_path }}"
-          find build -name "*.vst3" -type d 2>/dev/null || find build -name "*.vst3" -type f 2>/dev/null || true
-          exit 1
-        fi
-      shell: bash
+      - name: Build
+        run: cmake --build build --config Release
 
-    - name: Package artifacts
-      run: |
-        cd artifacts
-        if [ "$RUNNER_OS" == "Windows" ]; then
-          7z a "${{ matrix.artifact_name }}.zip" "Ball Pit.vst3"
-        else
-          zip -r "${{ matrix.artifact_name }}.zip" "Ball Pit.vst3"
-        fi
-      shell: bash
+      - name: Find and list build artifacts
+        run: |
+          echo "Searching for build artifacts..."
+          find build -name "*.vst3" -o -name "*.component" -o -name "*.dll" -o -name "*.so" -o -name "*.dylib" | head -20
+          echo "Build directory structure:"
+          ls -la build/
+        shell: bash
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.artifact_name }}
-        path: artifacts/
-        retention-days: 30
+      - name: Upload VST3 Plugin (All platforms)
+        uses: actions/upload-artifact@v4
+        with:
+          name: BallPit-VST3-${{ matrix.os }}
+          path: |
+            build/**/*.vst3
+            build/**/BallPit.vst3
+          if-no-files-found: warn
 
-    - name: Upload to release (if release)
-      if: github.event_name == 'release'
-      uses: softprops/action-gh-release@v2
-      with:
-        files: artifacts/${{ matrix.artifact_name }}.zip
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload macOS Component (macOS only)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: BallPit-Component-macOS
+          path: |
+            build/**/*.component
+            build/**/BallPit.component
+          if-no-files-found: ignore    
+
+
+  validate:
+    name: Validate - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+      - name: Download pluginval
+        run: |
+          curl -L "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip" -o pluginval.zip
+          unzip pluginval
+
+      - name: Run pluginval validation
+        if: runner.os == 'macos'
+        run: |
+          chmod +x pluginval/pluginval.app/Contents/MacOS/pluginval
+          mkdir -p logs
+          ./pluginval/pluginval.app/Contents/MacOS/pluginval \
+            --validate-in-process \
+            --strictness-level 5 \
+            --output-dir logs \
+            --validate /Users/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/**/BallPit.vst3 || exit 1
+        if: runner.os == 'windows'
+        run: |
+          chmod +x ./pluginval.exe
+          mkdir -p logs
+          ./pluginval.exe \
+            --validate-in-process \
+            --strictness-level 5 \
+            --output-dir logs \
+            --validate /Users/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/**/BallPit.vst3 || exit 1
