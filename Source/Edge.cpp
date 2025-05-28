@@ -129,6 +129,7 @@ void Edge::updateAbstractedEdge()
 	int index = 0;
 	int startingIndex = juce::jmap<int>(this->phase, 0, 360, 0, 1567);
 	int colorIndex;
+	DBG(std::to_string(edgeType) + " ==== ");
 	if (edgeType == 2)
 	{
 		colorIndex = 7; // if cycle down starts from last color
@@ -136,6 +137,8 @@ void Edge::updateAbstractedEdge()
 	else if (edgeType == 4)
 	{
 		colorIndex = (rand() % numOfColors); // if random, so also first edge part is random, daa....
+		juce::String debug = "start colour is " + std::to_string(colorIndex);
+		DBG(debug);
 	}
 	else
 	{
@@ -153,9 +156,11 @@ void Edge::updateAbstractedEdge()
 		if (index < 1568)
 		{
 			colorIndex = promoteColorIndexByEdgeType(colorIndex, numOfColors);
+			juce::String debug2 = "next colour is " + std::to_string(colorIndex);
+			DBG(debug2);
 		}
 	}
-	
+	DBG("--------------------");
 	for (int i = 0; i < remainder; i++)
 	{
 		abstractedEdge[1567 - i] = this->scaleNotes[colorIndex];

@@ -93,13 +93,11 @@ void Pit::setEdgeParams(int phase, int denomenator, int range, int edgeType)
 void Pit::setEdgeTypeToRandom()
 {
 	this->edge.setEdgeType(4);
-	this->edge.updateAbstractedEdge();
 }
 
 void Pit::setScaleTypeToRandom(int scaleChoice, int rootNote)
 {
 	setEdgeScale(static_cast<Scale::ScaleKinds>(scaleChoice), rootNote);
-	this->edge.updateAbstractedEdge();
 }
 
 void Pit::setBallsEdgeNotes()

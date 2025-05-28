@@ -915,10 +915,10 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 		auto* param = this->audioProcessor.valueTreeState.getRawParameterValue("edgeType");
 		if (param != nullptr)
 		{
-			*param = 2;
+			*param = 3; // random - 1 --> 4 - 1 = 3
 		}
-		this->audioProcessor.getPit().setEdgeTypeToRandom();
 		this->audioProcessor.setWasGUIUpdatedToTrue();
+		this->audioProcessor.getPit().setEdgeTypeToRandom();
 	}
 	else if (mouseOverScaleDice == true)
 	{
@@ -936,7 +936,6 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 		{
 			*rootNoteParam = randomRootNote;
 		}
-		this->audioProcessor.getPit().setEdgeTypeToRandom();
 		this->audioProcessor.setWasGUIUpdatedToTrue();
 	}
 	else if (mouseOverTab != MOUSE_NOT_IN_TAB)
@@ -945,8 +944,6 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 		currentBallFocused = mouseOverTab;
 		displayKnobsByTab();
 
-		//std::string ballTabId = "C:/Users/97252/Desktop/computer_science/project/BallPit/Resources/Ball_tab_" + std::to_string(currentBallFocused) + ".svg";
-		//std::string ballTabId = "D:/Computer_Science/project/BallPit/Resources/Ball_tab_" + std::to_string(currentBallFocused) + ".svg";
 		std::string ballTabId = "D:/Plugin Laboratory/BallPit/Resources/Ball_tab_" + std::to_string(currentBallFocused) + ".svg";
 		auto tabsSVGFile = juce::File(ballTabId);
 		std::unique_ptr<juce::XmlElement> tabsSVG(juce::XmlDocument::parse(tabsSVGFile));
