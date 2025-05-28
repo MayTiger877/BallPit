@@ -381,25 +381,25 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	{
 		for (auto pendingIt = pendingEvents.begin(); pendingIt != pendingEvents.end();)
 		{
-			if (pendingIt->samplePosition < m_samplesPerBlock)
+			if (pendingIt->samplePosition < (m_samplesPerBlock - 1)) // -1 because i want to add the noteoff at samplePosition and 1 after the noteon
 			{
 				if (pendingIt->message.isNoteOn())
 				{
 					float var = getVariedNoteVelocity(pendingIt->message.getVelocity());
 					pendingIt->message.setVelocity(var/127);
-					midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition);
+					midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition + 1);
 					int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate);
 
 					int offSample = pendingIt->samplePosition + noteDurationSamples;
-					if (offSample < m_samplesPerBlock)
+					juce::MidiMessage noteOff = juce::MidiMessage::noteOff(pendingIt->message.getChannel(), pendingIt->message.getNoteNumber());
+					midiMessages.addEvent(noteOff, pendingIt->samplePosition);
+					
+					if (offSample < m_samplesPerBlock) // now add the real note off...
 					{
-						juce::MidiMessage noteOff = juce::MidiMessage::noteOff(pendingIt->message.getChannel(), pendingIt->message.getNoteNumber());
 						midiMessages.addEvent(noteOff, offSample);
 					}
 					else
 					{
-						juce::MidiMessage noteOff = juce::MidiMessage::noteOff(pendingIt->message.getChannel(),	pendingIt->message.getNoteNumber());
-
 						int futureSample = offSample - m_samplesPerBlock;
 						eventsToAdd.push_back({ noteOff, futureSample });
 					}
@@ -442,10 +442,12 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		// add volume variation
 		float var = getVariedNoteVelocity(msg.getVelocity());
 		msg.setVelocity(var/127);
+		juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
 
-		if (finalSamplePos < m_samplesPerBlock)
+		if (finalSamplePos < (m_samplesPerBlock + 1))
 		{
-			midiMessages.addEvent(msg, finalSamplePos);
+			midiMessages.addEvent(msg, (finalSamplePos + 1));
+			midiMessages.addEvent(noteOff, finalSamplePos); // Todo - fast midi issue to do
 		}
 		else
 		{
@@ -458,7 +460,6 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 
 		if (noteOffPos < m_samplesPerBlock)
 		{
-			juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
 			midiMessages.addEvent(noteOff, noteOffPos);
 		}
 		else
@@ -633,5 +634,23 @@ void BallPitAudioProcessor::saveGUIState(juce::ValueTree &currentGUIState)
 
 void BallPitAudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
 {
-	wasGUIUpdated = true;
+	if (this->pit.areBallsMoving() == true)
+	{
+		if ((parameterID == "edgePhase") || (parameterID == "edgeDenomenator") || 
+			(parameterID == "edgeRange") || (parameterID == "scaleChoice") || 
+			(parameterID == "rootNote")  || (parameterID == "edgeType"))
+		{
+			wasGUIUpdated = true;
+			return;
+		}
+		else 
+		{
+			wasGUIUpdated = false;
+			return;
+		}
+	}
+	else
+	{
+		wasGUIUpdated = true;
+	}
 }
