@@ -324,7 +324,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		// Velocity Slider
 		ballsSlidersAndAttachments[i].velocitySlider.setBounds(BALL_SPEED_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].velocitySlider.setValue(BALL_VELOCITY_DEFAULT);
-		ballsSlidersAndAttachments[i].velocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballsSlidersAndAttachments[i].velocitySlider.setSliderStyle(juce::Slider::MayT_VelocityKnob);
 		ballsSlidersAndAttachments[i].velocitySlider.setDoubleClickReturnValue(true, BALL_VELOCITY_DOUBLE_CLICK_VALUE);
 		ballsSlidersAndAttachments[i].velocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].velocitySlider.setRange(BALL_VELOCITY_MIN, BALL_VELOCITY_MAX, BALL_VELOCITY_STEP);

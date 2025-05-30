@@ -45,6 +45,7 @@ void MyCostumeDial::drawRotarySlider(Graphics& g, int x, int y, int width, int h
                       sinusY + std::sin(phase) * (height * 0.7 / 2.0f) - 3.5, 7, 7);
 
         juce::String displayPhase = std::to_string(static_cast<int>(std::round(sliderPos*360)));
+        g.setFont(20.0f);
         g.setColour(BUTTON_TEXT_COLOUR);
         g.drawText(displayPhase, x + width - 55, y + height - 28, 50, 25, juce::Justification::left);
     }
@@ -65,6 +66,34 @@ void MyCostumeDial::drawRotarySlider(Graphics& g, int x, int y, int width, int h
         g.setColour(juce::Colours::red.brighter(0.7f));
         line.addRectangle(0, -radius + 6, 2.0f, radius * 0.2);
         g.fillPath(line, juce::AffineTransform::rotation(angle).translated(bounds.getCentreX(), bounds.getCentreY()));
+    }
+    else if (slider.getSliderStyle() == Slider::SliderStyle::MayT_VelocityKnob)
+    {
+        g.setColour(BUTTON_BG_COLOUR);
+        g.fillRect(0, 0, width, height);
+
+        g.setColour(BUTTON_BG_COLOUR.darker(0.5f));
+        g.fillRect(0, 0, (int)(width * sliderPos), height);
+        
+        g.setColour(BUTTON_BG_COLOUR.brighter(0.7f));
+        for (int i = 1; i < 10; i++)
+        {
+            float lineLength = 3.0f;
+            if ((i % 2) == 0) 
+            {
+                lineLength = 5.0f;
+            }
+            g.drawLine(i * (width / 10.0f), height - lineLength, i * (width / 10.0f), height, 1.0f);
+        }
+
+        long diagonal = sqrt(pow(width, 2) * pow(height, 2));
+        g.setColour(MAIN_BG_COLOUR);
+        g.fillEllipse((-2.3 * width), (-1.4 * height), 3.3 * width, 2.5 * height);
+
+        juce::String displayVelocity = std::to_string(static_cast<int>(std::round(sliderPos * BALL_VELOCITY_MAX)));
+        g.setFont(20.0f);
+        g.setColour(BUTTON_TEXT_COLOUR);
+        g.drawText(displayVelocity, 0, 0, 50, 25, juce::Justification::left);
     }
     else if (slider.getSliderStyle() == Slider::SliderStyle::MayT_VariationKnob)
     {

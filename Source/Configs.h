@@ -36,8 +36,8 @@
 
 #define NOTE_MIDI_DURATION 0.200 //ms
 
+#define MAIN_BG_COLOUR juce::Colour::fromRGB(16, 25, 32)
 #define BUTTON_BG_COLOUR juce::Colour::fromRGB(25, 78, 113)
-
 #define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(25, 78, 113).brighter(0.5f)
 
 //-----------------------------------------------------------------------
@@ -81,7 +81,7 @@
 #define BALL_X_KNOB_BOUNDS juce::Rectangle<int>(635, 522, 55, 55)
 #define BALL_Y_KNOB_BOUNDS juce::Rectangle<int>(725, 522, 55, 55)
 #define ADD_REMOVE_BUTTON_BOUNDS juce::Rectangle<int>(505, 512, 80, 25)
-#define BALL_SPEED_KNOB_BOUNDS juce::Rectangle<int>(520, 595, 55, 55)
+#define BALL_SPEED_KNOB_BOUNDS juce::Rectangle<int>(510, 600, 80, 40)
 #define BALL_DIRECTION_KNOB_BOUNDS juce::Rectangle<int>(635, 595, 55, 55)
 #define BALL_SIZE_KNOB_BOUNDS juce::Rectangle<int>(725, 595, 55, 55)
 #define BALL_X_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(490, 595, 55, 55)
