@@ -92,6 +92,8 @@ public:
 
 	Service::PresetManager& getPresetManager() { return *presetManager; }
 
+	juce::UndoManager& getUndoManager() { return m_undoManager; }
+
 	double getClockTimeSecond() { return clockTimeSeconds; }
 	void setClockTimeSeconds(double newClockTimeSeconds) { this->clockTimeSeconds = newClockTimeSeconds; }
 	void togglePlayState();
@@ -102,7 +104,6 @@ public:
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
 
-	
 	Pit pit;
 	juce::MidiBuffer midiBuffer;
 	std::vector<std::unique_ptr<EdgeEventListener>> listeners;
@@ -122,6 +123,8 @@ private:
 	void parameterChanged(const juce::String& parameterID, float newValue) override;
 
 	std::unique_ptr<Service::PresetManager> presetManager;
+
+	juce::UndoManager m_undoManager;
 
 	// TODO- check that all params are here!
 public:

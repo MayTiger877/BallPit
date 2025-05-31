@@ -47,6 +47,11 @@
       <FILE id="xD9Gqd" name="Pit.h" compile="0" resource="0" file="Source/Pit.h"/>
       <FILE id="lfa31n" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
+    <FILE id="c9rncb" name="Ball_tab_0.svg" compile="0" resource="1" file="Resources/Ball_tab_0.svg"/>
+    <FILE id="OkFfat" name="Ball_tab_1.svg" compile="0" resource="1" file="Resources/Ball_tab_1.svg"/>
+    <FILE id="v8bR37" name="Ball_tab_2.svg" compile="0" resource="1" file="Resources/Ball_tab_2.svg"/>
+    <FILE id="BHGDHg" name="ByKnobs.svg" compile="0" resource="1" file="Resources/ByKnobs.svg"/>
+    <FILE id="Ir0Pty" name="ByTempo.svg" compile="0" resource="1" file="Resources/ByTempo.svg"/>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>

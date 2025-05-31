@@ -35,6 +35,7 @@ public:
 class BallPitAudioProcessorEditor  : public juce::AudioProcessorEditor, 
 									 public juce::Timer, 
 									 private juce::ChangeListener,
+									 public juce::KeyListener,
 									 public juce::ComboBox::Listener
 {
 public:
@@ -60,6 +61,8 @@ public:
 	bool mouseIsDragging = false;
 	bool mouseOverEdgeDice = false;
 	bool mouseOverScaleDice = false;
+
+	bool keyPressed(const juce::KeyPress& key, juce::Component* originatingComponent) override;
 	//----------------------------------------------------------------------
 
 

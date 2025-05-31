@@ -20,7 +20,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					  #endif
 					   .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
 					 #endif
-					   ), midiBuffer(), pit(), valueTreeState(*this, nullptr, juce::Identifier("BallPitParams"), createParameters())
+					   ), midiBuffer(), pit(), valueTreeState(*this, &m_undoManager, juce::Identifier("BallPitParams"), createParameters())
 #endif
 {
 	this->wasGUIUploaded = false;
@@ -66,6 +66,9 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 	addParamListeners(valueTreeState);
 
 	presetManager = std::make_unique<Service::PresetManager>(valueTreeState);
+
+	m_undoManager.setMaxNumberOfStoredUnits(20, 1);
+
 }
 
 BallPitAudioProcessor::~BallPitAudioProcessor()
