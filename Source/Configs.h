@@ -84,8 +84,8 @@
 #define BALL_SPEED_KNOB_BOUNDS juce::Rectangle<int>(510, 600, 80, 40)
 #define BALL_DIRECTION_KNOB_BOUNDS juce::Rectangle<int>(635, 595, 55, 55)
 #define BALL_SIZE_KNOB_BOUNDS juce::Rectangle<int>(725, 595, 55, 55)
-#define BALL_X_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(490, 595, 55, 55)
-#define BALL_Y_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(600, 595, 55, 55)
+#define BALL_X_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(510, 595, 85, 55)
+#define BALL_Y_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(600, 595, 85, 55)
 
 #define EDGE_PHASE_SLIDER_BOUNDS juce::Rectangle<int>(30, 105, 180, 55)
 #define EDGE_DENOMENATOR_SLIDER_BOUNDS juce::Rectangle<int>(40, 165 , 150, 50)

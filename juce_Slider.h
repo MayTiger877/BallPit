@@ -144,7 +144,8 @@ public:
         MayT_DirectionKnob,             /*360 knob to set direction*/
         MayT_PhaseKnob,                 /*uniqe knob to set phase*/
         MayT_VariationKnob,             /*uniqe knob to set and display variation*/
-        MayT_VelocityKnob,                 /*uniqe knob to set and velocity*/
+        MayT_VelocityKnob,                 /*uniqe knob to set velocity*/
+        MayT_TempoKnob,                 /*uniqe knob to set Radius*/
     };
 
     /** The position of the slider's text-entry box.

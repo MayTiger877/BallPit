@@ -67,6 +67,52 @@ void MyCostumeDial::drawRotarySlider(Graphics& g, int x, int y, int width, int h
         line.addRectangle(0, -radius + 6, 2.0f, radius * 0.2);
         g.fillPath(line, juce::AffineTransform::rotation(angle).translated(bounds.getCentreX(), bounds.getCentreY()));
     }
+    else if (slider.getSliderStyle() == Slider::SliderStyle::MayT_TempoKnob)
+    {
+        juce::String chosenSpeedText;
+        int chosenSpeed = 10 * sliderPos;
+        switch (chosenSpeed)
+        {
+        case 0: { chosenSpeedText = "---"; break; }
+        case 1: {chosenSpeedText = "4"; break;}
+        case 2: {chosenSpeedText = "2"; break;}
+        case 3: {chosenSpeedText = "5/4"; break;}
+        case 4: {chosenSpeedText = "1"; break; }
+        case 5: {chosenSpeedText = "3/4"; break;}
+        case 6: {chosenSpeedText = "1/2"; break;}
+        case 7: {chosenSpeedText = "1/3"; break;}
+        case 8: {chosenSpeedText = "1/4"; break;}
+        case 9: {chosenSpeedText = "1/6"; break;}
+        case 10: { chosenSpeedText = "1/8"; break; }
+        default: chosenSpeedText = "4";
+        }
+
+        auto bounds = Rectangle<int>(x, y, width-30, height).toFloat().reduced(10);
+        float radius = jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f;
+        float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+        float rx = bounds.getCentreX() - radius;
+        float ry = bounds.getCentreY() - radius;
+
+        g.setColour(MyrotarySliderFillColourId);
+        g.fillEllipse(bounds);
+        g.setColour(juce::Colours::black);
+        g.fillEllipse(bounds.expanded(1.0f));
+        g.setColour(MyrotarySliderFillColourId.darker(0.2f));
+        g.fillEllipse(bounds.reduced(1.0f));
+        g.setColour(MyrotarySliderFillColourId.darker(0.4f));
+        g.fillEllipse(bounds.reduced(2.0f));
+        g.setColour(MyrotarySliderFillColourId.darker(0.7f));
+        g.fillEllipse(bounds.reduced(4.0f));
+
+        juce::Path line;
+        g.setColour(MyrotarySliderFillColourId.brighter(0.7f));
+        line.addRectangle(0, -radius + 6, 2.0f, radius * 0.8);
+        g.fillPath(line, juce::AffineTransform::rotation(angle).translated(bounds.getCentreX(), bounds.getCentreY()));
+
+        g.setFont(18.0f);
+        g.setColour(BUTTON_TEXT_COLOUR);
+        g.drawText(chosenSpeedText, bounds.getWidth() + 20, 0, width, height, juce::Justification::centredLeft);
+    }
     else if (slider.getSliderStyle() == Slider::SliderStyle::MayT_VelocityKnob)
     {
         g.setColour(BUTTON_BG_COLOUR);

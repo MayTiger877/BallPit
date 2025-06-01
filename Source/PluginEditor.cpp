@@ -341,7 +341,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		// X Velocity Slider
 		ballsSlidersAndAttachments[i].xVelocitySlider.setBounds(BALL_X_VELOCITY_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setValue(BALL_X_VELOCITY_DEFAULT);
-		ballsSlidersAndAttachments[i].xVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballsSlidersAndAttachments[i].xVelocitySlider.setSliderStyle(juce::Slider::MayT_TempoKnob);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setDoubleClickReturnValue(true, BALL_X_VELOCITY_DOUBLE_CLICK_VALUE);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setRange(BALL_X_VELOCITY_MIN, BALL_X_VELOCITY_MAX, BALL_X_VELOCITY_STEP);
@@ -359,7 +359,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		// Y Velocity Slider
 		ballsSlidersAndAttachments[i].yVelocitySlider.setBounds(BALL_Y_VELOCITY_KNOB_BOUNDS);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setValue(BALL_Y_VELOCITY_DEFAULT);
-		ballsSlidersAndAttachments[i].yVelocitySlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballsSlidersAndAttachments[i].yVelocitySlider.setSliderStyle(juce::Slider::MayT_TempoKnob);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setDoubleClickReturnValue(true, BALL_Y_VELOCITY_DOUBLE_CLICK_VALUE);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setRange(BALL_Y_VELOCITY_MIN, BALL_Y_VELOCITY_MAX, BALL_Y_VELOCITY_STEP);
