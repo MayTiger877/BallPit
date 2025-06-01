@@ -930,10 +930,6 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 		currentBallFocused = mouseOverTab;
 		displayKnobsByTab();
 
-		/*std::string ballTabId = "D:/Plugin Laboratory/BallPit/Resources/Ball_tab_" + std::to_string(currentBallFocused) + ".svg";
-		auto tabsSVGFile = juce::File(ballTabId);
-		std::unique_ptr<juce::XmlElement> tabsSVG(juce::XmlDocument::parse(tabsSVGFile));
-		if (tabsSVG != nullptr) { tabsDrawable = juce::Drawable::createFromSVG(*tabsSVG); }*/
 		if (currentBallFocused == 0)
 		{
 			auto tabsSVG = juce::MemoryInputStream(BinaryData::Ball_tab_0_svg, BinaryData::Ball_tab_0_svgSize, false);

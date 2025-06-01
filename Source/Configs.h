@@ -34,7 +34,7 @@
 
 #define DEFAULT_BALL_VELOCITY 5.0
 
-#define NOTE_MIDI_DURATION 0.200 //ms
+#define NOTE_MIDI_DURATION 0.015 //ms
 
 #define MAIN_BG_COLOUR juce::Colour::fromRGB(16, 25, 32)
 #define BUTTON_BG_COLOUR juce::Colour::fromRGB(25, 78, 113)
