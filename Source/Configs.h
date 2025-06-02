@@ -110,7 +110,7 @@
 #define START_STOP_BUTTON_BOUNDS juce::Rectangle<int>(43, 13, 100, 25)
 #define PRESET_MANAGER_MENU_BUTTON_BOUNDS juce::Rectangle<int>(675, 13, 100, 25)
 
-#define QUANTIZATION_DIVISION_COMBOBOX_BOUNDS juce::Rectangle<int>(30, 535, 45, 20)
+#define QUANTIZATION_DIVISION_COMBOBOX_BOUNDS juce::Rectangle<int>(30, 530, 45, 20)
 #define QUANTIZATION_KNOB_BOUNDS juce::Rectangle<int>(80, 515, 55, 55)
 
 #define VOLUME_VARIATION_KNOB_BOUNDS juce::Rectangle<int>(160, 520, 120, 55)

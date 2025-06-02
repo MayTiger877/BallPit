@@ -12,10 +12,9 @@
 
 namespace Service
 {
-	const File PresetManager::defaultDirectory{ File::getSpecialLocation(
-		File::SpecialLocationType::commonDocumentsDirectory)
-			.getChildFile(ProjectInfo::companyName)
-			.getChildFile(ProjectInfo::projectName)
+	const File PresetManager::defaultDirectory
+	{
+		File::getSpecialLocation(File::SpecialLocationType::commonDocumentsDirectory).getChildFile(ProjectInfo::companyName).getChildFile(ProjectInfo::projectName)
 	};
 	const String PresetManager::extension{ "preset" };
 	const String PresetManager::presetNameProperty{ "presetName" };
@@ -44,11 +43,26 @@ namespace Service
 
 		currentPreset.setValue(presetName);
 		const auto xml = valueTreeState.copyState().createXml();
-		const auto presetFile = defaultDirectory.getChildFile(presetName + "." + extension);
-		if (!xml->writeTo(presetFile))
+		if (xml != nullptr)
 		{
-			DBG("Could not create preset file: " + presetFile.getFullPathName());
-			jassertfalse;
+			// remove size percentage and link nextParam to keep xml validityyy
+			for (auto* param = xml->getFirstChildElement(); param != nullptr;)
+			{
+				auto* nextParam = param->getNextElement();
+				if (param->hasTagName("PARAM") && param->getStringAttribute("id") == "sizePercentage")
+				{
+					xml->removeChildElement(param, true);
+				}
+
+				param = nextParam;
+			}
+
+			const auto presetFile = defaultDirectory.getChildFile(presetName + "." + extension);
+			if (!xml->writeTo(presetFile))
+			{
+				DBG("Could not create preset file: " + presetFile.getFullPathName());
+				jassertfalse;
+			}
 		}
 	}
 
@@ -86,10 +100,15 @@ namespace Service
 			return;
 		}
 		// presetFile (XML) -> (ValueTree)
-		XmlDocument xmlDocument{ presetFile }; 
-		const auto valueTreeToLoad = ValueTree::fromXml(*xmlDocument.getDocumentElement());
+		XmlDocument xmlDocument{ presetFile };
 
+		const auto valueTreeToLoad = ValueTree::fromXml(*xmlDocument.getDocumentElement());
+		float currentSizePercentage = valueTreeState.getRawParameterValue("sizePercentage")->load();
 		valueTreeState.replaceState(valueTreeToLoad);
+		if (auto* sizeParam = valueTreeState.getParameter("sizePercentage"))
+		{
+			sizeParam->setValueNotifyingHost(currentSizePercentage);
+		}
 		currentPreset.setValue(presetName);
 
 	}
