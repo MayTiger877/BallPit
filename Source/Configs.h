@@ -14,11 +14,11 @@
 //-----------------------------------------------------------------------
 // defines and constants
 
-#define VISUAL_FRAMES_PER_SECOND 50.0
+#define VISUAL_FRAMES_PER_SECOND 50.0f
 
-#define SECONDS_IN_MINUTE 60.0
+#define SECONDS_IN_MINUTE 60.0f
 
-#define PI 3.14159265
+#define PI 3.14159265f
 
 //-----------------------------------------------------------------------
 // defaults values for the BallPit multiverse
@@ -79,13 +79,15 @@
 #define BALLS_TAB_2_BOUNDS juce::Rectangle<int>(BALLS_TABS_BOUNDS.getX() + 3, BALLS_TABS_BOUNDS.getY() + 105, 68, 43)
 
 #define BALL_X_KNOB_BOUNDS juce::Rectangle<int>(635, 522, 55, 55)
-#define BALL_Y_KNOB_BOUNDS juce::Rectangle<int>(725, 522, 55, 55)
+#define BALL_Y_KNOB_BOUNDS juce::Rectangle<int>(745, 522, 55, 55)
 #define ADD_REMOVE_BUTTON_BOUNDS juce::Rectangle<int>(505, 512, 80, 25)
 #define BALL_SPEED_KNOB_BOUNDS juce::Rectangle<int>(510, 600, 80, 40)
 #define BALL_DIRECTION_KNOB_BOUNDS juce::Rectangle<int>(635, 595, 55, 55)
-#define BALL_SIZE_KNOB_BOUNDS juce::Rectangle<int>(725, 595, 55, 55)
+#define BALL_SIZE_KNOB_BOUNDS juce::Rectangle<int>(745, 595, 55, 55)
 #define BALL_X_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(510, 595, 85, 55)
-#define BALL_Y_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(600, 595, 85, 55)
+#define BALL_Y_VELOCITY_KNOB_BOUNDS juce::Rectangle<int>(635, 595, 85, 55)
+#define BALL_X_VELOCITY_INVERTER_BOUNDS juce::Rectangle<int>(575, 600, 20, 20)
+#define BALL_Y_VELOCITY_INVERTER_BOUNDS juce::Rectangle<int>(700, 600, 20, 20)
 
 #define EDGE_PHASE_SLIDER_BOUNDS juce::Rectangle<int>(30, 105, 180, 55)
 #define EDGE_DENOMENATOR_SLIDER_BOUNDS juce::Rectangle<int>(40, 165 , 150, 50)

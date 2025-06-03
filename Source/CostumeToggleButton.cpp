@@ -106,3 +106,29 @@ void MyCostumeCollisionLAF::drawToggleButton(Graphics& g, ToggleButton& button,
                    x + width / 2 + 6.0,  y + height - 10.0f, 1.0f);
     }
 }
+
+// ------------------------------------------------------------------------------------------
+
+MyCostumeVelocityInverterLAF::MyCostumeVelocityInverterLAF()
+{
+}
+
+void MyCostumeVelocityInverterLAF::drawToggleButton(Graphics& g, ToggleButton& button,
+    bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+{
+    float width = button.getWidth();
+    float height = button.getHeight();
+    g.setColour(BUTTON_BG_COLOUR);
+    g.fillAll();
+    g.setColour(juce::Colours::black);
+    if (button.getToggleState() == false)
+    {
+        juce::Line<float> arrowLine(width / 5, height / 2, width * 4 / 5, height / 2);
+        g.drawArrow(arrowLine, 2.0f, 6.0f, 5.0f);
+    }
+    else 
+    {
+        juce::Line<float> arrowLine(width * 4 / 5, height / 2, width / 5, height / 2);
+        g.drawArrow(arrowLine, 2.0f, 6.0f, 5.0f);
+    }
+}

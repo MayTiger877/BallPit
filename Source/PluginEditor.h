@@ -28,6 +28,8 @@ public:
 
 	juce::Slider xSlider, ySlider, radiusSlider, velocitySlider, angleSlider, xVelocitySlider, yVelocitySlider;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> xAttachment, yAttachment, radiusAttachment, velocityAttachment, angleAttachment, xVelocityAttachment, yVelocityAttachment;
+	juce::ToggleButton xVelocityInverter, yVelocityInverter;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> xVelocityInverterAttachment, yVelocityInverterAttachment;
 };
 
 //-------------------------------------------------------------------------------------------
@@ -139,6 +141,7 @@ private:
 	MyCostumeComboBox m_costumeComboBoxLAF;
 	MyCostumeSnapToGridLAF m_costumeToggleButoonLAF;
 	MyCostumeCollisionLAF m_costumeCollisionLAF;
+	MyCostumeVelocityInverterLAF m_costumeVelocityInverterLAF;
 
 	juce::Component content;
 	float sizePercentage = 1.0f;

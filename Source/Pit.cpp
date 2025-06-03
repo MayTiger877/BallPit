@@ -59,11 +59,11 @@ void Pit::setBallsSizePercentage(float newSizePercentage)
 
 void Pit::setBallParams(int index, float x, float y, float radius, float velocity, float angle, int ballSpeedType)
 {
+	balls[index]->setBallSpeedType(ballSpeedType);
 	balls[index]->setPosition(x, y);
 	balls[index]->setRadius(radius);
 	balls[index]->setVelocity(velocity);
 	balls[index]->setAngle(angle);
-	balls[index]->setBallSpeedType(ballSpeedType);
 	
 	int otherIndex1 = (index + 1) % balls.size();
 	int otherIndex2 = (index + 2) % balls.size();

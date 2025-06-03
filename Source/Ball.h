@@ -3,7 +3,7 @@
 #include "EdgeEventListener.h"
 #include "Configs.h"
 
-#define NO_SPEED 0
+#define NO_SPEED 0.0f
 #define MOUSE_NOT_IN_BALL -1.0
 #define MOUSE_NOT_IN_TAB -1
 

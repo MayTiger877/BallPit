@@ -47,6 +47,12 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 
 		std::string ballYVelocityID = "ballYVelocity" + std::to_string(i);
 		ballsSlidersAndAttachments[i].yVelocityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballYVelocityID, ballsSlidersAndAttachments[i].yVelocitySlider);
+	
+		std::string xVelocityInverterID = "xVelocityInverter" + std::to_string(i);
+		ballsSlidersAndAttachments[i].xVelocityInverterAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, xVelocityInverterID, ballsSlidersAndAttachments[i].xVelocityInverter);
+
+		std::string yVelocityInverterID = "yVelocityInverter" + std::to_string(i);
+		ballsSlidersAndAttachments[i].yVelocityInverterAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, yVelocityInverterID, ballsSlidersAndAttachments[i].yVelocityInverter);
 	}
 
 	std::string edgePhaseID = "edgePhase";
@@ -122,6 +128,8 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 		ballsSlidersAndAttachments[i].radiusSlider.setLookAndFeel(nullptr);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setLookAndFeel(nullptr);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setLookAndFeel(nullptr);
+		ballsSlidersAndAttachments[i].xVelocityInverter.setLookAndFeel(nullptr);
+		ballsSlidersAndAttachments[i].yVelocityInverter.setLookAndFeel(nullptr);
 	}
 	scaleChoiceComboBox.setLookAndFeel(nullptr);
 	edgeTypeComboBox.setLookAndFeel(nullptr);
@@ -151,6 +159,8 @@ void BallPitAudioProcessorEditor::saveGUIState()
 		std::string ballAngleId = "ballAngle" + std::to_string(i);
 		std::string ballXVelocityId = "ballXVelocity" + std::to_string(i);
 		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
+		std::string xVelocityInverterId = "xVelocityInverter" + std::to_string(i);
+		std::string yVelocityInverterId = "yVelocityInverter" + std::to_string(i);
 
 		GUIState.setProperty(juce::Identifier(ballXId), ballsSlidersAndAttachments[i].xSlider.getValue(), nullptr);
 		GUIState.setProperty(juce::Identifier(ballYId), ballsSlidersAndAttachments[i].ySlider.getValue(), nullptr);
@@ -159,6 +169,9 @@ void BallPitAudioProcessorEditor::saveGUIState()
 		GUIState.setProperty(juce::Identifier(ballAngleId), ballsSlidersAndAttachments[i].angleSlider.getValue(), nullptr);
 		GUIState.setProperty(juce::Identifier(ballXVelocityId), ballsSlidersAndAttachments[i].xVelocitySlider.getValue(), nullptr);
 		GUIState.setProperty(juce::Identifier(ballYVelocityId), ballsSlidersAndAttachments[i].yVelocitySlider.getValue(), nullptr);
+		GUIState.setProperty(juce::Identifier(xVelocityInverterId), ballsSlidersAndAttachments[i].xVelocityInverter.getToggleState(), nullptr);
+		GUIState.setProperty(juce::Identifier(yVelocityInverterId), ballsSlidersAndAttachments[i].yVelocityInverter.getToggleState(), nullptr);
+
 	}
 
 	GUIState.setProperty("edgePhase", edgePhaseSlider.getValue(), nullptr);
@@ -191,6 +204,8 @@ void BallPitAudioProcessorEditor::loadGUIState()
 		std::string ballAngleId = "ballAngle" + std::to_string(i);
 		std::string ballXVelocityId = "ballXVelocity" + std::to_string(i);
 		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
+		std::string xVelocityInverterId = "xVelocityInverter" + std::to_string(i);
+		std::string yVelocityInverterId = "yVelocityInverter" + std::to_string(i);
 
 		ballsSlidersAndAttachments[i].xSlider.setValue(GUIState.getProperty(juce::Identifier(ballXId)), juce::dontSendNotification);
 		ballsSlidersAndAttachments[i].ySlider.setValue(GUIState.getProperty(juce::Identifier(ballYId)), juce::dontSendNotification);
@@ -199,6 +214,8 @@ void BallPitAudioProcessorEditor::loadGUIState()
 		ballsSlidersAndAttachments[i].angleSlider.setValue(GUIState.getProperty(juce::Identifier(ballAngleId)), juce::dontSendNotification);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setValue(GUIState.getProperty(juce::Identifier(ballXVelocityId)), juce::dontSendNotification);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setValue(GUIState.getProperty(juce::Identifier(ballYVelocityId)), juce::dontSendNotification);
+		ballsSlidersAndAttachments[i].xVelocityInverter.setToggleState(GUIState.getProperty(juce::Identifier(xVelocityInverterId)), juce::dontSendNotification);
+		ballsSlidersAndAttachments[i].yVelocityInverter.setToggleState(GUIState.getProperty(juce::Identifier(yVelocityInverterId)), juce::dontSendNotification);
 	}
 
 	edgePhaseSlider.setValue(GUIState.getProperty("edgePhase"), juce::dontSendNotification);
@@ -236,6 +253,8 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 			ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(true);
 			ballsSlidersAndAttachments[currentTab].xVelocitySlider.setVisible(false);
 			ballsSlidersAndAttachments[currentTab].yVelocitySlider.setVisible(false);
+			ballsSlidersAndAttachments[currentTab].xVelocityInverter.setVisible(false);
+			ballsSlidersAndAttachments[currentTab].yVelocityInverter.setVisible(false);
 			break;
 		}
 		case 2: // by tempo
@@ -244,6 +263,8 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 			ballsSlidersAndAttachments[currentTab].velocitySlider.setVisible(false);
 			ballsSlidersAndAttachments[currentTab].xVelocitySlider.setVisible(true);
 			ballsSlidersAndAttachments[currentTab].yVelocitySlider.setVisible(true);
+			ballsSlidersAndAttachments[currentTab].xVelocityInverter.setVisible(true);
+			ballsSlidersAndAttachments[currentTab].yVelocityInverter.setVisible(true);
 			break;
 		}
 		default:
@@ -257,6 +278,8 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 	ballsSlidersAndAttachments[otherTab1].velocitySlider.setVisible(false);
 	ballsSlidersAndAttachments[otherTab1].xVelocitySlider.setVisible(false);
 	ballsSlidersAndAttachments[otherTab1].yVelocitySlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].xVelocityInverter.setVisible(false);
+	ballsSlidersAndAttachments[otherTab1].yVelocityInverter.setVisible(false);
 
 	ballsSlidersAndAttachments[otherTab2].xSlider.setVisible(false);
 	ballsSlidersAndAttachments[otherTab2].ySlider.setVisible(false);
@@ -265,6 +288,8 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 	ballsSlidersAndAttachments[otherTab2].velocitySlider.setVisible(false);
 	ballsSlidersAndAttachments[otherTab2].xVelocitySlider.setVisible(false);
 	ballsSlidersAndAttachments[otherTab2].yVelocitySlider.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].xVelocityInverter.setVisible(false);
+	ballsSlidersAndAttachments[otherTab2].yVelocityInverter.setVisible(false);
 	
 	if (audioProcessor.getPit().getBalls()[this->currentBallFocused]->isActive() == true)
 	{
@@ -373,6 +398,18 @@ void BallPitAudioProcessorEditor::initiateComponents()
 				);
 			};
 		content.addChildComponent(ballsSlidersAndAttachments[i].yVelocitySlider);
+
+		// xVelocityInverter
+		ballsSlidersAndAttachments[i].xVelocityInverter.setBounds(BALL_X_VELOCITY_INVERTER_BOUNDS);
+		ballsSlidersAndAttachments[i].xVelocityInverter.setToggleState(false, juce::dontSendNotification);
+		ballsSlidersAndAttachments[i].xVelocityInverter.setLookAndFeel(&this->m_costumeVelocityInverterLAF);
+		content.addChildComponent(ballsSlidersAndAttachments[i].xVelocityInverter);
+
+		// yVelocityInverter
+		ballsSlidersAndAttachments[i].yVelocityInverter.setBounds(BALL_Y_VELOCITY_INVERTER_BOUNDS);
+		ballsSlidersAndAttachments[i].yVelocityInverter.setToggleState(false, juce::dontSendNotification);
+		ballsSlidersAndAttachments[i].yVelocityInverter.setLookAndFeel(&this->m_costumeVelocityInverterLAF);
+		content.addChildComponent(ballsSlidersAndAttachments[i].yVelocityInverter);
 	}
 
 	// Set initial visibility for ball 0
@@ -383,6 +420,8 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	ballsSlidersAndAttachments[0].velocitySlider.setVisible(true);
 	ballsSlidersAndAttachments[0].xVelocitySlider.setVisible(false);
 	ballsSlidersAndAttachments[0].yVelocitySlider.setVisible(false);
+	ballsSlidersAndAttachments[0].xVelocityInverter.setVisible(false);
+	ballsSlidersAndAttachments[0].yVelocityInverter.setVisible(false);
 
 	// Start/Stop Button
 	startStopButton.setButtonText("Start");
@@ -537,7 +576,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 
 	// Collision Button
 	collisionButton.setBounds(COLLISION_BUTTON_BOUNDS);
-	collisionButton.setToggleState(true, juce::dontSendNotification);
+	collisionButton.setToggleState(false, juce::dontSendNotification);
 	collisionButton.setLookAndFeel(&this->m_costumeCollisionLAF);
 	content.addAndMakeVisible(collisionButton);
 

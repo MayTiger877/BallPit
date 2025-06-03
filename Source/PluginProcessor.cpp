@@ -207,12 +207,6 @@ void BallPitAudioProcessor::setXYVelocityByTempo(float& xVelocity, float& yVeloc
 {
 	if (m_bpm <= 0)
 		return;
-
-	/*float beatsPerSecond = static_cast<double>(m_bpm) / SECONDS_IN_MINUTE;
-	double pitWidth = static_cast<double>(PIT_WIDTH - (2 * PIT_INNER_DIFF) - (2.0 * ballRadius));
-	float distancePerUpdate = pitWidth * beatsPerSecond;
-	double denomeratorRatio = 4.0 / static_cast<double>(m_timeSignature.denominator);
-	float effectiveVelocity = (distancePerUpdate / static_cast<double>(VISUAL_FRAMES_PER_SECOND)) / denomeratorRatio;*/
 	
 	const float beatsPerSecond = static_cast<float>(m_bpm) / SECONDS_IN_MINUTE;
 	const double pitWidth = static_cast<double>(PIT_WIDTH - (2 * PIT_INNER_DIFF) - (2.0 * ballRadius));
@@ -237,8 +231,8 @@ void BallPitAudioProcessor::setXYVelocityByTempo(float& xVelocity, float& yVeloc
 
 static void getAngleAndVelocity(float& angle, float& velocity, float xVelocity, float yVelocity)
 {
-	velocity = sqrt(pow(xVelocity, 2) + pow(yVelocity, 2));
-	angle = atan2(yVelocity, xVelocity) * 180 / juce::MathConstants<float>::pi;
+	velocity = sqrt((xVelocity * xVelocity) + (yVelocity * yVelocity));
+	angle = atan2(((-1) * yVelocity), xVelocity) * (180 / PI);
 }
 
 void BallPitAudioProcessor::getUpdatedBallParams()
@@ -255,6 +249,8 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 		std::string ballAngleId = "ballAngle" + std::to_string(i);
 		std::string ballXVelocityId = "ballXVelocity" + std::to_string(i);
 		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
+		std::string xVelocityInverterId = "xVelocityInverter" + std::to_string(i);
+		std::string yVelocityInverterId = "yVelocityInverter" + std::to_string(i);
 
 		float x = valueTreeState.getRawParameterValue(ballXId)->load();
 		float y = valueTreeState.getRawParameterValue(ballYId)->load();
@@ -274,6 +270,10 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 			case 2: // by tempo
 			{
 				setXYVelocityByTempo(xVelocity, yVelocity, radius);
+				float inverter = (static_cast<bool>(valueTreeState.getRawParameterValue(xVelocityInverterId)->load())) ? (-1.0) : 1.0;
+				xVelocity = xVelocity * inverter;
+				inverter = (static_cast<bool>(valueTreeState.getRawParameterValue(yVelocityInverterId)->load())) ? (-1.0) : 1.0;
+				yVelocity = yVelocity * inverter;
 				getAngleAndVelocity(angle, velocity, xVelocity, yVelocity);
 				break;
 			}
@@ -568,6 +568,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		std::string ballAngleId = "ballAngle" + std::to_string(i);
 		std::string ballXVelocityId = "ballXVelocity" + std::to_string(i);
 		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
+		std::string xVelocityInverterId = "xVelocityInverter" + std::to_string(i);
+		std::string yVelocityInverterId = "yVelocityInverter" + std::to_string(i);
 
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, BALL_X_SLIDER_STEP));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, BALL_Y_SLIDER_STEP));
@@ -576,6 +578,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", BALL_ANGLE_MIN, BALL_ANGLE_MAX, BALL_ANGLE_STEP));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballXVelocityId, "XVelocity", BALL_X_VELOCITY_MIN, BALL_X_VELOCITY_MAX, BALL_X_VELOCITY_STEP));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballYVelocityId, "YVelocity", BALL_Y_VELOCITY_MIN, BALL_Y_VELOCITY_MAX, BALL_Y_VELOCITY_STEP));
+		params.add(std::make_unique<juce::AudioParameterBool>(xVelocityInverterId, "x velocity inverter", false));
+		params.add(std::make_unique<juce::AudioParameterBool>(yVelocityInverterId, "x velocity inverter", false));
 	}
 
 	std::string edgePhaseId = "edgePhase";
@@ -603,7 +607,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	params.add(std::make_unique<juce::AudioParameterBool>(snapToGridId, "Snap To Grid", false));
 
 	std::string collisionId = "collision";
-	params.add(std::make_unique<juce::AudioParameterBool>(collisionId, "Collision", true));
+	params.add(std::make_unique<juce::AudioParameterBool>(collisionId, "Collision", false));
 
 	std::string quantizationId = "quantization";
 	params.add(std::make_unique<juce::AudioParameterFloat>(quantizationId, "Quantization", QUANTIZATION_MIN, QUANTIZATION_MAX, QUANTIZATION_DEFAULT));

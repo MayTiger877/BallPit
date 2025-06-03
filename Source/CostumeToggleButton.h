@@ -32,3 +32,12 @@ public:
     void drawToggleButton(Graphics&, ToggleButton&,
         bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
 };
+
+class MyCostumeVelocityInverterLAF : public LookAndFeel_V4
+{
+public:
+    MyCostumeVelocityInverterLAF();
+
+    void drawToggleButton(Graphics&, ToggleButton&,
+        bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
+};

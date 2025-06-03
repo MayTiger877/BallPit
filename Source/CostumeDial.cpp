@@ -111,7 +111,7 @@ void MyCostumeDial::drawRotarySlider(Graphics& g, int x, int y, int width, int h
 
         g.setFont(18.0f);
         g.setColour(BUTTON_TEXT_COLOUR);
-        g.drawText(chosenSpeedText, bounds.getWidth() + 20, 0, width, height, juce::Justification::centredLeft);
+        g.drawText(chosenSpeedText, bounds.getWidth() + 20, 0, width, height-4, juce::Justification::bottomLeft);
     }
     else if (slider.getSliderStyle() == Slider::SliderStyle::MayT_VelocityKnob)
     {

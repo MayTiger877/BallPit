@@ -85,13 +85,14 @@ void Ball::draw(juce::Graphics& g) const
 	if (isMoving == false) // draw direction and length arrow
 	{
 		float radiusRatio = pow(radius, 1.2);
-		float angleInRadians = (angle - 90) * (PI / 180.0f); // (angle-90) is the actual knob direction
-		float arrowLenghtMultiplierByVelocity;
+		float angleInRadians = angle * (PI / 180.0f);
+		float arrowLenghtMultiplierByVelocity = 0.0f;
 		if (this->ballSpeedType == 1) // chaos
 		{
+			angleInRadians = (angle - 90.0f) * (PI / 180.0f);
 			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 2000.0, 0.0, 30.0);
 		}
-		else
+		else // byTempo
 		{
 			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 8300.0, 0.0, 30.0);
 		}
@@ -128,17 +129,36 @@ float Ball::getRadius() const
 
 void Ball::setAngledSpeed()
 {
-	float offset = juce::MathConstants<float>::pi * (this->angle - 90.0f) / 180.0f;
-	this->speedX = velocity * cos(offset);
-	this->speedY = velocity * sin(offset);
-	// actually angle of the knob is (angle - 90)
-	if (angle == 90.0f || angle == 270.0f) // 0 or 180
+	if (ballSpeedType == 1) // ByKnobs
 	{
-		this->speedY = NO_SPEED;
+
+		float offset = PI * (this->angle - 90.0f) / 180.0f;
+		this->speedX = velocity * cos(offset);
+		this->speedY = velocity * sin(offset);
+		// offset is (angle - 90) because the + direction of Y axis is down..... god da#$^@#^
+		if (angle == 90.0f || angle == 270.0f) // 0 or 180
+		{
+			this->speedY = NO_SPEED;
+		}
+		if (angle == 0.0f || angle == 180.0f) // 270 or 90
+		{
+			this->speedX = NO_SPEED;
+		}
 	}
-	if (angle == 0.0f || angle == 180.0f) // 270 or 90
+	else // ByTempo
 	{
-		this->speedX = NO_SPEED;
+		float angleInRadians = PI * this->angle / 180.0f;
+		this->speedX = velocity * cos(angleInRadians);
+		this->speedY = velocity * sin(angleInRadians);
+
+		if (angle == 0.0f || angle == 180.0f) // 0 or 180
+		{
+			this->speedY = NO_SPEED;
+		}
+		if (angle == 90.0f || angle == 270.0f) // 270 or 90
+		{
+			this->speedX = NO_SPEED;
+		}
 	}
 }
 
