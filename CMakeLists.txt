@@ -47,7 +47,7 @@ juce_add_plugin(BallPit
     PLUGIN_MANUFACTURER_CODE Juce
     PLUGIN_CODE Bpit
     FORMATS VST3
-    PRODUCT_NAME "Ball Pit"
+    PRODUCT_NAME "BallPit"
 )
 
 juce_generate_juce_header(BallPit)
@@ -94,4 +94,9 @@ target_link_libraries(BallPit PRIVATE
     juce::juce_gui_extra
     juce::juce_audio_plugin_client
     ResourcesData
+)
+
+# Fix VST3 parameter automation conflict
+target_compile_definitions(BallPit PRIVATE
+    JUCE_VST3_CAN_REPLACE_VST2=0
 )

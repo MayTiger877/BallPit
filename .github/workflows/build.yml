@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  JUCE_VERSION: 8.0.7
+  JUCE_VERSION: 8.0.8
 
 jobs:
   build:
@@ -45,8 +45,10 @@ jobs:
           echo "Custom juce_Slider.h found"
         shell: bash
 
-      - name: Backup original and replace juce_Slider.h
-        run:  cp ./juce_Slider.h JUCE/modules/juce_gui_basics/widgets/juce_Slider.h
+      - name: Backup original and replace juce_Slider
+        run: |
+          cp ./juce_Slider.h JUCE/modules/juce_gui_basics/widgets/
+          cp ./juce_Slider.cpp JUCE/modules/juce_gui_basics/widgets/
         shell: bash
 
       - name: Verify custom enums are present
@@ -107,7 +109,7 @@ jobs:
       - name: Running Pluginval
         if: runner.os == 'windows'
         run: |
-          VST3_PATH=$(find . -name "Ball Pit.vst3" -path "*/x86_64-win/*" -type f | head -1)
+          VST3_PATH=$(find . -name "BallPit.vst3" -path "*/x86_64-win/*" -type f | head -1)
           if [ -n "$VST3_PATH" ]; then
             echo "Found VST3 at: $VST3_PATH"
             ./pluginval --strictness-level 10 --validate-in-process --output-dir validation_results "$VST3_PATH"
@@ -140,38 +142,3 @@ jobs:
             exit 1
           fi
         shell: bash
-      # - name: Setting up Pluginval
-      #   run: |
-      #     curl -LO "https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_${{ matrix.name }}.zip"
-      #     7z x pluginval_${{ matrix.name }}.zip
-      #     ls
-      #   shell: bash
-
-      # - name: Running Pluginval
-      #   if: runner.os == 'windows'
-      #   run: |
-      #     VST3_PATH=$(find . -name "Ball Pit.vst3" -path "*/x86_64-win/*" -type f | head -1)
-      #     if [ -n "$VST3_PATH" ]; then
-      #       echo "Found VST3 at: $VST3_PATH"
-      #       ./pluginval --strictness-level 10 --validate-in-process --output-dir validation_results "$VST3_PATH"
-      #     else
-      #       echo "VST3 plugin not found!"
-      #       exit 1
-      #     fi
-      #   shell: bash
-      
-      # - name: Running Pluginval
-      #   if: runner.os == 'macos'
-      #   run: |
-      #     VST3_PATH=$(find . -name "Ball Pit" -path "*/MacOS/*" -type f | head -1)
-      #     if [ -n "$VST3_PATH" ]; then
-      #       echo "Found VST3 at: $VST3_PATH"
-      #       ./pluginval --strictness-level 10 --validate-in-process --output-dir validation_results "$VST3_PATH"
-      #     else
-      #       echo "VST3 plugin not found!"
-      #       exit 1
-      #     fi
-      #   shell: bash
-          
-          
-# ${{ matrix.pluginval-binary }} --strictness-level 10 --verbose --validate "build/BallPit_artefacts/Release/VST3/Ball\ Pit.vst3/Contents/x86_64-win/Ball\ Pit.vst3"
