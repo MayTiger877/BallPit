@@ -239,6 +239,10 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 {
 	for (int i = 0; i < 3; i++)
 	{
+		std::string BallActivationId = "BallActivation" + std::to_string(i);
+		bool ballActivation = static_cast<bool>(valueTreeState.getRawParameterValue(BallActivationId)->load());
+		pit.getBalls()[i]->setActive(ballActivation);
+
 		if (pit.getBalls()[i]->isActive() == false)
 			continue;
 
@@ -570,6 +574,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
 		std::string xVelocityInverterId = "xVelocityInverter" + std::to_string(i);
 		std::string yVelocityInverterId = "yVelocityInverter" + std::to_string(i);
+		std::string BallActivationId = "BallActivation" + std::to_string(i);
 
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, BALL_X_SLIDER_STEP));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, BALL_Y_SLIDER_STEP));
@@ -580,6 +585,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballYVelocityId, "YVelocity", BALL_Y_VELOCITY_MIN, BALL_Y_VELOCITY_MAX, BALL_Y_VELOCITY_STEP));
 		params.add(std::make_unique<juce::AudioParameterBool>(xVelocityInverterId, "x velocity inverter", false));
 		params.add(std::make_unique<juce::AudioParameterBool>(yVelocityInverterId, "x velocity inverter", false));
+		params.add(std::make_unique<juce::AudioParameterBool>(BallActivationId, "BallActivation", ((i == 0) ? true : false)));
 	}
 
 	std::string edgePhaseId = "edgePhase";
@@ -620,6 +626,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	
 	std::string sizePercentageID = "sizePercentage";
 	params.add(std::make_unique<juce::AudioParameterChoice>(sizePercentageID, "size Percentage", getsizePercentageTypes(), SIZE_PERCENTAGE_DEFAULT));
+	
 	return params;
 }
 

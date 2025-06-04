@@ -30,7 +30,7 @@ namespace Service
 		int loadNextPreset();
 		int loadPreviousPreset();
 		StringArray getAllPresets() const;
-		String getCurrentPreset() const;
+		String getCurrentPreset() const;		
 	private:
 		void valueTreeRedirected(ValueTree& treeWhichHasBeenChanged) override;
 

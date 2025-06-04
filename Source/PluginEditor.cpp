@@ -446,15 +446,19 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	addRemoveBallButton.setButtonText("Add");
 	addRemoveBallButton.onClick = [this]()
 		{
+			std::string BallActivationId = "BallActivation" + std::to_string(this->currentBallFocused);
+			auto* activationParam = audioProcessor.valueTreeState.getParameter(BallActivationId);
 			if (audioProcessor.getPit().getBalls()[this->currentBallFocused]->isActive() == true)
 			{
 				addRemoveBallButton.setButtonText("Add");
 				audioProcessor.getPit().getBalls()[this->currentBallFocused]->setActive(false);
+				if (activationParam) { activationParam->setValueNotifyingHost(false); }
 			}
 			else
 			{
 				addRemoveBallButton.setButtonText("Remove");
 				audioProcessor.getPit().getBalls()[this->currentBallFocused]->setActive(true);
+				if (activationParam) { activationParam->setValueNotifyingHost(true); }
 			}
 		};
 	addRemoveBallButton.setBounds(ADD_REMOVE_BUTTON_BOUNDS);

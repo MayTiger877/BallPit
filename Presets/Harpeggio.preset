@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<BallPitParams presetName="Harpeggio">
+  <PARAM id="ballAngle0" value="0.0"/>
+  <PARAM id="ballAngle1" value="60.0"/>
+  <PARAM id="ballAngle2" value="120.0"/>
+  <PARAM id="ballRadius0" value="10.0"/>
+  <PARAM id="ballRadius1" value="10.0"/>
+  <PARAM id="ballRadius2" value="10.0"/>
+  <PARAM id="ballVelocity0" value="400.0"/>
+  <PARAM id="ballVelocity1" value="400.0"/>
+  <PARAM id="ballVelocity2" value="400.0"/>
+  <PARAM id="ballX0" value="319.0"/>
+  <PARAM id="ballX1" value="368.5"/>
+  <PARAM id="ballX2" value="418.0"/>
+  <PARAM id="ballY0" value="109.5"/>
+  <PARAM id="ballY1" value="258.0"/>
+  <PARAM id="ballY2" value="406.5"/>
+  <PARAM id="edgeDenomenator" value="8.0"/>
+  <PARAM id="edgePhase" value="25.0"/>
+  <PARAM id="edgeRange" value="8.0"/>
+  <PARAM id="rootNote" value="5.0"/>
+  <PARAM id="scaleChoice" value="1.0"/>
+  <PARAM id="ballXVelocity0" value="4.0"/>
+  <PARAM id="ballXVelocity1" value="4.0"/>
+  <PARAM id="ballXVelocity2" value="4.0"/>
+  <PARAM id="ballYVelocity0" value="0.0"/>
+  <PARAM id="ballYVelocity1" value="0.0"/>
+  <PARAM id="ballYVelocity2" value="0.0"/>
+  <PARAM id="ballsPositioningType" value="1.0"/>
+  <PARAM id="collision"/>
+  <PARAM id="edgeType" value="0.0"/>
+  <PARAM id="quantization"/>
+  <PARAM id="quantizationDivision" value="0.0"/>
+  <PARAM id="snapToGrid" value="1.0"/>
+  <PARAM id="volumeVariation" value="0.7999999523162842"/>
+  <PARAM id="BallActivation0"/>
+  <PARAM id="BallActivation1" value="1.0"/>
+  <PARAM id="BallActivation2" value="1.0"/>
+  <PARAM id="xVelocityInverter0"/>
+  <PARAM id="xVelocityInverter1" value="0.0"/>
+  <PARAM id="xVelocityInverter2" value="0.0"/>
+  <PARAM id="yVelocityInverter0"/>
+  <PARAM id="yVelocityInverter1"/>
+  <PARAM id="yVelocityInverter2"/>
+</BallPitParams>
