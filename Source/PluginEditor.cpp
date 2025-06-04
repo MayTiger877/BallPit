@@ -11,7 +11,7 @@
 
 //==============================================================================
 BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor& p)
-	: AudioProcessorEditor (&p), presetPanel(p.getPresetManager()), audioProcessor (p), ballBeingDragged(MOUSE_NOT_IN_BALL, MOUSE_NOT_IN_BALL)
+	: AudioProcessorEditor (&p), presetPanel(p.getPresetManager()), audioProcessor (p), ballBeingDragged((int)MOUSE_NOT_IN_BALL, MOUSE_NOT_IN_BALL)
 {
 	auto backgroundSVGFile = juce::MemoryInputStream(BinaryData::ByKnobs_svg, BinaryData::ByKnobs_svgSize, false);
 	backgroundDrawable = juce::Drawable::createFromImageDataStream(backgroundSVGFile);
@@ -766,20 +766,18 @@ void BallPitAudioProcessorEditor::changeXAndYToSnapToGrid()
 	lastBall2Position = { ballsSlidersAndAttachments[1].xSlider.getValue(), ballsSlidersAndAttachments[1].ySlider.getValue() };
 	lastBall3Position = { ballsSlidersAndAttachments[2].xSlider.getValue(), ballsSlidersAndAttachments[2].ySlider.getValue() };
 
-	constexpr float gridFactor = 48.75f; // scaling factor for snapping-- 390 = 48.75px * 8 parts
-
 	for (int i = 0; i < 3; i++)
 	{
-		ballsSlidersAndAttachments[i].xSlider.setRange(BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, 48.75f);
-		ballsSlidersAndAttachments[i].ySlider.setRange(BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, 48.75f);
+		ballsSlidersAndAttachments[i].xSlider.setRange(BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, PIT_GRID_FACTOR);
+		ballsSlidersAndAttachments[i].ySlider.setRange(BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, PIT_GRID_FACTOR);
 
 		std::string ballXId = "ballX" + std::to_string(i);
 		std::string ballYId = "ballY" + std::to_string(i);
 
 		float currentX = audioProcessor.valueTreeState.getRawParameterValue(ballXId)->load() - PIT_MIN_X;
 		float currentY = audioProcessor.valueTreeState.getRawParameterValue(ballYId)->load() - PIT_MIN_Y;
-		float snappedX = std::round(currentX / gridFactor);
-		float snappedY = std::round(currentY / gridFactor);
+		float snappedX = std::round(currentX / PIT_GRID_FACTOR);
+		float snappedY = std::round(currentY / PIT_GRID_FACTOR);
 
 		snappedX = juce::jlimit(0.0f, 9.0f, snappedX);
 		snappedY = juce::jlimit(0.0f, 9.0f, snappedY);
@@ -789,12 +787,12 @@ void BallPitAudioProcessorEditor::changeXAndYToSnapToGrid()
 
 		if (auto* xParam = audioProcessor.valueTreeState.getParameter(ballXId))
 		{
-			xParam->setValueNotifyingHost((snappedX * gridFactor) / PIT_WIDTH); // Scale to normalized 0-1 range
+			xParam->setValueNotifyingHost((snappedX * PIT_GRID_FACTOR) / PIT_WIDTH); // Scale to normalized 0-1 range
 		}
 
 		if (auto* yParam = audioProcessor.valueTreeState.getParameter(ballYId))
 		{
-			yParam->setValueNotifyingHost((snappedY * gridFactor) / PIT_WIDTH); // Scale to normalized 0-1 range
+			yParam->setValueNotifyingHost((snappedY * PIT_GRID_FACTOR) / PIT_WIDTH); // Scale to normalized 0-1 range
 		}
 	}
 }
@@ -900,7 +898,7 @@ void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 			this->audioProcessor.getPit().getBalls()[ball->getBallIndex()]->setIsMouseOverBall(false);
 		}
 	}
-	ballBeingDragged.first = MOUSE_NOT_IN_BALL;
+	ballBeingDragged.first = (int)MOUSE_NOT_IN_BALL;
 	ballBeingDragged.second = MOUSE_NOT_IN_BALL;
 	
 	if (isMouseOverEdgeDice(event, sizePercentage))
@@ -927,7 +925,7 @@ void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 
 void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 {
-	if (ballBeingDragged.first > MOUSE_NOT_IN_BALL)
+	if (ballBeingDragged.first > (int)MOUSE_NOT_IN_BALL)
 	{
 		if (this->audioProcessor.getPit().getBalls()[ballBeingDragged.first]->isActive() == true)
 		{
@@ -991,7 +989,7 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 
 void BallPitAudioProcessorEditor::mouseDrag(const juce::MouseEvent& event)
 {
-	if ((mouseIsDragging) && (ballBeingDragged.first > MOUSE_NOT_IN_BALL))
+	if ((mouseIsDragging) && (ballBeingDragged.first > (int)MOUSE_NOT_IN_BALL))
 	{
 		ballsSlidersAndAttachments[ballBeingDragged.first].xSlider.setValue(event.position.getX() / sizePercentage, juce::sendNotification);
 		ballsSlidersAndAttachments[ballBeingDragged.first].ySlider.setValue(event.position.getY() / sizePercentage, juce::sendNotification);

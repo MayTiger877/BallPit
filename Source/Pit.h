@@ -43,8 +43,7 @@ public:
 private:
 	
 	Edge edge;
-	
-	// balls
+
 	std::vector<std::unique_ptr<Ball>> balls;
 
 	bool isMoving;

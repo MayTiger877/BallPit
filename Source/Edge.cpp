@@ -110,6 +110,8 @@ int Edge::promoteColorIndexByEdgeType(int currentColorIndex, int numOfColors, bo
 		default:
 			break;
 	}
+
+	return 0;
 }
 
 void Edge::updateAbstractedEdge()
