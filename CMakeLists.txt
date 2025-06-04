@@ -80,7 +80,6 @@ target_sources(BallPit PRIVATE
     Source/Scales.h
 )
 
-# Add resources
 juce_add_binary_data(ResourcesData SOURCES
     Resources/Ball_tab_0.svg
     Resources/Ball_tab_1.svg
@@ -88,6 +87,10 @@ juce_add_binary_data(ResourcesData SOURCES
     Resources/ByKnobs.svg
     Resources/ByTempo.svg
 )
+
+# Get all preset files automatically
+file(GLOB PRESET_FILES "Presets/*.preset")
+juce_add_binary_data(PresetsData SOURCES ${PRESET_FILES})
 
 target_link_libraries(BallPit PRIVATE
     juce::juce_audio_utils
