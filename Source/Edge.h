@@ -41,6 +41,7 @@ public:
 	Scale getScale() const { return scale; }
 
 	void setEdgeType(int edgeType);
+	int getEdgType() { return this->edgeType; }
 	int promoteColorIndexByEdgeType(int currentColorIndex, int numOfColors, bool reverse = false);
 
 	const int* getAbstractedEdge() { return abstractedEdge; }

@@ -40,6 +40,8 @@ public:
 	void setEdgeScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode = 0);
 	void drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors);
 
+	int getPitEdgeType() { return this->edge.getEdgType(); }
+
 private:
 	
 	Edge edge;

@@ -648,7 +648,8 @@ void BallPitAudioProcessor::saveGUIState(juce::ValueTree &currentGUIState)
 
 void BallPitAudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
 {
-	if (this->pit.areBallsMoving() == true)
+	int currentEdgeType = this->getPit().getPitEdgeType();
+	if (currentEdgeType == 4) //random
 	{
 		if ((parameterID == "edgePhase") || (parameterID == "edgeDenomenator") || 
 			(parameterID == "edgeRange") || (parameterID == "scaleChoice") || 
