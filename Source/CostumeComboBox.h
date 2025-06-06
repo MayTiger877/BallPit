@@ -31,9 +31,6 @@ public:
 
 
 private:
-    Colour MybackgroundColourId = Colour::fromRGB(10, 16, 20);  /**< A colour to use to fill the slider's background. */
-    Colour MythumbColourId = Colour::fromRGB(117, 137, 167);  /**< The colour to draw the thumb with. It's up to the look and feel class how this is used. */
-    Colour MytrackColourId = Colour::fromRGB(250, 250, 250);  /**< The colour to draw the groove that the thumb moves along. */
-    Colour MyrotarySliderFillColourId = Colour::fromRGB(25, 78, 113);  /**< For rotary sliders, this colour fills the outer curve. */
-    Colour MyrotarySliderOutlineColourId = Colour::fromRGB(18, 38, 67);  /**< For rotary sliders, this colour is used to draw the outer curve's outline. */
+    Colour MyrotarySliderFillColourId = BUTTON_BG_COLOUR;
+    Colour MyrotarySliderOutlineColourId = BUTTON_TEXT_COLOUR;
 };

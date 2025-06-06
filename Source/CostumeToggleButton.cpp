@@ -73,7 +73,7 @@ void MyCostumeCollisionLAF::drawToggleButton(Graphics& g, ToggleButton& button,
 
     if (button.getToggleState() == false)
     {
-        g.setColour(BALL_2_COLOUR.withAlpha(0.4f));
+        g.setColour(BALL_1_COLOUR.withAlpha(0.4f));
         g.fillEllipse(x + width / 2 - 3.0, y + height - 30.0f, 25.0f, 25.0f);
         g.setColour(BALL_3_COLOUR.withAlpha(0.4f));
         g.fillEllipse(x + width / 2 - 20.0f, y + height - 30.0f, 25.0f, 25.0f);
@@ -89,7 +89,7 @@ void MyCostumeCollisionLAF::drawToggleButton(Graphics& g, ToggleButton& button,
     }
     else
     {
-        g.setColour(BALL_2_COLOUR.withAlpha(0.7f));
+        g.setColour(BALL_1_COLOUR.withAlpha(0.7f));
         g.fillEllipse(x + width / 2, y + height - 30.0f, 25.0f, 25.0f);
         g.setColour(BALL_3_COLOUR.withAlpha(0.7f));
         g.fillEllipse(x + width / 2 - 25.0f, y + height - 30.0f, 25.0f, 25.0f);

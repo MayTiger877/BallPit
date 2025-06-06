@@ -118,7 +118,7 @@ void MyCostumeDial::drawRotarySlider(Graphics& g, int x, int y, int width, int h
         g.setColour(BUTTON_BG_COLOUR);
         g.fillRect(0, 0, width, height);
 
-        g.setColour(BUTTON_BG_COLOUR.darker(0.5f));
+        g.setColour(juce::Colours::black);
         g.fillRect(0, 0, (int)(width * sliderPos), height);
         
         g.setColour(BUTTON_BG_COLOUR.brighter(0.7f));

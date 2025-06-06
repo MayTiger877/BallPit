@@ -28,10 +28,6 @@ public:
                           Slider::SliderStyle, Slider&) override;
 
 private:
-
-    juce::Colour MybackgroundColourId = juce::Colour::fromRGB(10, 16, 20);  /**< A colour to use to fill the slider's background. */
-    juce::Colour MythumbColourId = juce::Colour::fromRGB(117, 137, 167);  /**< The colour to draw the thumb with. It's up to the look and feel class how this is used. */
-    juce::Colour MytrackColourId = juce::Colour::fromRGB(250, 250, 250);  /**< The colour to draw the groove that the thumb moves along. */
-    juce::Colour MyrotarySliderFillColourId = juce::Colour::fromRGB(25, 78, 113);  /**< For rotary sliders, this colour fills the outer curve. */
-    juce::Colour MyrotarySliderOutlineColourId = juce::Colour::fromRGB(18, 38, 67);  /**< For rotary sliders, this colour is used to draw the outer curve's outline. */
+    juce::Colour MyrotarySliderFillColourId = BUTTON_BG_COLOUR;
+    juce::Colour MyrotarySliderOutlineColourId = BUTTON_TEXT_COLOUR;
 };

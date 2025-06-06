@@ -36,9 +36,10 @@
 
 #define NOTE_MIDI_DURATION 0.015 //ms
 
-#define MAIN_BG_COLOUR juce::Colour::fromRGB(16, 25, 32)
-#define BUTTON_BG_COLOUR juce::Colour::fromRGB(25, 78, 113)
-#define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(25, 78, 113).brighter(0.5f)
+#define MAIN_BG_COLOUR juce::Colour::fromRGB(50, 60, 67)
+#define BUTTON_BG_COLOUR juce::Colour::fromRGB(98, 128, 143).darker()
+#define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(212, 201, 190).darker()
+
 
 //-----------------------------------------------------------------------
 // Sizes and positions map
