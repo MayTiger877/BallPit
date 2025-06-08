@@ -559,6 +559,11 @@ juce::StringArray getsizePercentageTypes()
 	return { "100%", "125%", "150%"};
 }
 
+juce::StringArray getDelayNoteMovementTypes()
+{
+	return { "None", "Ascending", "Descending" };
+}
+
 juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::createParameters()
 {
 	juce::AudioProcessorValueTreeState::ParameterLayout params;
@@ -575,6 +580,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		std::string xVelocityInverterId = "xVelocityInverter" + std::to_string(i);
 		std::string yVelocityInverterId = "yVelocityInverter" + std::to_string(i);
 		std::string BallActivationId = "BallActivation" + std::to_string(i);
+		std::string delayAmountId = "delayAmount" + std::to_string(i);
+		std::string delayFeedbackId = "delayFeedback" + std::to_string(i);
+		std::string delayRateId = "delayRate" + std::to_string(i);
+		std::string delayNoteMovementId = "delayNoteMovement" + std::to_string(i);
 
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, BALL_X_SLIDER_STEP));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, BALL_Y_SLIDER_STEP));
@@ -586,6 +595,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		params.add(std::make_unique<juce::AudioParameterBool>(xVelocityInverterId, "x velocity inverter", false));
 		params.add(std::make_unique<juce::AudioParameterBool>(yVelocityInverterId, "x velocity inverter", false));
 		params.add(std::make_unique<juce::AudioParameterBool>(BallActivationId, "BallActivation", ((i == 0) ? true : false)));
+		params.add(std::make_unique<juce::AudioParameterFloat>(delayAmountId, "Delay Amount", DELAY_AMOUNT_MIN, DELAY_AMOUNT_MAX, DELAY_AMOUNT_STEP));
+		params.add(std::make_unique<juce::AudioParameterFloat>(delayFeedbackId, "Delay Feedback", DELAY_FEEDBACK_MIN, DELAY_FEEDBACK_MAX, DELAY_FEEDBACK_STEP));
+		params.add(std::make_unique<juce::AudioParameterFloat>(delayRateId, "Delay Rate", DELAY_RATE_MIN, DELAY_RATE_MAX, DELAY_RATE_STEP));
+		params.add(std::make_unique<juce::AudioParameterChoice>(delayNoteMovementId, "Delay Note Movement", getDelayNoteMovementTypes(), DELAY_NOTE_MOVEMENT_DEFAULT));
 	}
 
 	std::string edgePhaseId = "edgePhase";

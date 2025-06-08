@@ -129,9 +129,9 @@ private:
 	// TODO- check that all params are here!
 public:
 	std::vector<juce::String> paramIDs = {
-	"ballX0", "ballY0", "ballRadius0", "ballVelocity0", "ballAngle0", "ballXVelocity0", "ballYVelocity0", "xVelocityInverter0", "yVelocityInverter0",
-	"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "ballYVelocity1", "xVelocityInverter1", "yVelocityInverter1",
-	"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "ballYVelocity2", "xVelocityInverter2", "yVelocityInverter2",
+	"ballX0", "ballY0", "ballRadius0", "ballVelocity0", "ballAngle0", "ballXVelocity0", "ballYVelocity0", "xVelocityInverter0", "yVelocityInverter0", "delayAmount0", "delayFeedback0", "delayRate0", "delayNoteMovement0",
+	"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "ballYVelocity1", "xVelocityInverter1", "yVelocityInverter1", "delayAmount1", "delayFeedback1", "delayRate1", "delayNoteMovement1",
+	"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "ballYVelocity2", "xVelocityInverter2", "yVelocityInverter2", "delayAmount2", "delayFeedback2", "delayRate2", "delayNoteMovement2",
 	"edgePhase", "edgeDenomenator", "edgeRange", "scaleChoice", "rootNote", "edgeType",
 	"ballsPositioningType", "snapToGrid", "collision", "quantization", "quantizationDivision", "volumeVariation", "sizePercentage",
 	};

@@ -76,10 +76,10 @@
 #define BALL_2_COLOUR juce::Colours::crimson
 #define BALL_3_COLOUR juce::Colours::orange
 
-#define BALLS_TABS_BOUNDS juce::Rectangle<int>(417, 491, 413, 157)
-#define BALLS_TAB_0_BOUNDS juce::Rectangle<int>(BALLS_TABS_BOUNDS.getX() + 3, BALLS_TABS_BOUNDS.getY() + 5, 68, 43)
-#define BALLS_TAB_1_BOUNDS juce::Rectangle<int>(BALLS_TABS_BOUNDS.getX() + 3, BALLS_TABS_BOUNDS.getY() + 55, 68, 43)
-#define BALLS_TAB_2_BOUNDS juce::Rectangle<int>(BALLS_TABS_BOUNDS.getX() + 3, BALLS_TABS_BOUNDS.getY() + 105, 68, 43)
+#define BALLS_TABS_BOUNDS juce::Rectangle<int>(417, 85, 205, 563)
+#define BALLS_TAB_0_BOUNDS juce::Rectangle<int>(420, 496, 68, 43)
+#define BALLS_TAB_1_BOUNDS juce::Rectangle<int>(420, 546, 68, 43)
+#define BALLS_TAB_2_BOUNDS juce::Rectangle<int>(420, 596, 68, 43)
 
 #define BALL_X_KNOB_BOUNDS juce::Rectangle<int>(635, 522, 55, 55)
 #define BALL_Y_KNOB_BOUNDS juce::Rectangle<int>(745, 522, 55, 55)
@@ -122,6 +122,11 @@
 #define SNAP_TO_GRID_BUTTON_BOUNDS juce::Rectangle<int>(320, 515, 60, 60)
 #define COLLISION_BUTTON_BOUNDS juce::Rectangle<int>(30, 600, 90, 40)
 #define BALLS_POSITIONING_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(210, 610, 85, 20)
+
+#define DELAY_AMOUNT_SLIDER_BOUNDS juce::Rectangle<int>(720, 115, 55, 55)
+#define DELAY_FEEDBACK_SLIDER_BOUNDS juce::Rectangle<int>(720, 175, 55, 50)
+#define DELAY_RATE_SLIDER_BOUNDS juce::Rectangle<int>(720, 235, 55, 50)
+#define DELAY_NOTE_MOVEMENT_COMBOBOX_BOUNDS juce::Rectangle<int>(720, 295, 90, 20)
 
 
 //-----------------------------------------------------------------------
@@ -293,3 +298,37 @@
 #define VOLUME_VARIATION_STEP 0.05
 #define VOLUME_VARIATION_DEFAULT 0.0
 #define VOLUME_VARIATION_DOUBLE_CLICK_VALUE 0.0f
+
+//-----------------------------------------------------------------------
+// Delay Amount Values
+
+#define DELAY_AMOUNT_MIN 0
+#define DELAY_AMOUNT_MAX 3
+#define DELAY_AMOUNT_STEP 1
+#define DELAY_AMOUNT_DEFAULT 0
+
+//-----------------------------------------------------------------------
+// Delay Feedback Values
+
+#define DELAY_FEEDBACK_MIN 0.0f
+#define DELAY_FEEDBACK_MAX 1.0f
+#define DELAY_FEEDBACK_STEP 0.01f
+#define DELAY_FEEDBACK_DEFAULT 0.0f
+#define DELAY_FEEDBACK_DOUBLE_CLICK_VALUE 0.0f
+
+//-----------------------------------------------------------------------
+// Delay Rate Values
+
+#define DELAY_RATE_MIN 0.0f
+#define DELAY_RATE_MAX 1.0f
+#define DELAY_RATE_STEP 0.01f
+#define DELAY_RATE_DEFAULT 0.0f
+#define DELAY_RATE_DOUBLE_CLICK_VALUE 0.0f
+
+//-----------------------------------------------------------------------
+// Delay Note Movement Values
+// todo- add more options for the movement of the notes in the delay
+#define DELAY_NOTE_MOVEMENT_NONE 1
+#define DELAY_NOTE_MOVEMENT_UP 2
+#define DELAY_NOTE_MOVEMENT_DOWN 3
+#define DELAY_NOTE_MOVEMENT_DEFAULT DELAY_NOTE_MOVEMENT_NONE

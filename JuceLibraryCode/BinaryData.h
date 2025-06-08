@@ -9,19 +9,19 @@
 namespace BinaryData
 {
     extern const char*   Ball_tab_0_svg;
-    const int            Ball_tab_0_svgSize = 12678;
+    const int            Ball_tab_0_svgSize = 13039;
 
     extern const char*   Ball_tab_1_svg;
-    const int            Ball_tab_1_svgSize = 12806;
+    const int            Ball_tab_1_svgSize = 13037;
 
     extern const char*   Ball_tab_2_svg;
-    const int            Ball_tab_2_svgSize = 12810;
+    const int            Ball_tab_2_svgSize = 13045;
 
     extern const char*   ByKnobs_svg;
-    const int            ByKnobs_svgSize = 182245;
+    const int            ByKnobs_svgSize = 221506;
 
     extern const char*   ByTempo_svg;
-    const int            ByTempo_svgSize = 182635;
+    const int            ByTempo_svgSize = 221896;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
     const int namedResourceListSize = 5;

@@ -32,6 +32,18 @@ public:
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> xVelocityInverterAttachment, yVelocityInverterAttachment;
 };
 
+class BallEffectsSlidersAndAttachments : public juce::Component
+{
+public:
+	BallEffectsSlidersAndAttachments() {}
+
+	// delay fx
+	juce::Slider delayAmountSlider, delayRateSlider, delayFeedbackSlider;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> delayAmountAttachment, delayRateAttachment, delayFeedbackAttachment;
+	juce::ComboBox delayNoteMovementComboBox;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> delayNoteMovementAttachment;
+};
+
 //-------------------------------------------------------------------------------------------
 
 class BallPitAudioProcessorEditor  : public juce::AudioProcessorEditor, 
@@ -122,6 +134,8 @@ private:
 	juce::ComboBox sizePercentageComboBox;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> sizePercentageAttachment;
 
+	BallEffectsSlidersAndAttachments ballEffectsSlidersAndAttachments[3];
+	
 	juce::Colour edgeColors[8] = {
 		juce::Colours::red,
 		juce::Colours::limegreen,
