@@ -62,7 +62,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 		ballEffectsSlidersAndAttachments[i].delayFeedbackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, delayFeedbackID, ballEffectsSlidersAndAttachments[i].delayFeedbackSlider);
 
 		std::string delayRateID = "delayRate" + std::to_string(i);
-		ballEffectsSlidersAndAttachments[i].delayRateAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, delayRateID, ballEffectsSlidersAndAttachments[i].delayRateSlider);
+		ballEffectsSlidersAndAttachments[i].delayRateAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, delayRateID, ballEffectsSlidersAndAttachments[i].delayRateComboBox);
 
 		std::string delayNoteMovementID = "delayNoteMovement" + std::to_string(i);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, delayNoteMovementID, ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox);
@@ -143,6 +143,10 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 		ballsSlidersAndAttachments[i].yVelocitySlider.setLookAndFeel(nullptr);
 		ballsSlidersAndAttachments[i].xVelocityInverter.setLookAndFeel(nullptr);
 		ballsSlidersAndAttachments[i].yVelocityInverter.setLookAndFeel(nullptr);
+		ballEffectsSlidersAndAttachments[i].delayFeedbackSlider.setLookAndFeel(nullptr);
+		ballEffectsSlidersAndAttachments[i].delayAmountSlider.setLookAndFeel(nullptr);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.setLookAndFeel(nullptr);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setLookAndFeel(nullptr);
 	}
 	scaleChoiceComboBox.setLookAndFeel(nullptr);
 	edgeTypeComboBox.setLookAndFeel(nullptr);
@@ -174,6 +178,10 @@ void BallPitAudioProcessorEditor::saveGUIState()
 		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
 		std::string xVelocityInverterId = "xVelocityInverter" + std::to_string(i);
 		std::string yVelocityInverterId = "yVelocityInverter" + std::to_string(i);
+		std::string delayAmountId = "delayAmount" + std::to_string(i);
+		std::string delayFeedbackId = "delayFeedback" + std::to_string(i);
+		std::string delayRateId = "delayRate" + std::to_string(i);
+		std::string delayNoteMovementId = "delayNoteMovement" + std::to_string(i);
 
 		GUIState.setProperty(juce::Identifier(ballXId), ballsSlidersAndAttachments[i].xSlider.getValue(), nullptr);
 		GUIState.setProperty(juce::Identifier(ballYId), ballsSlidersAndAttachments[i].ySlider.getValue(), nullptr);
@@ -184,7 +192,10 @@ void BallPitAudioProcessorEditor::saveGUIState()
 		GUIState.setProperty(juce::Identifier(ballYVelocityId), ballsSlidersAndAttachments[i].yVelocitySlider.getValue(), nullptr);
 		GUIState.setProperty(juce::Identifier(xVelocityInverterId), ballsSlidersAndAttachments[i].xVelocityInverter.getToggleState(), nullptr);
 		GUIState.setProperty(juce::Identifier(yVelocityInverterId), ballsSlidersAndAttachments[i].yVelocityInverter.getToggleState(), nullptr);
-
+		GUIState.setProperty(juce::Identifier(delayAmountId), ballEffectsSlidersAndAttachments[i].delayAmountSlider.getValue(), nullptr);
+		GUIState.setProperty(juce::Identifier(delayFeedbackId), ballEffectsSlidersAndAttachments[i].delayFeedbackSlider.getValue(), nullptr);
+		GUIState.setProperty(juce::Identifier(delayRateId), ballEffectsSlidersAndAttachments[i].delayRateComboBox.getSelectedId(), nullptr);
+		GUIState.setProperty(juce::Identifier(delayNoteMovementId), ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.getSelectedId(), nullptr);
 	}
 
 	GUIState.setProperty("edgePhase", edgePhaseSlider.getValue(), nullptr);
@@ -219,6 +230,10 @@ void BallPitAudioProcessorEditor::loadGUIState()
 		std::string ballYVelocityId = "ballYVelocity" + std::to_string(i);
 		std::string xVelocityInverterId = "xVelocityInverter" + std::to_string(i);
 		std::string yVelocityInverterId = "yVelocityInverter" + std::to_string(i);
+		std::string delayAmountId = "delayAmount" + std::to_string(i);
+		std::string delayFeedbackId = "delayFeedback" + std::to_string(i);
+		std::string delayRateId = "delayRate" + std::to_string(i);
+		std::string delayNoteMovementId = "delayNoteMovement" + std::to_string(i);
 
 		ballsSlidersAndAttachments[i].xSlider.setValue(GUIState.getProperty(juce::Identifier(ballXId)), juce::dontSendNotification);
 		ballsSlidersAndAttachments[i].ySlider.setValue(GUIState.getProperty(juce::Identifier(ballYId)), juce::dontSendNotification);
@@ -229,6 +244,10 @@ void BallPitAudioProcessorEditor::loadGUIState()
 		ballsSlidersAndAttachments[i].yVelocitySlider.setValue(GUIState.getProperty(juce::Identifier(ballYVelocityId)), juce::dontSendNotification);
 		ballsSlidersAndAttachments[i].xVelocityInverter.setToggleState(GUIState.getProperty(juce::Identifier(xVelocityInverterId)), juce::dontSendNotification);
 		ballsSlidersAndAttachments[i].yVelocityInverter.setToggleState(GUIState.getProperty(juce::Identifier(yVelocityInverterId)), juce::dontSendNotification);
+		ballEffectsSlidersAndAttachments[i].delayAmountSlider.setValue(GUIState.getProperty(juce::Identifier(delayAmountId)), juce::dontSendNotification);
+		ballEffectsSlidersAndAttachments[i].delayFeedbackSlider.setValue(GUIState.getProperty(juce::Identifier(delayFeedbackId)), juce::dontSendNotification);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.setSelectedId(GUIState.getProperty(juce::Identifier(delayRateId)), juce::dontSendNotification);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setSelectedId(GUIState.getProperty(juce::Identifier(delayNoteMovementId)), juce::dontSendNotification);
 	}
 
 	edgePhaseSlider.setValue(GUIState.getProperty("edgePhase"), juce::dontSendNotification);
@@ -252,12 +271,14 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 	int currentTab = this->currentBallFocused;
 	int otherTab1 = (currentTab + 1) % 3;
 	int otherTab2 = (currentTab + 2) % 3;
-	std::string ballXVelocityID = "ballXVelocity" + std::to_string(currentTab);
-	std::string ballYVelocityID = "ballYVelocity" + std::to_string(currentTab);
 	
 	ballsSlidersAndAttachments[currentTab].xSlider.setVisible(true);
 	ballsSlidersAndAttachments[currentTab].ySlider.setVisible(true);
 	ballsSlidersAndAttachments[currentTab].radiusSlider.setVisible(true);
+	ballEffectsSlidersAndAttachments[currentTab].delayAmountSlider.setVisible(true);
+	ballEffectsSlidersAndAttachments[currentTab].delayFeedbackSlider.setVisible(true);
+	ballEffectsSlidersAndAttachments[currentTab].delayRateComboBox.setVisible(true);
+	ballEffectsSlidersAndAttachments[currentTab].delayNoteMovementComboBox.setVisible(true);
 	switch (ballsPosType)
 	{
 		case 1: // chaos
@@ -293,6 +314,10 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 	ballsSlidersAndAttachments[otherTab1].yVelocitySlider.setVisible(false);
 	ballsSlidersAndAttachments[otherTab1].xVelocityInverter.setVisible(false);
 	ballsSlidersAndAttachments[otherTab1].yVelocityInverter.setVisible(false);
+	ballEffectsSlidersAndAttachments[otherTab1].delayAmountSlider.setVisible(false);
+	ballEffectsSlidersAndAttachments[otherTab1].delayFeedbackSlider.setVisible(false);
+	ballEffectsSlidersAndAttachments[otherTab1].delayRateComboBox.setVisible(false);
+	ballEffectsSlidersAndAttachments[otherTab1].delayNoteMovementComboBox.setVisible(false);
 
 	ballsSlidersAndAttachments[otherTab2].xSlider.setVisible(false);
 	ballsSlidersAndAttachments[otherTab2].ySlider.setVisible(false);
@@ -303,6 +328,10 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 	ballsSlidersAndAttachments[otherTab2].yVelocitySlider.setVisible(false);
 	ballsSlidersAndAttachments[otherTab2].xVelocityInverter.setVisible(false);
 	ballsSlidersAndAttachments[otherTab2].yVelocityInverter.setVisible(false);
+	ballEffectsSlidersAndAttachments[otherTab2].delayAmountSlider.setVisible(false);
+	ballEffectsSlidersAndAttachments[otherTab2].delayFeedbackSlider.setVisible(false);
+	ballEffectsSlidersAndAttachments[otherTab2].delayRateComboBox.setVisible(false);
+	ballEffectsSlidersAndAttachments[otherTab2].delayNoteMovementComboBox.setVisible(false);
 	
 	if (audioProcessor.getPit().getBalls()[this->currentBallFocused]->isActive() == true)
 	{
@@ -427,11 +456,11 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		// Delay Amount Slider
 		ballEffectsSlidersAndAttachments[i].delayAmountSlider.setBounds(DELAY_AMOUNT_SLIDER_BOUNDS);
 		ballEffectsSlidersAndAttachments[i].delayAmountSlider.setValue(DELAY_AMOUNT_DEFAULT);
-		ballEffectsSlidersAndAttachments[i].delayAmountSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+		ballEffectsSlidersAndAttachments[i].delayAmountSlider.setSliderStyle(juce::Slider::LinearHorizontal);
 		ballEffectsSlidersAndAttachments[i].delayAmountSlider.setDoubleClickReturnValue(true, DELAY_AMOUNT_DEFAULT);
 		ballEffectsSlidersAndAttachments[i].delayAmountSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballEffectsSlidersAndAttachments[i].delayAmountSlider.setRange(DELAY_AMOUNT_MIN, DELAY_AMOUNT_MAX, DELAY_AMOUNT_STEP);
-		/*ballEffectsSlidersAndAttachments[i].delayAmountSlider.setLookAndFeel(&this->m_costumeDialLAF);*/
+		ballEffectsSlidersAndAttachments[i].delayAmountSlider.setLookAndFeel(&this->m_costumeDelayAmountLAF);
 		ballEffectsSlidersAndAttachments[i].delayAmountSlider.toFront(false);
 		content.addChildComponent(ballEffectsSlidersAndAttachments[i].delayAmountSlider);
 		
@@ -442,20 +471,23 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballEffectsSlidersAndAttachments[i].delayFeedbackSlider.setDoubleClickReturnValue(true, DELAY_FEEDBACK_DEFAULT);
 		ballEffectsSlidersAndAttachments[i].delayFeedbackSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 		ballEffectsSlidersAndAttachments[i].delayFeedbackSlider.setRange(DELAY_FEEDBACK_MIN, DELAY_FEEDBACK_MAX, DELAY_FEEDBACK_STEP);
-		/*ballEffectsSlidersAndAttachments[i].delayFeedbackSlider.setLookAndFeel(&this->m_costumeDialLAF);*/
+		ballEffectsSlidersAndAttachments[i].delayFeedbackSlider.setLookAndFeel(&this->m_costumeDelayFeedbackLAF);
 		ballEffectsSlidersAndAttachments[i].delayFeedbackSlider.toFront(false);
 		content.addChildComponent(ballEffectsSlidersAndAttachments[i].delayFeedbackSlider);
 
 		// Delay Rate Slider
-		ballEffectsSlidersAndAttachments[i].delayRateSlider.setBounds(DELAY_RATE_SLIDER_BOUNDS);
-		ballEffectsSlidersAndAttachments[i].delayRateSlider.setValue(DELAY_RATE_DEFAULT);
-		ballEffectsSlidersAndAttachments[i].delayRateSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-		ballEffectsSlidersAndAttachments[i].delayRateSlider.setDoubleClickReturnValue(true, DELAY_RATE_DEFAULT);
-		ballEffectsSlidersAndAttachments[i].delayRateSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-		ballEffectsSlidersAndAttachments[i].delayRateSlider.setRange(DELAY_RATE_MIN, DELAY_RATE_MAX, DELAY_RATE_STEP);
-		/*ballEffectsSlidersAndAttachments[i].delayRateSlider.setLookAndFeel(&this->m_costumeDialLAF);*/
-		ballEffectsSlidersAndAttachments[i].delayRateSlider.toFront(false);
-		content.addChildComponent(ballEffectsSlidersAndAttachments[i].delayRateSlider);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.setBounds(DELAY_RATE_SLIDER_BOUNDS);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.addItem("4", DELAY_RATE_4);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.addItem("2", DELAY_RATE_2);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.addItem("1", DELAY_RATE_1);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.addItem("1/2", DELAY_RATE_0_5);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.addItem("1/4", DELAY_RATE_0_25);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.addItem("1/8", DELAY_RATE_0_125);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.setSelectedId(1, juce::dontSendNotification);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.setLookAndFeel(&this->m_costumeComboBoxLAF);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.toFront(false);
+		content.addChildComponent(ballEffectsSlidersAndAttachments[i].delayRateComboBox);
 
 		// Delay Note Movement ComboBox
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setBounds(DELAY_NOTE_MOVEMENT_COMBOBOX_BOUNDS);
@@ -463,7 +495,8 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Ascending", DELAY_NOTE_MOVEMENT_UP);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Descending", DELAY_NOTE_MOVEMENT_DOWN);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setSelectedId(1, juce::dontSendNotification);
-		//ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setLookAndFeel(&this->m_costumeComboBoxLAF);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setLookAndFeel(&this->m_costumeComboBoxLAF);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.toFront(false);
 		content.addChildComponent(ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox);
 	}
@@ -480,7 +513,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	ballsSlidersAndAttachments[0].yVelocityInverter.setVisible(false);
 	ballEffectsSlidersAndAttachments[0].delayAmountSlider.setVisible(true);
 	ballEffectsSlidersAndAttachments[0].delayFeedbackSlider.setVisible(true);
-	ballEffectsSlidersAndAttachments[0].delayRateSlider.setVisible(true);
+	ballEffectsSlidersAndAttachments[0].delayRateComboBox.setVisible(true);
 	ballEffectsSlidersAndAttachments[0].delayNoteMovementComboBox.setVisible(true);
 
 	// Start/Stop Button

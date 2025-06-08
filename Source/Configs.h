@@ -123,10 +123,10 @@
 #define COLLISION_BUTTON_BOUNDS juce::Rectangle<int>(30, 600, 90, 40)
 #define BALLS_POSITIONING_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(210, 610, 85, 20)
 
-#define DELAY_AMOUNT_SLIDER_BOUNDS juce::Rectangle<int>(720, 115, 55, 55)
-#define DELAY_FEEDBACK_SLIDER_BOUNDS juce::Rectangle<int>(720, 175, 55, 50)
-#define DELAY_RATE_SLIDER_BOUNDS juce::Rectangle<int>(720, 235, 55, 50)
-#define DELAY_NOTE_MOVEMENT_COMBOBOX_BOUNDS juce::Rectangle<int>(720, 295, 90, 20)
+#define DELAY_AMOUNT_SLIDER_BOUNDS juce::Rectangle<int>(660, 125, 145, 55) 
+#define DELAY_FEEDBACK_SLIDER_BOUNDS juce::Rectangle<int>(670, 170, 145, 55)
+#define DELAY_RATE_SLIDER_BOUNDS juce::Rectangle<int>(700, 250, 90, 20)
+#define DELAY_NOTE_MOVEMENT_COMBOBOX_BOUNDS juce::Rectangle<int>(700, 310, 90, 20)
 
 
 //-----------------------------------------------------------------------
@@ -313,17 +313,20 @@
 #define DELAY_FEEDBACK_MIN 0.0f
 #define DELAY_FEEDBACK_MAX 1.0f
 #define DELAY_FEEDBACK_STEP 0.01f
-#define DELAY_FEEDBACK_DEFAULT 0.0f
-#define DELAY_FEEDBACK_DOUBLE_CLICK_VALUE 0.0f
+#define DELAY_FEEDBACK_DEFAULT 0.4f
+#define DELAY_FEEDBACK_DOUBLE_CLICK_VALUE DELAY_FEEDBACK_DEFAULT
 
 //-----------------------------------------------------------------------
 // Delay Rate Values
 
 #define DELAY_RATE_MIN 0.0f
-#define DELAY_RATE_MAX 1.0f
-#define DELAY_RATE_STEP 0.01f
-#define DELAY_RATE_DEFAULT 0.0f
-#define DELAY_RATE_DOUBLE_CLICK_VALUE 0.0f
+#define DELAY_RATE_4 1
+#define DELAY_RATE_2 2
+#define DELAY_RATE_1 3
+#define DELAY_RATE_0_5 4
+#define DELAY_RATE_0_25 5
+#define DELAY_RATE_0_125 6
+#define DELAY_RATE_DEFAULT DELAY_RATE_1
 
 //-----------------------------------------------------------------------
 // Delay Note Movement Values

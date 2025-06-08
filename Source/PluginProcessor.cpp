@@ -559,6 +559,11 @@ juce::StringArray getsizePercentageTypes()
 	return { "100%", "125%", "150%"};
 }
 
+juce::StringArray getDelayRateTypes()
+{
+	return { "4", "2", "1", "1/2", "1/4", "1/8" };
+}
+
 juce::StringArray getDelayNoteMovementTypes()
 {
 	return { "None", "Ascending", "Descending" };
@@ -597,7 +602,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		params.add(std::make_unique<juce::AudioParameterBool>(BallActivationId, "BallActivation", ((i == 0) ? true : false)));
 		params.add(std::make_unique<juce::AudioParameterFloat>(delayAmountId, "Delay Amount", DELAY_AMOUNT_MIN, DELAY_AMOUNT_MAX, DELAY_AMOUNT_STEP));
 		params.add(std::make_unique<juce::AudioParameterFloat>(delayFeedbackId, "Delay Feedback", DELAY_FEEDBACK_MIN, DELAY_FEEDBACK_MAX, DELAY_FEEDBACK_STEP));
-		params.add(std::make_unique<juce::AudioParameterFloat>(delayRateId, "Delay Rate", DELAY_RATE_MIN, DELAY_RATE_MAX, DELAY_RATE_STEP));
+		params.add(std::make_unique<juce::AudioParameterChoice>(delayRateId, "Delay Rate", getDelayRateTypes(), DELAY_RATE_DEFAULT));
 		params.add(std::make_unique<juce::AudioParameterChoice>(delayNoteMovementId, "Delay Note Movement", getDelayNoteMovementTypes(), DELAY_NOTE_MOVEMENT_DEFAULT));
 	}
 

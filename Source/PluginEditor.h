@@ -16,6 +16,7 @@
 #include "CostumeDial.h"
 #include "CostumeComboBox.h"
 #include "CostumeToggleButton.h"
+#include "CostumeDelaySliders.h"
 
 //==============================================================================
 /**
@@ -38,10 +39,10 @@ public:
 	BallEffectsSlidersAndAttachments() {}
 
 	// delay fx
-	juce::Slider delayAmountSlider, delayRateSlider, delayFeedbackSlider;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> delayAmountAttachment, delayRateAttachment, delayFeedbackAttachment;
-	juce::ComboBox delayNoteMovementComboBox;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> delayNoteMovementAttachment;
+	juce::Slider delayAmountSlider, delayFeedbackSlider;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> delayAmountAttachment, delayFeedbackAttachment;
+	juce::ComboBox delayRateComboBox, delayNoteMovementComboBox;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> delayRateAttachment, delayNoteMovementAttachment;
 };
 
 //-------------------------------------------------------------------------------------------
@@ -156,6 +157,8 @@ private:
 	MyCostumeSnapToGridLAF m_costumeToggleButoonLAF;
 	MyCostumeCollisionLAF m_costumeCollisionLAF;
 	MyCostumeVelocityInverterLAF m_costumeVelocityInverterLAF;
+	MyCostumeDelayAmountLAF m_costumeDelayAmountLAF;
+	MyCostumeDelayFeedbackLAF m_costumeDelayFeedbackLAF;
 
 	juce::Component content;
 	float sizePercentage = 1.0f;
