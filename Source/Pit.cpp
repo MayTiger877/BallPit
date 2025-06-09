@@ -22,12 +22,12 @@ void Pit::setSampleRate(double updatedSampleRate)
 	}
 }
 
-void Pit::update(double timePassed)
+void Pit::update(double timePassed, double clockTimeSeconds)
 {
 	// edges hit
 	for (auto& ball : balls)
 	{
-		ball->update(timePassed);
+		ball->update(timePassed, clockTimeSeconds);
 		ball->edgeBounce();
 	}
 
@@ -57,14 +57,15 @@ void Pit::setBallsSizePercentage(float newSizePercentage)
 	}
 }
 
-void Pit::setBallParams(int index, float x, float y, float radius, float velocity, float angle, int ballSpeedType)
+void Pit::setBallParams(int index, float x, float y, float radius, float velocity, float angle, int ballSpeedType, DelaySettings newDelaySettings)
 {
 	balls[index]->setBallSpeedType(ballSpeedType);
 	balls[index]->setPosition(x, y);
 	balls[index]->setRadius(radius);
 	balls[index]->setVelocity(velocity);
 	balls[index]->setAngle(angle);
-	
+	balls[index]->setDelaySettings(newDelaySettings);
+
 	int otherIndex1 = (index + 1) % balls.size();
 	int otherIndex2 = (index + 2) % balls.size();
 	if (balls[index]->checkCollision(*balls[otherIndex1]))

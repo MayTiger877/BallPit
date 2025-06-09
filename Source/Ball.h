@@ -14,6 +14,14 @@ typedef enum {
     RIGHT
 }HitPossition;
 
+typedef struct DelaySettings
+{
+	int delayAmount = 0;
+	float delayFeedback = 0.0f;
+	float delayRate = 0.0f;
+	int delayType = 0;
+};
+
 
 class Ball : public juce::Component
 {
@@ -25,7 +33,7 @@ public:
 
     void setSampleRate(double newSampleRate) { this->sampleRate = newSampleRate; }
 
-    void update(double timePassed);
+    void update(double timePassed, double clockTimeSeconds);
     void edgeBounce();
     bool checkCollision(const Ball& other) const;
     void resolveCollision(Ball& other);
@@ -42,7 +50,10 @@ public:
 	float getY() const { return y; }
 
 	bool isActive() const { return active; }
-	void setActive(bool active) { this->active = active; }
+    void setActive(bool active);
+
+	DelaySettings getDelaySettings() const { return delaySettings; }
+    void setDelaySettings(const DelaySettings& newDelaySettings);
 
     void setBallSpeedType(int newSpeedType) { this->ballSpeedType = newSpeedType; }
 
@@ -75,6 +86,11 @@ private:
     bool active;
     int ballIndex;
     int ballSpeedType = 0;
+
+	DelaySettings delaySettings;
+	juce::Point<float> delayPoints[3];
+	std::queue<juce::Point<float>> ballPathPoints;
+	void insertDelayPoints(double clockTimeSeconds);
 
     juce::Path ballArrow;
 

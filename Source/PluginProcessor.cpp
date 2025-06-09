@@ -203,6 +203,26 @@ double velocityToInterval(int velocity)
 	}
 }
 
+float getDelayRateInSeconds(int delayRateChoice, float bpm, int sampleRate)
+{
+	if (bpm <= 0 || sampleRate <= 0)
+		return 0.0f;
+
+	const float beatsPerSecond = bpm / SECONDS_IN_MINUTE;
+	const float secondsPerBeat = SECONDS_IN_MINUTE / bpm;
+	const float secondsPerDivision = secondsPerBeat / 4.0f; // 1 division = 1/4 of a beat
+	switch (delayRateChoice)
+	{
+	case 0: return secondsPerDivision * 4.0f; // 4
+	case 1: return secondsPerDivision * 2.0f; // 2
+	case 2: return secondsPerDivision;         // 1
+	case 3: return secondsPerDivision / 2.0f; // 1/2
+	case 4: return secondsPerDivision / 4.0f; // 1/4
+	case 5: return secondsPerDivision / 8.0f; // 1/8
+	default: return secondsPerDivision;        // Default to 1 division
+	}
+}
+
 void BallPitAudioProcessor::setXYVelocityByTempo(float& xVelocity, float& yVelocity, float ballRadius)
 {
 	if (m_bpm <= 0)
@@ -263,6 +283,12 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 		float angle = valueTreeState.getRawParameterValue(ballAngleId)->load();
 		float xVelocity = valueTreeState.getRawParameterValue(ballXVelocityId)->load();
 		float yVelocity = valueTreeState.getRawParameterValue(ballYVelocityId)->load();
+		float delayRateInSeconds = getDelayRateInSeconds(static_cast<int>(valueTreeState.getRawParameterValue("delayRate" + std::to_string(i))->load()), this->m_bpm, this->m_sampleRate);
+		
+		DelaySettings newDelaySettings = { static_cast<int>(valueTreeState.getRawParameterValue("delayAmount" + std::to_string(i))->load()),
+										   valueTreeState.getRawParameterValue("delayFeedback" + std::to_string(i))->load(),
+										   delayRateInSeconds,
+										   static_cast<int>(valueTreeState.getRawParameterValue("delayNoteMovement" + std::to_string(i))->load()) };
 
 		int ballsPosType = 1 + this->valueTreeState.getRawParameterValue("ballsPositioningType")->load(); // 1 is offset
 		switch (ballsPosType)
@@ -282,7 +308,7 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 				break;
 			}
 		}
-		pit.setBallParams(i, x, y, radius, velocity, angle, ballsPosType);
+		pit.setBallParams(i, x, y, radius, velocity, angle, ballsPosType, newDelaySettings);
 	}
 	pit.setCollision(static_cast<bool>(valueTreeState.getRawParameterValue("collision")->load()));
 }
@@ -377,7 +403,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			//}
 		}
 		clockTimeSeconds += timePassed;
-		pit.update(timePassed);
+		pit.update(timePassed, clockTimeSeconds);
 	}
 
 	double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm;

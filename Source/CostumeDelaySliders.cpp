@@ -68,13 +68,18 @@ void MyCostumeDelayFeedbackLAF::drawRotarySlider(Graphics& g, int x, int y, int 
     const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider)
 {    
     g.setColour(BALL_1_COLOUR.withAlpha(juce::jmap(sliderPos, 0.0f, 1.0f, 0.4f, 1.0f)));
-    g.fillEllipse((width / 4), height - 33.0f, 30.0f, 30.0f);
+    g.fillEllipse((width / 8), height - 33.0f, 30.0f, 30.0f);
 
     g.setColour(BALL_1_COLOUR.withAlpha(juce::jmap(sliderPos, 0.0f, 1.0f, 0.0f, 0.7f)));
-    g.fillEllipse((2 * width / 4), height - 23.0f, 20.0f, 20.0f);
+    g.fillEllipse((width / 8) + 40.0f, height - 23.0f, 20.0f, 20.0f);
     
     g.setColour(BALL_1_COLOUR.withAlpha(juce::jmap(sliderPos, 0.0f, 1.0f, 0.0f, 0.5f)));
-    g.fillEllipse((3 * width / 4) - 10.0f, height - 15.0f, 12.0f, 12.0f);
+    g.fillEllipse((width / 8) + 70.0f, height - 15.0f, 12.0f, 12.0f);
+
+    g.setColour(BUTTON_TEXT_COLOUR);
+	float feedbackPercentage = sliderPos * 100.0f;
+	std::string feedbackText = std::to_string(static_cast<int>(feedbackPercentage)) + "%";
+    g.drawText(feedbackText, width - 50, 15, 50, 20, Justification::left);
 
     g.setColour(BUTTON_BG_COLOUR.brighter(0.6f));
     g.drawLine(0.0f,height - 2.f, width - 2.0f, height - 2.f, 4.0f);

@@ -19,18 +19,61 @@ void Ball::setBallCollideEventListener(BallCollideEventListener* l)
 	this->collideListener = l;
 }
 
-void Ball::update(double timePassed)
+void Ball::insertDelayPoints(double clockTimeSeconds)
+{
+	if (clockTimeSeconds <= 0.0)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			this->delayPoints[i].x = x;
+			this->delayPoints[i].y = y;
+		}
+	}
+	else
+	{
+		if (clockTimeSeconds > (this->delaySettings.delayRate * 3)) // TODO- make the balls go in a similar difference delay
+		{
+			this->delayPoints[2].x = this->delayPoints[1].x;
+			this->delayPoints[2].y = this->delayPoints[1].y;
+			this->delayPoints[1].x = this->delayPoints[0].x;
+			this->delayPoints[1].y = this->delayPoints[0].y;
+			this->delayPoints[0] = this->ballPathPoints.front();
+			this->ballPathPoints.pop();
+		}
+		else if (clockTimeSeconds > (this->delaySettings.delayRate * 2))
+		{
+			this->delayPoints[1].x = this->delayPoints[0].x;
+			this->delayPoints[1].y = this->delayPoints[0].y;
+			this->delayPoints[0] = this->ballPathPoints.front();
+			this->ballPathPoints.pop();
+		}
+		else if (clockTimeSeconds > this->delaySettings.delayRate)
+		{
+			this->delayPoints[0] = this->ballPathPoints.front();
+			this->ballPathPoints.pop();
+		}
+		else
+		{
+			this->delayPoints[0].x = x;
+			this->delayPoints[0].y = y;
+		}
+	}
+}
+
+void Ball::update(double timePassed, double clockTimeSeconds)
 {
 	if (this->active == true)
 	{
+		insertDelayPoints(clockTimeSeconds);
 		x += speedX * timePassed;
 		y += speedY * timePassed;
+		ballPathPoints.push(juce::Point<float>(x, y));
 	}
 	else
 	{
 		speedX = speedY = 0;
-		x = PIT_MAX_X + 20 + ballIndex * 50;
-		y = 800;
+		x = PIT_MIN_X + 20 + ballIndex * 50;
+		y = PIT_MIN_Y + 200;
 	}
 }
 
@@ -82,20 +125,21 @@ void Ball::draw(juce::Graphics& g) const
 				  radius * 2.0f + mouseOnMagnifier * 2,
 				  radius * 2.0f + mouseOnMagnifier * 2);
 
-	if (isMoving == false) // draw direction and length arrow
+	float angleInRadians = angle * (PI / 180.0f);
+	float radiusRatio = pow(radius, 1.2);
+	float arrowLenghtMultiplierByVelocity = 0.0f;
+	if (this->ballSpeedType == 1) // chaos
 	{
-		float radiusRatio = pow(radius, 1.2);
-		float angleInRadians = angle * (PI / 180.0f);
-		float arrowLenghtMultiplierByVelocity = 0.0f;
-		if (this->ballSpeedType == 1) // chaos
-		{
-			angleInRadians = (angle - 90.0f) * (PI / 180.0f);
-			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 2000.0, 0.0, 30.0);
-		}
-		else // byTempo
-		{
-			arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 8300.0, 0.0, 30.0);
-		}
+		angleInRadians = (angle - 90.0f) * (PI / 180.0f);
+		arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 2000.0, 0.0, 30.0);
+	}
+	else // byTempo
+	{
+		arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 8300.0, 0.0, 30.0);
+	}
+
+	if (isMoving == false) // draw direction and length arrow and also delay balls
+	{
 		float startX = x + (5.0f + mouseOnMagnifier + radius) * cos(angleInRadians);
 		float endX = x + (20.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * cos(angleInRadians);
 		float startY = y + (5.0f + mouseOnMagnifier + radius) * sin(angleInRadians);
@@ -114,6 +158,36 @@ void Ball::draw(juce::Graphics& g) const
 		g.drawArrow(thickLine, arrowThickness + 3.0f, arrowHeadWidth + 3.0f, arrowHeadLength + 5.0f);
 		g.setColour(ballColor);
 		g.drawArrow(line, arrowThickness, arrowHeadWidth, arrowHeadLength);
+
+		// ----------- draw delay balls -----------
+		if (this->delaySettings.delayAmount <= 0)
+		{
+			return;
+		}
+
+		for (int i = 1; i < (this->delaySettings.delayAmount + 1); i++)
+		{
+			float delaySizeRatio = pow(0.7f, i);
+			float delayBallRadius = radius * delaySizeRatio;
+			float delayBallX = x - (2.0f * radius * i + (this->delaySettings.delayRate * i)) * cos(angleInRadians);
+			float delayBallY = y - (2.0f * radius * i + (this->delaySettings.delayRate * i)) * sin(angleInRadians);
+			g.setColour(ballColor.withAlpha(0.1f + this->delaySettings.delayFeedback * delaySizeRatio));
+			g.fillEllipse(delayBallX - delayBallRadius, delayBallY - delayBallRadius, 
+						  delayBallRadius * 2.0f, delayBallRadius * 2.0f);
+		}
+	}
+	else
+	{
+		for (int i = 1; i < (this->delaySettings.delayAmount + 1); i++)
+		{
+			float delaySizeRatio = pow(0.7f, i);
+			float delayBallRadius = radius * delaySizeRatio;
+			g.setColour(ballColor.withAlpha(0.1f + this->delaySettings.delayFeedback * delaySizeRatio));
+			g.fillEllipse(this->delayPoints[i].getX() - delayBallRadius,
+						  this->delayPoints[i].getY() - delayBallRadius,
+						  delayBallRadius * 2.0f,
+						  delayBallRadius * 2.0f);
+		}
 	}
 }
 
@@ -198,6 +272,20 @@ void Ball::setPosition(float newX, float newY)
 	this->y = newY;
 }
 
+void Ball::setActive(bool active)
+{
+	this->active = active;
+	if (this->active == true)
+	{
+		insertDelayPoints(0.0); // reset path points when ball is activated
+	}
+}
+
+void Ball::setDelaySettings(const DelaySettings& newDelaySettings)
+{
+	this->delaySettings = newDelaySettings;
+}
+
 int Ball::getEdgeHitIndex(HitPossition currentHitPosition)
 {
 	switch (currentHitPosition)
@@ -267,7 +355,7 @@ void Ball::edgeBounce()
 			if ((this->isMoving) && (speedX != NO_SPEED))
 			{
 				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));
-				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate);
+				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate, this->delaySettings.delayAmount, this->delaySettings.delayRate);
 			}
 		}
 	}
@@ -298,7 +386,7 @@ void Ball::edgeBounce()
 			if ((this->isMoving) && (speedY != NO_SPEED))
 			{
 				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));
-				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate);
+				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate, this->delaySettings.delayAmount, this->delaySettings.delayRate);
 			}
 		}
 	}

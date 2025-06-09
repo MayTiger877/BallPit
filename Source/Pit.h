@@ -14,10 +14,10 @@ public:
 
 	void addBall(std::unique_ptr<Ball> ball);
 	void setSampleRate(double updatedSampleRate);
-	void update(double timePassed);
+	void update(double timePassed, double clockTimeSeconds);
 	
 	const std::vector<std::unique_ptr<Ball>>& getBalls() const;
-	void setBallParams(int index, float x, float y, float radius, float velocity, float angle, int ballSpeedType);
+	void setBallParams(int index, float x, float y, float radius, float velocity, float angle, int ballSpeedType, DelaySettings newDelaySettings);
 	void setBallsEdgeNotes();
 	
 	void toggleBallMovement() 
