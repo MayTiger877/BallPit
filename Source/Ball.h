@@ -19,7 +19,7 @@ typedef struct DelaySettings
 	int delayAmount = 0;
 	float delayFeedback = 0.0f;
 	float delayRate = 0.0f;
-	int delayType = 0;
+	int delayNoteMovement = 0;
 };
 
 

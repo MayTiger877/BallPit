@@ -368,7 +368,8 @@ void Ball::edgeBounce()
 			if ((this->isMoving) && (speedX != NO_SPEED))
 			{
 				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));
-				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate, this->delaySettings.delayAmount, this->delaySettings.delayRate);
+				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate, this->delaySettings.delayAmount,
+											  this->delaySettings.delayRate, this->delaySettings.delayFeedback, this->delaySettings.delayNoteMovement);
 			}
 		}
 	}
@@ -399,7 +400,8 @@ void Ball::edgeBounce()
 			if ((this->isMoving) && (speedY != NO_SPEED))
 			{
 				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));
-				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate, this->delaySettings.delayAmount, this->delaySettings.delayRate);
+				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate, this->delaySettings.delayAmount,
+											  this->delaySettings.delayRate, this->delaySettings.delayFeedback, this->delaySettings.delayNoteMovement);
 			}
 		}
 	}

@@ -483,7 +483,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		}
 		else
 		{
-			finalSamplePos = finalSamplePos = m_samplesPerBlock;
+			finalSamplePos = finalSamplePos - m_samplesPerBlock;
 			pendingEvents.push_back({ msg, finalSamplePos });
 		}
 
@@ -591,7 +591,7 @@ juce::StringArray getDelayRateTypes()
 
 juce::StringArray getDelayNoteMovementTypes()
 {
-	return { "None", "Ascending", "Descending" };
+	return { "None", "Up", "Down", "Up and Down", "Down and Up", "Random" };
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::createParameters()

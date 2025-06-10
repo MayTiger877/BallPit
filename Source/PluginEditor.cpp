@@ -492,8 +492,11 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		// Delay Note Movement ComboBox
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setBounds(DELAY_NOTE_MOVEMENT_COMBOBOX_BOUNDS);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("None", DELAY_NOTE_MOVEMENT_NONE);
-		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Ascending", DELAY_NOTE_MOVEMENT_UP);
-		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Descending", DELAY_NOTE_MOVEMENT_DOWN);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Up", DELAY_NOTE_MOVEMENT_UP);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Down", DELAY_NOTE_MOVEMENT_DOWN);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Up and Down", DELAY_NOTE_MOVEMENT_UP_DOWN);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Down and Up", DELAY_NOTE_MOVEMENT_DOWN_UP);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Random", DELAY_NOTE_MOVEMENT_RANDOM);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setSelectedId(1, juce::dontSendNotification);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setLookAndFeel(&this->m_costumeComboBoxLAF);
