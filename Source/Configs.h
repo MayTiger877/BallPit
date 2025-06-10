@@ -124,9 +124,9 @@
 #define BALLS_POSITIONING_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(210, 610, 85, 20)
 
 #define DELAY_AMOUNT_SLIDER_BOUNDS juce::Rectangle<int>(660, 125, 145, 55) 
-#define DELAY_FEEDBACK_SLIDER_BOUNDS juce::Rectangle<int>(670, 170, 145, 55)
-#define DELAY_RATE_SLIDER_BOUNDS juce::Rectangle<int>(700, 250, 90, 20)
-#define DELAY_NOTE_MOVEMENT_COMBOBOX_BOUNDS juce::Rectangle<int>(700, 310, 90, 20)
+#define DELAY_FEEDBACK_SLIDER_BOUNDS juce::Rectangle<int>(670, 175, 145, 55)
+#define DELAY_RATE_SLIDER_BOUNDS juce::Rectangle<int>(680, 255, 90, 20)
+#define DELAY_NOTE_MOVEMENT_COMBOBOX_BOUNDS juce::Rectangle<int>(680, 300, 90, 20)
 
 
 //-----------------------------------------------------------------------

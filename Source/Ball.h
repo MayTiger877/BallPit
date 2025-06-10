@@ -89,7 +89,7 @@ private:
 
 	DelaySettings delaySettings;
 	juce::Point<float> delayPoints[3];
-	std::queue<juce::Point<float>> ballPathPoints;
+	std::queue<juce::Point<float>> ballPathPoints[3];
 	void insertDelayPoints(double clockTimeSeconds);
 
     juce::Path ballArrow;

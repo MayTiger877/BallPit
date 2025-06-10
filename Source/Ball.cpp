@@ -33,31 +33,38 @@ void Ball::insertDelayPoints(double clockTimeSeconds)
 	{
 		if (clockTimeSeconds > (this->delaySettings.delayRate * 3)) // TODO- make the balls go in a similar difference delay
 		{
-			this->delayPoints[2].x = this->delayPoints[1].x;
-			this->delayPoints[2].y = this->delayPoints[1].y;
-			this->delayPoints[1].x = this->delayPoints[0].x;
-			this->delayPoints[1].y = this->delayPoints[0].y;
-			this->delayPoints[0] = this->ballPathPoints.front();
-			this->ballPathPoints.pop();
+			this->delayPoints[2] = this->ballPathPoints[2].front();
+			this->ballPathPoints[2].pop(); 
+			this->delayPoints[1] = this->ballPathPoints[1].front();
+			this->ballPathPoints[1].pop();
+			this->delayPoints[0] = this->ballPathPoints[0].front();
+			this->ballPathPoints[0].pop();
 		}
 		else if (clockTimeSeconds > (this->delaySettings.delayRate * 2))
 		{
-			this->delayPoints[1].x = this->delayPoints[0].x;
-			this->delayPoints[1].y = this->delayPoints[0].y;
-			this->delayPoints[0] = this->ballPathPoints.front();
-			this->ballPathPoints.pop();
+			this->delayPoints[1] = this->ballPathPoints[1].front();
+			this->ballPathPoints[1].pop();
+			this->delayPoints[0] = this->ballPathPoints[0].front();
+			this->ballPathPoints[0].pop();
 		}
 		else if (clockTimeSeconds > this->delaySettings.delayRate)
 		{
-			this->delayPoints[0] = this->ballPathPoints.front();
-			this->ballPathPoints.pop();
+			this->delayPoints[0] = this->ballPathPoints[0].front();
+			this->ballPathPoints[0].pop();
 		}
 		else
 		{
-			this->delayPoints[0].x = x;
-			this->delayPoints[0].y = y;
+			this->delayPoints[0] = juce::Point<float>(x, y);
+			this->delayPoints[1] = this->delayPoints[0];
+			this->delayPoints[2] = this->delayPoints[0];
 		}
 	}
+}
+
+static void clearQueue(std::queue<juce::Point<float>>& q)
+{
+	std::queue<juce::Point<float>> empty;
+	std::swap(q, empty);
 }
 
 void Ball::update(double timePassed, double clockTimeSeconds)
@@ -67,7 +74,10 @@ void Ball::update(double timePassed, double clockTimeSeconds)
 		insertDelayPoints(clockTimeSeconds);
 		x += speedX * timePassed;
 		y += speedY * timePassed;
-		ballPathPoints.push(juce::Point<float>(x, y));
+		ballPathPoints[0].push(juce::Point<float>(x, y));
+		ballPathPoints[1].push(juce::Point<float>(x, y));
+		ballPathPoints[2].push(juce::Point<float>(x, y));
+
 	}
 	else
 	{
@@ -183,8 +193,8 @@ void Ball::draw(juce::Graphics& g) const
 			float delaySizeRatio = pow(0.7f, i);
 			float delayBallRadius = radius * delaySizeRatio;
 			g.setColour(ballColor.withAlpha(0.1f + this->delaySettings.delayFeedback * delaySizeRatio));
-			g.fillEllipse(this->delayPoints[i].getX() - delayBallRadius,
-						  this->delayPoints[i].getY() - delayBallRadius,
+			g.fillEllipse(this->delayPoints[i-1].getX() - delayBallRadius,
+						  this->delayPoints[i-1].getY() - delayBallRadius,
 						  delayBallRadius * 2.0f,
 						  delayBallRadius * 2.0f);
 		}
@@ -284,6 +294,9 @@ void Ball::setActive(bool active)
 void Ball::setDelaySettings(const DelaySettings& newDelaySettings)
 {
 	this->delaySettings = newDelaySettings;
+	clearQueue(ballPathPoints[0]);
+	clearQueue(ballPathPoints[1]);
+	clearQueue(ballPathPoints[2]);
 }
 
 int Ball::getEdgeHitIndex(HitPossition currentHitPosition)

@@ -208,7 +208,6 @@ float getDelayRateInSeconds(int delayRateChoice, float bpm, int sampleRate)
 	if (bpm <= 0 || sampleRate <= 0)
 		return 0.0f;
 
-	const float beatsPerSecond = bpm / SECONDS_IN_MINUTE;
 	const float secondsPerBeat = SECONDS_IN_MINUTE / bpm;
 	const float secondsPerDivision = secondsPerBeat / 4.0f; // 1 division = 1/4 of a beat
 	switch (delayRateChoice)
