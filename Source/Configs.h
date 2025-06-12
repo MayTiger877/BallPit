@@ -326,7 +326,7 @@
 #define DELAY_RATE_0_5 4
 #define DELAY_RATE_0_25 5
 #define DELAY_RATE_0_125 6
-#define DELAY_RATE_DEFAULT DELAY_RATE_1
+#define DELAY_RATE_DEFAULT DELAY_RATE_4
 
 //-----------------------------------------------------------------------
 // Delay Note Movement Values

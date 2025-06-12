@@ -282,12 +282,12 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 		float angle = valueTreeState.getRawParameterValue(ballAngleId)->load();
 		float xVelocity = valueTreeState.getRawParameterValue(ballXVelocityId)->load();
 		float yVelocity = valueTreeState.getRawParameterValue(ballYVelocityId)->load();
-		float delayRateInSeconds = getDelayRateInSeconds(static_cast<int>(valueTreeState.getRawParameterValue("delayRate" + std::to_string(i))->load()), this->m_bpm, this->m_sampleRate);
+		float delayRateInSeconds = getDelayRateInSeconds(static_cast<int>(valueTreeState.getRawParameterValue("delayRate" + std::to_string(i))->load()) + 1, this->m_bpm, this->m_sampleRate);
 		
 		DelaySettings newDelaySettings = { static_cast<int>(valueTreeState.getRawParameterValue("delayAmount" + std::to_string(i))->load()),
 										   valueTreeState.getRawParameterValue("delayFeedback" + std::to_string(i))->load(),
 										   delayRateInSeconds,
-										   static_cast<int>(valueTreeState.getRawParameterValue("delayNoteMovement" + std::to_string(i))->load()) };
+										   static_cast<int>(valueTreeState.getRawParameterValue("delayNoteMovement" + std::to_string(i))->load()) + 1 };
 
 		int ballsPosType = 1 + this->valueTreeState.getRawParameterValue("ballsPositioningType")->load(); // 1 is offset
 		switch (ballsPosType)

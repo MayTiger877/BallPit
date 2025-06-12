@@ -24,7 +24,7 @@ static int getNoteFromBallIndex(int ballIndex, int baseNote = 60, int noteMoveme
 {
 	switch (noteMovement)
 	{
-		case 0: // no movement
+		case 1: // no movement
 			return baseNote;
 		case 2: // up
 			return baseNote + ballIndex;

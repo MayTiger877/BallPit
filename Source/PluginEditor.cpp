@@ -483,7 +483,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballEffectsSlidersAndAttachments[i].delayRateComboBox.addItem("1/2", DELAY_RATE_0_5);
 		ballEffectsSlidersAndAttachments[i].delayRateComboBox.addItem("1/4", DELAY_RATE_0_25);
 		ballEffectsSlidersAndAttachments[i].delayRateComboBox.addItem("1/8", DELAY_RATE_0_125);
-		ballEffectsSlidersAndAttachments[i].delayRateComboBox.setSelectedId(1, juce::dontSendNotification);
+		ballEffectsSlidersAndAttachments[i].delayRateComboBox.setSelectedId(DELAY_RATE_DEFAULT, juce::dontSendNotification);
 		ballEffectsSlidersAndAttachments[i].delayRateComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 		ballEffectsSlidersAndAttachments[i].delayRateComboBox.setLookAndFeel(&this->m_costumeComboBoxLAF);
 		ballEffectsSlidersAndAttachments[i].delayRateComboBox.toFront(false);
@@ -497,7 +497,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Up and Down", DELAY_NOTE_MOVEMENT_UP_DOWN);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Down and Up", DELAY_NOTE_MOVEMENT_DOWN_UP);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Random", DELAY_NOTE_MOVEMENT_RANDOM);
-		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setSelectedId(1, juce::dontSendNotification);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setSelectedId(DELAY_NOTE_MOVEMENT_DEFAULT, juce::dontSendNotification);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setColour(juce::ComboBox::textColourId, BUTTON_TEXT_COLOUR);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setLookAndFeel(&this->m_costumeComboBoxLAF);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.toFront(false);
