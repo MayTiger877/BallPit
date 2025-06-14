@@ -129,6 +129,7 @@
 #define DELAY_NOTE_MOVEMENT_COMBOBOX_BOUNDS juce::Rectangle<int>(680, 468, 90, 20)
 
 #define TRANSPOSE_RECTANGLE_BOUNDS juce::Rectangle<int>(654, 126, 150, 21)
+#define PROBABILITY_SLIDER_BOUNDS juce::Rectangle<int>(654, 175, 150, 75)
 
 //-------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------
@@ -342,3 +343,12 @@
 #define DELAY_NOTE_MOVEMENT_DOWN_UP 5
 #define DELAY_NOTE_MOVEMENT_RANDOM 6
 #define DELAY_NOTE_MOVEMENT_DEFAULT DELAY_NOTE_MOVEMENT_SAME
+
+//-----------------------------------------------------------------------
+// Probability Values
+
+#define PROBABILITY_MIN 0.0f
+#define PROBABILITY_MAX 100.0f
+#define PROBABILITY_STEP 1.0f
+#define PROBABILITY_DEFAULT 100.0f
+#define PROBABILITY_DOUBLE_CLICK_VALUE PROBABILITY_DEFAULT

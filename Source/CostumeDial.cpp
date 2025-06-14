@@ -248,3 +248,42 @@ void MyCostumeDial::drawLinearSlider(Graphics& g, int x, int y, int width, int h
         g.fillEllipse(Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint));
     }
 }
+
+//---------------------------------------------------------------------------------
+
+CostumeHorizontalSlider::CostumeHorizontalSlider()
+{
+}
+
+void CostumeHorizontalSlider::drawLinearSlider(Graphics& g, int x, int y, int width, int height,
+    float sliderPos, float minSliderPos, float maxSliderPos,
+    const Slider::SliderStyle style, Slider& slider)
+{
+    auto trackWidth = jmin(6.0f, slider.isHorizontal() ? (float)height * 0.25f : (float)width * 0.25f);
+
+    Point<float> startPoint(slider.isHorizontal() ? (float)x : (float)x + (float)width * 0.5f,
+        slider.isHorizontal() ? (float)y + (float)height * 0.5f : (float)(height + y));
+
+    Point<float> endPoint(slider.isHorizontal() ? (float)(width + x) : startPoint.x,
+        slider.isHorizontal() ? startPoint.y : (float)y);
+
+    Path backgroundTrack;
+    backgroundTrack.startNewSubPath(startPoint);
+    backgroundTrack.lineTo(endPoint);
+    g.setColour(slider.findColour(Slider::backgroundColourId));
+    g.strokePath(backgroundTrack, { trackWidth, PathStrokeType::curved, PathStrokeType::rounded });
+    g.setColour(slider.findColour(Slider::backgroundColourId).brighter());
+    g.strokePath(backgroundTrack, { (0.2f * trackWidth), PathStrokeType::curved, PathStrokeType::rounded });
+
+    auto kx = slider.isHorizontal() ? sliderPos : ((float)x + (float)width * 0.5f);
+    auto ky = slider.isHorizontal() ? ((float)y + (float)height * 0.5f) : sliderPos;
+    Point<float> maxPoint = { kx, ky };
+    auto thumbWidth = getSliderThumbRadius(slider);
+
+    g.setColour(slider.findColour(Slider::thumbColourId).darker(0.3f));
+    g.fillEllipse(Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint));
+
+	g.setColour(BUTTON_TEXT_COLOUR);
+	std::string displayValue = std::to_string(static_cast<int>(std::round(slider.getValue()))) + "%";
+	g.drawText(displayValue, x + width - 55, 5, 50, 25, Justification::left);
+}

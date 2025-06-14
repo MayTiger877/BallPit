@@ -405,6 +405,13 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		pit.update(timePassed, clockTimeSeconds);
 	}
 
+	int randomProbabilityDecider = (rand() % 100) + 1;
+	float currentNotePlay = 1.0f;
+	m_probability = valueTreeState.getRawParameterValue("probability")->load();
+	if (randomProbabilityDecider > m_probability)
+	{
+		currentNotePlay = 0.0f;
+	}
 	double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm;
 	double secondsPerDivision = (secondsPerBeat * quantizationDivision / 4.0); // 1 division = 1/quantizationDivision of a measure
 	std::vector<PendingMidiEvent> eventsToAdd;
@@ -418,7 +425,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 				if (pendingIt->message.isNoteOn())
 				{
 					float var = getVariedNoteVelocity(pendingIt->message.getVelocity());
-					pendingIt->message.setVelocity(var/127);
+					pendingIt->message.setVelocity((currentNotePlay * var)/127);
 					midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition + 1);
 					int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate);
 
@@ -473,7 +480,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		
 		// add volume variation
 		float var = getVariedNoteVelocity(msg.getVelocity());
-		msg.setVelocity(var/127);
+		msg.setVelocity((currentNotePlay * var) / 127);
 		juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
 
 		if (finalSamplePos < (m_samplesPerBlock + 1))
@@ -670,6 +677,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	std::string sizePercentageID = "sizePercentage";
 	params.add(std::make_unique<juce::AudioParameterChoice>(sizePercentageID, "size Percentage", getsizePercentageTypes(), SIZE_PERCENTAGE_DEFAULT));
 	
+	std::string probabilityID = "probability";
+	params.add(std::make_unique<juce::AudioParameterFloat>(probabilityID, "Probability", PROBABILITY_MIN, PROBABILITY_MAX, PROBABILITY_DEFAULT));
+
 	return params;
 }
 

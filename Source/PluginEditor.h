@@ -139,6 +139,9 @@ private:
 	juce::ComboBox sizePercentageComboBox;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> sizePercentageAttachment;
 
+	juce::Slider probabilitySlider;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> probabilityAttachment;
+
 	BallEffectsSlidersAndAttachments ballEffectsSlidersAndAttachments[3];
 	
 	juce::Colour edgeColors[8] = {
@@ -163,6 +166,7 @@ private:
 	MyCostumeVelocityInverterLAF m_costumeVelocityInverterLAF;
 	MyCostumeDelayAmountLAF m_costumeDelayAmountLAF;
 	MyCostumeDelayFeedbackLAF m_costumeDelayFeedbackLAF;
+	CostumeHorizontalSlider m_costumeHorizontalSliderLAF;
 
 	juce::Component content;
 	float sizePercentage = 1.0f;

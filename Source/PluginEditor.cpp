@@ -106,6 +106,9 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 
 	std::string sizePercentageID = "sizePercentage";
 	sizePercentageAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, sizePercentageID, sizePercentageComboBox);
+
+	std::string probabilityID = "probability";
+	probabilityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, probabilityID, probabilitySlider);
 	
 	audioProcessor.addChangeListener(this); // Register as listener
 
@@ -157,6 +160,7 @@ BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
 	quantizationSlider.setLookAndFeel(nullptr);
 	volumeVariationSlider.setLookAndFeel(nullptr);
 	sizePercentageComboBox.setLookAndFeel(nullptr);
+	probabilitySlider.setLookAndFeel(nullptr);
 
 	edgeDenomenatorSlider.setLookAndFeel(nullptr);
 	edgeRangeSlider.setLookAndFeel(nullptr);
@@ -210,6 +214,7 @@ void BallPitAudioProcessorEditor::saveGUIState()
 	GUIState.setProperty("quantization", quantizationDivisionComboBox.getSelectedItemIndex(), nullptr);
 	GUIState.setProperty("volumeVariation", volumeVariationSlider.getValue(), nullptr);
 	GUIState.setProperty("sizePercentage", sizePercentageComboBox.getSelectedItemIndex(), nullptr);
+	GUIState.setProperty("probability", probabilitySlider.getValue(), nullptr);
 
 	audioProcessor.saveGUIState(GUIState);
 	audioProcessor.removeChangeListener(this);
@@ -263,6 +268,7 @@ void BallPitAudioProcessorEditor::loadGUIState()
 	quantizationDivisionComboBox.setSelectedItemIndex(GUIState.getProperty("quantizationDivision"), juce::dontSendNotification);
 	volumeVariationSlider.setValue(GUIState.getProperty("volumeVariation"), juce::dontSendNotification);
 	sizePercentageComboBox.setSelectedItemIndex(GUIState.getProperty("sizePercentage"), juce::dontSendNotification);
+	probabilitySlider.setValue(GUIState.getProperty("probability"), juce::dontSendNotification);
 }
 
 void BallPitAudioProcessorEditor::displayKnobsByTab()
@@ -721,6 +727,17 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	sizePercentageComboBox.setLookAndFeel(&m_costumeComboBoxLAF);
 	content.addAndMakeVisible(sizePercentageComboBox);
 	sizePercentageComboBox.addListener(this); // SPACIAL
+
+	// Probability Slider
+	probabilitySlider.setBounds(PROBABILITY_SLIDER_BOUNDS);
+	probabilitySlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+	probabilitySlider.setLookAndFeel(&this->m_costumeHorizontalSliderLAF);
+	probabilitySlider.setDoubleClickReturnValue(true, PROBABILITY_DOUBLE_CLICK_VALUE);
+	probabilitySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+	probabilitySlider.setValue(PROBABILITY_DEFAULT);
+	probabilitySlider.setRange(PROBABILITY_MIN, PROBABILITY_MAX, PROBABILITY_STEP);
+	content.addAndMakeVisible(probabilitySlider);
+
 
 	// Preset Manager Button
 	openPresetManager.setButtonText("Presets");
