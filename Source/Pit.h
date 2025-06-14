@@ -32,6 +32,8 @@ public:
 	bool areBallsMoving() const { return isMoving; }
 	void setBallsSizePercentage(float newSizePercentage);
 
+	void setBallsTranspose(int newTranspose);
+
 	void setCollision(bool newcollisionState) { isCollisionOn = newcollisionState; }
 	
 	void setEdgeParams(int phase, int denomenator, int range, int edgeType);

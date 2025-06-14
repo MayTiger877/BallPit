@@ -491,7 +491,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 
 		// Delay Note Movement ComboBox
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.setBounds(DELAY_NOTE_MOVEMENT_COMBOBOX_BOUNDS);
-		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("None", DELAY_NOTE_MOVEMENT_NONE);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Same note", DELAY_NOTE_MOVEMENT_SAME);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Up", DELAY_NOTE_MOVEMENT_UP);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Down", DELAY_NOTE_MOVEMENT_DOWN);
 		ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox.addItem("Up and Down", DELAY_NOTE_MOVEMENT_UP_DOWN);
@@ -796,6 +796,8 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	g.fillEllipse(PIT_CORNER_TR);
 	g.fillEllipse(PIT_CORNER_BL);
 	g.fillEllipse(PIT_CORNER_BR);
+
+	drawTranspsoe(g);
 }
 
 void BallPitAudioProcessorEditor::resized()
@@ -980,6 +982,41 @@ static int isMouseOverTab(const juce::MouseEvent& event, float sizePercentage)
 	return MOUSE_NOT_IN_TAB;
 }
 
+static int isMouseOverTranspose(const juce::MouseEvent& event, float sizePercentage)
+{
+	if (event.position.y > TRANSPOSE_RECTANGLE_BOUNDS.getY() * sizePercentage &&
+		event.position.y < (TRANSPOSE_RECTANGLE_BOUNDS.getY() + TRANSPOSE_RECTANGLE_BOUNDS.getHeight()) * sizePercentage)
+	{
+		if (event.position.x > TRANSPOSE_RECTANGLE_BOUNDS.getX() * sizePercentage &&
+			event.position.x <= (TRANSPOSE_RECTANGLE_BOUNDS.getX() + 30) * sizePercentage)
+		{
+			return 0;
+		}
+		else if (event.position.x > (TRANSPOSE_RECTANGLE_BOUNDS.getX() + 30) * sizePercentage &&
+				 event.position.x <= (TRANSPOSE_RECTANGLE_BOUNDS.getX() + 60) * sizePercentage)
+		{
+			return 1;
+		}
+		else if (event.position.x > (TRANSPOSE_RECTANGLE_BOUNDS.getX() + 60) * sizePercentage &&
+				 event.position.x <= (TRANSPOSE_RECTANGLE_BOUNDS.getX() + 90) * sizePercentage)
+		{
+			return 2;
+		}
+		else if (event.position.x > (TRANSPOSE_RECTANGLE_BOUNDS.getX() + 90) * sizePercentage &&
+				 event.position.x <= (TRANSPOSE_RECTANGLE_BOUNDS.getX() + 120) * sizePercentage)
+		{
+			return 3;
+		}
+		else if (event.position.x > (TRANSPOSE_RECTANGLE_BOUNDS.getX() + 120) * sizePercentage &&
+				 event.position.x <= (TRANSPOSE_RECTANGLE_BOUNDS.getX() + 150) * sizePercentage)
+		{
+			return 4;
+		}
+	}
+
+	return -1;
+}
+
 void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 {
 	float result = MOUSE_NOT_IN_BALL;
@@ -1021,6 +1058,13 @@ void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 		return;
 	}
 	mouseOverTab = MOUSE_NOT_IN_TAB;
+
+	mouseOverTranspose = isMouseOverTranspose(event, sizePercentage);
+	if (mouseOverTranspose != -1)
+	{
+		return;
+	}
+	mouseOverTranspose = -1;
 }
 
 void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
@@ -1085,6 +1129,35 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 
 		mouseOverTab = MOUSE_NOT_IN_TAB;
 	}
+	else if (mouseOverTranspose != -1)
+	{
+		switch (mouseOverTranspose)
+		{
+		case 0:
+			this->transpose = -24;
+			break;
+		case 1:
+			this->transpose = -12;
+			break;
+		case 2:
+			this->transpose = 0;
+			break;
+		case 3:
+			this->transpose = 12;
+			break;
+		case 4:
+			this->transpose = 24;
+			break;
+		default:
+			this->transpose = 0; // Default to 0 if an unexpected value is encountered
+			break;
+		}
+
+		this->audioProcessor.getPit().setBallsTranspose(this->transpose);
+
+		repaint();
+		return;
+	}
 }
 
 void BallPitAudioProcessorEditor::mouseDrag(const juce::MouseEvent& event)
@@ -1122,4 +1195,39 @@ bool BallPitAudioProcessorEditor::keyPressed(const juce::KeyPress& key, juce::Co
 	}
 
 	return false; // key not handled
+}
+
+void BallPitAudioProcessorEditor::drawTranspsoe(juce::Graphics& g)
+{
+	int chosenTranspose = 2;
+	switch (this->transpose)
+	{
+	case -24:
+		chosenTranspose = 0;
+		break;
+	case -12:
+		chosenTranspose = 1;
+		break;
+	case 0:
+		chosenTranspose = 2;
+		break;
+	case 12:
+		chosenTranspose = 3;
+		break;
+	case 24:
+		chosenTranspose = 4;
+		break;
+	default:
+		chosenTranspose = 2; // Default to 0 if an unexpected value is encountered
+		break;
+	}
+
+	g.setColour(BUTTON_BG_COLOUR.withAlpha(0.6f));
+	g.fillRect((655 + 30 * chosenTranspose), 127, 29, 19);
+	g.setColour(BUTTON_TEXT_COLOUR);
+	g.drawText("-24", 656, 128, 28, 19, juce::Justification::centred);
+	g.drawText("-12", 686, 128, 28, 19, juce::Justification::centred);
+	g.drawText("0",   716, 128, 28, 19, juce::Justification::centred);
+	g.drawText("12",  746, 128, 28, 19, juce::Justification::centred);
+	g.drawText("24",  776, 128, 28, 19, juce::Justification::centred);
 }

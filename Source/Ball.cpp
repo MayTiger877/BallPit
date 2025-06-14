@@ -367,8 +367,9 @@ void Ball::edgeBounce()
 			jassert((edgeIndex >= 0) && (edgeIndex < 1568));
 			if ((this->isMoving) && (speedX != NO_SPEED))
 			{
+				int note = abstractedEdgeDuplicate[edgeIndex] + transpose;
 				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));
-				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate, this->delaySettings.delayAmount,
+				this->edgeListener->onEdgeHit(note, noteVelocity, sampleRate, this->delaySettings.delayAmount,
 											  this->delaySettings.delayRate, this->delaySettings.delayFeedback, this->delaySettings.delayNoteMovement);
 			}
 		}
@@ -399,8 +400,9 @@ void Ball::edgeBounce()
 			jassert((edgeIndex >= 0) && (edgeIndex < 1568));
 			if ((this->isMoving) && (speedY != NO_SPEED))
 			{
+				int note = abstractedEdgeDuplicate[edgeIndex] + transpose;
 				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));
-				this->edgeListener->onEdgeHit(abstractedEdgeDuplicate[edgeIndex], noteVelocity, sampleRate, this->delaySettings.delayAmount,
+				this->edgeListener->onEdgeHit(note, noteVelocity, sampleRate, this->delaySettings.delayAmount,
 											  this->delaySettings.delayRate, this->delaySettings.delayFeedback, this->delaySettings.delayNoteMovement);
 			}
 		}

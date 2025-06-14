@@ -57,6 +57,14 @@ void Pit::setBallsSizePercentage(float newSizePercentage)
 	}
 }
 
+void Pit::setBallsTranspose(int newTranspose)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		balls[i]->setBallTranspose(newTranspose);
+	}
+}
+
 void Pit::setBallParams(int index, float x, float y, float radius, float velocity, float angle, int ballSpeedType, DelaySettings newDelaySettings)
 {
 	balls[index]->setBallSpeedType(ballSpeedType);

@@ -591,7 +591,7 @@ juce::StringArray getDelayRateTypes()
 
 juce::StringArray getDelayNoteMovementTypes()
 {
-	return { "None", "Up", "Down", "Up and Down", "Down and Up", "Random" };
+	return { "Same note", "Up", "Down", "Up and Down", "Down and Up", "Random" };
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::createParameters()

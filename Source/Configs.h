@@ -44,7 +44,7 @@
 //-----------------------------------------------------------------------
 // Sizes and positions map
 
-#define SIZE_PERCENTAGE_COMBOBOX_BOUNDS juce::Rectangle<int>(570, 13, 100, 25)
+#define SIZE_PERCENTAGE_COMBOBOX_BOUNDS juce::Rectangle<int>(585, 20, 100, 25)
 #define SIZE_PERCENTAGE_100 1.0f
 #define SIZE_PERCENTAGE_125 1.25f
 #define SIZE_PERCENTAGE_150 1.5f
@@ -76,7 +76,7 @@
 #define BALL_2_COLOUR juce::Colours::crimson
 #define BALL_3_COLOUR juce::Colours::orange
 
-#define BALLS_TABS_BOUNDS juce::Rectangle<int>(417, 85, 205, 563)
+#define BALLS_TABS_BOUNDS juce::Rectangle<int>(417, 238, 412, 410)
 #define BALLS_TAB_0_BOUNDS juce::Rectangle<int>(420, 496, 68, 43)
 #define BALLS_TAB_1_BOUNDS juce::Rectangle<int>(420, 546, 68, 43)
 #define BALLS_TAB_2_BOUNDS juce::Rectangle<int>(420, 596, 68, 43)
@@ -112,8 +112,8 @@
 #define SCALE_RANDOM_DICE_MAX_X (SCALE_PARAMS_DICE_BOUNDS.getX() + SCALE_PARAMS_DICE_BOUNDS.getWidth())
 #define SCALE_RANDOM_DICE_MAX_Y (SCALE_PARAMS_DICE_BOUNDS.getY() + SCALE_PARAMS_DICE_BOUNDS.getHeight())
 
-#define START_STOP_BUTTON_BOUNDS juce::Rectangle<int>(43, 13, 100, 25)
-#define PRESET_MANAGER_MENU_BUTTON_BOUNDS juce::Rectangle<int>(675, 13, 100, 25)
+#define START_STOP_BUTTON_BOUNDS juce::Rectangle<int>(43, 20, 100, 25)
+#define PRESET_MANAGER_MENU_BUTTON_BOUNDS juce::Rectangle<int>(690, 20, 100, 25)
 
 #define QUANTIZATION_DIVISION_COMBOBOX_BOUNDS juce::Rectangle<int>(30, 530, 45, 20)
 #define QUANTIZATION_KNOB_BOUNDS juce::Rectangle<int>(80, 515, 55, 55)
@@ -123,13 +123,17 @@
 #define COLLISION_BUTTON_BOUNDS juce::Rectangle<int>(30, 600, 90, 40)
 #define BALLS_POSITIONING_TYPE_COMBOBOX_BOUNDS juce::Rectangle<int>(210, 610, 85, 20)
 
-#define DELAY_AMOUNT_SLIDER_BOUNDS juce::Rectangle<int>(660, 125, 145, 55) 
-#define DELAY_FEEDBACK_SLIDER_BOUNDS juce::Rectangle<int>(670, 175, 145, 55)
-#define DELAY_RATE_SLIDER_BOUNDS juce::Rectangle<int>(680, 255, 90, 20)
-#define DELAY_NOTE_MOVEMENT_COMBOBOX_BOUNDS juce::Rectangle<int>(680, 300, 90, 20)
+#define DELAY_AMOUNT_SLIDER_BOUNDS juce::Rectangle<int>(660, 292, 145, 55) 
+#define DELAY_FEEDBACK_SLIDER_BOUNDS juce::Rectangle<int>(670, 345, 145, 55)
+#define DELAY_RATE_SLIDER_BOUNDS juce::Rectangle<int>(680, 421, 90, 20)
+#define DELAY_NOTE_MOVEMENT_COMBOBOX_BOUNDS juce::Rectangle<int>(680, 468, 90, 20)
 
+#define TRANSPOSE_RECTANGLE_BOUNDS juce::Rectangle<int>(654, 126, 150, 21)
 
-//-----------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------
 // Ball Position Values
 
 // X Slider
@@ -331,10 +335,10 @@
 //-----------------------------------------------------------------------
 // Delay Note Movement Values
 // todo- add more options for the movement of the notes in the delay
-#define DELAY_NOTE_MOVEMENT_NONE 1
+#define DELAY_NOTE_MOVEMENT_SAME 1
 #define DELAY_NOTE_MOVEMENT_UP 2
 #define DELAY_NOTE_MOVEMENT_DOWN 3
 #define DELAY_NOTE_MOVEMENT_UP_DOWN 4
 #define DELAY_NOTE_MOVEMENT_DOWN_UP 5
 #define DELAY_NOTE_MOVEMENT_RANDOM 6
-#define DELAY_NOTE_MOVEMENT_DEFAULT DELAY_NOTE_MOVEMENT_NONE
+#define DELAY_NOTE_MOVEMENT_DEFAULT DELAY_NOTE_MOVEMENT_SAME

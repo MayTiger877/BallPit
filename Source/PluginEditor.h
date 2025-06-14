@@ -97,6 +97,10 @@ private:
 	void changeXAndYToSnapToGrid();
 	void changeXAndYToFree();
 
+	int transpose = 0;
+	int mouseOverTranspose = -1;
+	void drawTranspsoe(juce::Graphics& g);
+
 	juce::TextButton startStopButton;
 	juce::TextButton addRemoveBallButton;
 

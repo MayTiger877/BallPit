@@ -65,6 +65,8 @@ public:
 	bool isBallMoving() { return isMoving; }
 	void setBallMoving(bool isMoving) { this->isMoving = isMoving; }
 
+	void setBallTranspose(int newTranspose) { this->transpose = newTranspose; }
+
     void draw(juce::Graphics& g) const;
 
 	float isMouseInsideBall(juce::Point<float> mousePosition) const;
@@ -86,6 +88,7 @@ private:
     bool active;
     int ballIndex;
     int ballSpeedType = 0;
+	int transpose = 0;
 
 	DelaySettings delaySettings;
 	juce::Point<float> delayPoints[3];
