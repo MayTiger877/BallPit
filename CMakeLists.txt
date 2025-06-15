@@ -57,6 +57,7 @@ target_sources(BallPit PRIVATE
     Source/Ball.cpp
     Source/Ball.h
     Source/Configs.h
+    Source/Configs.cpp
     Source/CostumeComboBox.cpp
     Source/CostumeComboBox.h
     Source/CostumeDelaySliders.cpp
