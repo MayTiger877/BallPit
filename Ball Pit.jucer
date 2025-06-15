@@ -32,6 +32,7 @@
               file="Source/PresetManagerGUI.h"/>
       </GROUP>
       <FILE id="efpKvr" name="Configs.h" compile="0" resource="0" file="Source/Configs.h"/>
+      <FILE id="hg2OzF" name="Configs.cpp" compile="1" resource="0" file="Source/Configs.cpp"/>
       <FILE id="ipSPwC" name="CostumeLogger.h" compile="0" resource="0" file="Source/CostumeLogger.h"/>
       <FILE id="DMtabk" name="Scales.cpp" compile="1" resource="0" file="Source/Scales.cpp"/>
       <FILE id="RRSQOo" name="Scales.h" compile="0" resource="0" file="Source/Scales.h"/>

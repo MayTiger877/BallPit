@@ -8,8 +8,20 @@
   ==============================================================================
 */
 
+#ifndef CONFIGS_H
+#define CONFIGS_H
+
+
 #pragma once
 #include <JuceHeader.h>
+
+//-----------------------------------------------------------------------
+// f*** it, i am using a globalish var....
+extern int chosenTabIndex;
+
+void setChosenTabIndex(int index);
+
+int getChosenTabIndex();
 
 //-----------------------------------------------------------------------
 // defines and constants
@@ -37,8 +49,8 @@
 #define NOTE_MIDI_DURATION 0.015 //ms
 
 #define MAIN_BG_COLOUR juce::Colour::fromRGB(50, 60, 67)
-#define BUTTON_BG_COLOUR juce::Colour::fromRGB(98, 128, 143).darker()
-#define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(212, 201, 190).darker()
+#define BUTTON_BG_COLOUR juce::Colour::fromRGB(98, 128, 143).darker(0.2f)
+#define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(212, 201, 190).darker(0.3f)
 
 
 //-----------------------------------------------------------------------
@@ -352,3 +364,6 @@
 #define PROBABILITY_STEP 1.0f
 #define PROBABILITY_DEFAULT 100.0f
 #define PROBABILITY_DOUBLE_CLICK_VALUE PROBABILITY_DEFAULT
+
+
+#endif // CONFIGS_H

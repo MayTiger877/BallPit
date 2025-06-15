@@ -1090,6 +1090,24 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 	{
 		if (this->audioProcessor.getPit().getBalls()[ballBeingDragged.first]->isActive() == true)
 		{
+			currentBallFocused = ballBeingDragged.first;
+			setChosenTabIndex(currentBallFocused);
+			if (currentBallFocused == 0)
+			{
+				auto tabsSVG = juce::MemoryInputStream(BinaryData::Ball_tab_0_svg, BinaryData::Ball_tab_0_svgSize, false);
+				tabsDrawable = juce::Drawable::createFromImageDataStream(tabsSVG);
+			}
+			else if (currentBallFocused == 1)
+			{
+				auto tabsSVG = juce::MemoryInputStream(BinaryData::Ball_tab_1_svg, BinaryData::Ball_tab_1_svgSize, false);
+				tabsDrawable = juce::Drawable::createFromImageDataStream(tabsSVG);
+			}
+			else if (currentBallFocused == 2)
+			{
+				auto tabsSVG = juce::MemoryInputStream(BinaryData::Ball_tab_2_svg, BinaryData::Ball_tab_2_svgSize, false);
+				tabsDrawable = juce::Drawable::createFromImageDataStream(tabsSVG);
+			}
+			
 			mouseIsDragging = true;
 		}
 	}
@@ -1126,6 +1144,7 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 	{
 		jassert(mouseOverTab >= 0 && mouseOverTab < 4);
 		currentBallFocused = mouseOverTab;
+		setChosenTabIndex(currentBallFocused);
 		displayKnobsByTab();
 
 		if (currentBallFocused == 0)

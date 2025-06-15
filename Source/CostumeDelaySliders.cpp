@@ -67,13 +67,30 @@ MyCostumeDelayFeedbackLAF::MyCostumeDelayFeedbackLAF()
 void MyCostumeDelayFeedbackLAF::drawRotarySlider(Graphics& g, int x, int y, int width, int height, float sliderPos,
     const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider)
 {    
-    g.setColour(BALL_1_COLOUR.withAlpha(juce::jmap(sliderPos, 0.0f, 1.0f, 0.4f, 1.0f)));
+    juce::Colour currentBallColour;
+    switch (getChosenTabIndex())
+    {
+        case 0: // Ball 1
+            currentBallColour = BALL_1_COLOUR;
+		    break;
+        case 1: // Ball 2
+			currentBallColour = BALL_2_COLOUR;
+            break;
+		case 2: // Ball 3
+			currentBallColour = BALL_3_COLOUR;
+			break;
+		default: // Default to Ball 1
+			currentBallColour = BALL_1_COLOUR;
+			break;
+    }
+
+    g.setColour(currentBallColour.withAlpha(juce::jmap(sliderPos, 0.0f, 1.0f, 0.4f, 1.0f)));
     g.fillEllipse((width / 8), height - 33.0f, 30.0f, 30.0f);
 
-    g.setColour(BALL_1_COLOUR.withAlpha(juce::jmap(sliderPos, 0.0f, 1.0f, 0.0f, 0.7f)));
+    g.setColour(currentBallColour.withAlpha(juce::jmap(sliderPos, 0.0f, 1.0f, 0.0f, 0.7f)));
     g.fillEllipse((width / 8) + 40.0f, height - 23.0f, 20.0f, 20.0f);
     
-    g.setColour(BALL_1_COLOUR.withAlpha(juce::jmap(sliderPos, 0.0f, 1.0f, 0.0f, 0.5f)));
+    g.setColour(currentBallColour.withAlpha(juce::jmap(sliderPos, 0.0f, 1.0f, 0.0f, 0.5f)));
     g.fillEllipse((width / 8) + 70.0f, height - 15.0f, 12.0f, 12.0f);
 
     g.setColour(BUTTON_TEXT_COLOUR);
