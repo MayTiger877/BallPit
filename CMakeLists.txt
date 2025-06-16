@@ -38,7 +38,7 @@ add_subdirectory(${JUCE_DIR} JUCE)
 set(CMAKE_CXX_STANDARD 20)
 
 juce_add_plugin(BallPit
-    COMPANY_NAME "YourCompany"
+    COMPANY_NAME "MayTigerPlugins"
     IS_SYNTH TRUE
     IS_MIDI_EFFECT TRUE
     NEEDS_MIDI_INPUT FALSE
@@ -96,10 +96,17 @@ file(GLOB PRESET_FILES "Presets/*.preset")
 juce_add_binary_data(PresetsData SOURCES ${PRESET_FILES})
 
 target_link_libraries(BallPit PRIVATE
-    juce::juce_audio_utils
-    juce::juce_dsp
-    juce::juce_gui_extra
+    juce::juce_audio_basics
+    juce::juce_audio_devices
+    juce::juce_audio_formats
     juce::juce_audio_plugin_client
+    juce::juce_audio_processors
+    juce::juce_core
+    juce::juce_data_structures
+    juce::juce_events
+    juce::juce_graphics
+    juce::juce_gui_basics
+    juce::juce_gui_extra
     ResourcesData
 )
 
