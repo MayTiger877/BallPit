@@ -91,6 +91,8 @@ private:
 	BallSlidersAndAttachments ballsSlidersAndAttachments[3];
 	std::unique_ptr<juce::Drawable> tabsDrawable;
 	int mouseOverTab = -1;
+
+	void configureAttachments();
 	void initiateComponents();
 	void displayKnobsByTab();
 

@@ -212,12 +212,12 @@ float getDelayRateInSeconds(int delayRateChoice, float bpm, int sampleRate)
 	const float secondsPerDivision = secondsPerBeat / 4.0f; // 1 division = 1/4 of a beat
 	switch (delayRateChoice)
 	{
-	case 0: return secondsPerDivision * 4.0f; // 4
-	case 1: return secondsPerDivision * 2.0f; // 2
-	case 2: return secondsPerDivision;         // 1
-	case 3: return secondsPerDivision / 2.0f; // 1/2
-	case 4: return secondsPerDivision / 4.0f; // 1/4
-	case 5: return secondsPerDivision / 8.0f; // 1/8
+	case 1: return secondsPerDivision * 4.0f; // 4
+	case 2: return secondsPerDivision * 2.0f; // 2
+	case 3: return secondsPerDivision * 1.0F; // 1
+	case 4: return secondsPerDivision / 2.0f; // 1/2
+	case 5: return secondsPerDivision / 4.0f; // 1/4
+	case 6: return secondsPerDivision / 8.0f; // 1/8
 	default: return secondsPerDivision;        // Default to 1 division
 	}
 }
@@ -571,6 +571,11 @@ juce::StringArray getScaleOptions()
 			 "Pentatonic", "Minor Pentatonic" };
 }
 
+juce::StringArray getRootNoteTypes()
+{
+	return { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+}
+
 juce::StringArray getEdgeTypes()
 {
 	return { "Cyclic up", "Cyclic down", "Ping pong", "Random"};
@@ -632,7 +637,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		params.add(std::make_unique<juce::AudioParameterBool>(xVelocityInverterId, "x velocity inverter", false));
 		params.add(std::make_unique<juce::AudioParameterBool>(yVelocityInverterId, "x velocity inverter", false));
 		params.add(std::make_unique<juce::AudioParameterBool>(BallActivationId, "BallActivation", ((i == 0) ? true : false)));
-		params.add(std::make_unique<juce::AudioParameterFloat>(delayAmountId, "Delay Amount", DELAY_AMOUNT_MIN, DELAY_AMOUNT_MAX, DELAY_AMOUNT_STEP));
+		params.add(std::make_unique<juce::AudioParameterInt>(delayAmountId, "Delay Amount", DELAY_AMOUNT_MIN, DELAY_AMOUNT_MAX, DELAY_AMOUNT_STEP));
 		params.add(std::make_unique<juce::AudioParameterFloat>(delayFeedbackId, "Delay Feedback", DELAY_FEEDBACK_MIN, DELAY_FEEDBACK_MAX, DELAY_FEEDBACK_STEP));
 		params.add(std::make_unique<juce::AudioParameterChoice>(delayRateId, "Delay Rate", getDelayRateTypes(), DELAY_RATE_DEFAULT));
 		params.add(std::make_unique<juce::AudioParameterChoice>(delayNoteMovementId, "Delay Note Movement", getDelayNoteMovementTypes(), DELAY_NOTE_MOVEMENT_DEFAULT));
@@ -642,16 +647,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	params.add(std::make_unique<juce::AudioParameterFloat>(edgePhaseId, "Edge Phase", EDGE_PHASE_MIN, EDGE_PHASE_MAX, EDGE_PHASE_STEP));
 
 	std::string edgeDenomenatorId = "edgeDenomenator";
-	params.add(std::make_unique<juce::AudioParameterFloat>(edgeDenomenatorId, "Edge Denomenator", EDGE_DENOMINATOR_MIN, EDGE_DENOMINATOR_MAX, EDGE_DENOMINATOR_STEP));
+	params.add(std::make_unique<juce::AudioParameterInt>(edgeDenomenatorId, "Edge Denomenator", EDGE_DENOMINATOR_MIN, EDGE_DENOMINATOR_MAX, EDGE_DENOMINATOR_STEP));
 
 	std::string edgeRangeId = "edgeRange";
-	params.add(std::make_unique<juce::AudioParameterFloat>(edgeRangeId, "Edge Range", EDGE_RANGE_MIN, EDGE_RANGE_MAX, EDGE_RANGE_STEP));
+	params.add(std::make_unique<juce::AudioParameterInt>(edgeRangeId, "Edge Range", EDGE_RANGE_MIN, EDGE_RANGE_MAX, EDGE_RANGE_STEP));
 
 	std::string scaleKindId = "scaleChoice";
 	params.add(std::make_unique<juce::AudioParameterChoice>(scaleKindId, "Scale", getScaleOptions(), SCALE_DEFAULT));
 	
 	std::string rootNoteId = "rootNote";
-	params.add(std::make_unique<juce::AudioParameterInt>(rootNoteId, "Root Note", ROOT_NOTE_C, ROOT_NOTE_B, ROOT_NOTE_DEFAULT));
+	params.add(std::make_unique<juce::AudioParameterChoice>(rootNoteId, "Root Note", getRootNoteTypes(), ROOT_NOTE_DEFAULT));
 
 	std::string edgeTypeID = "edgeType";
 	params.add(std::make_unique<juce::AudioParameterChoice>(edgeTypeID, "Edge Type", getEdgeTypes(), EDGE_TYPE_DEFAULT));

@@ -24,97 +24,12 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 
 	GUIState = juce::ValueTree("GUIState");
 
-	// Configure and attach parameters and sliders and fx
-	for (int i = 0; i < 3; i++)
-	{
-		std::string ballXId = "ballX" + std::to_string(i);
-		ballsSlidersAndAttachments[i].xAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballXId, ballsSlidersAndAttachments[i].xSlider);
-
-		std::string ballYID = "ballY" + std::to_string(i);
-		ballsSlidersAndAttachments[i].yAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballYID, ballsSlidersAndAttachments[i].ySlider);
-
-		std::string ballRadiusID = "ballRadius" + std::to_string(i);
-		ballsSlidersAndAttachments[i].radiusAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballRadiusID, ballsSlidersAndAttachments[i].radiusSlider);
-		
-		std::string ballVelocityID = "ballVelocity" + std::to_string(i);
-		ballsSlidersAndAttachments[i].velocityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballVelocityID, ballsSlidersAndAttachments[i].velocitySlider);
-
-		std::string ballAngleID = "ballAngle" + std::to_string(i);
-		ballsSlidersAndAttachments[i].angleAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballAngleID, ballsSlidersAndAttachments[i].angleSlider);
-
-		std::string ballXVelocityID = "ballXVelocity" + std::to_string(i);
-		ballsSlidersAndAttachments[i].xVelocityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballXVelocityID, ballsSlidersAndAttachments[i].xVelocitySlider);
-
-		std::string ballYVelocityID = "ballYVelocity" + std::to_string(i);
-		ballsSlidersAndAttachments[i].yVelocityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballYVelocityID, ballsSlidersAndAttachments[i].yVelocitySlider);
-	
-		std::string xVelocityInverterID = "xVelocityInverter" + std::to_string(i);
-		ballsSlidersAndAttachments[i].xVelocityInverterAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, xVelocityInverterID, ballsSlidersAndAttachments[i].xVelocityInverter);
-
-		std::string yVelocityInverterID = "yVelocityInverter" + std::to_string(i);
-		ballsSlidersAndAttachments[i].yVelocityInverterAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, yVelocityInverterID, ballsSlidersAndAttachments[i].yVelocityInverter);
-
-		// fx
-		std::string dealyAmountID = "delayAmount" + std::to_string(i);
-		ballEffectsSlidersAndAttachments[i].delayAmountAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, dealyAmountID, ballEffectsSlidersAndAttachments[i].delayAmountSlider);
-
-		std::string delayFeedbackID = "delayFeedback" + std::to_string(i);
-		ballEffectsSlidersAndAttachments[i].delayFeedbackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, delayFeedbackID, ballEffectsSlidersAndAttachments[i].delayFeedbackSlider);
-
-		std::string delayRateID = "delayRate" + std::to_string(i);
-		ballEffectsSlidersAndAttachments[i].delayRateAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, delayRateID, ballEffectsSlidersAndAttachments[i].delayRateComboBox);
-
-		std::string delayNoteMovementID = "delayNoteMovement" + std::to_string(i);
-		ballEffectsSlidersAndAttachments[i].delayNoteMovementAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, delayNoteMovementID, ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox);
-	}
-
-	std::string edgePhaseID = "edgePhase";
-	edgePhaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgePhaseID, edgePhaseSlider);
-
-	std::string edgeDenomenatorID = "edgeDenomenator";
-	edgeDenomenatorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgeDenomenatorID, edgeDenomenatorSlider);
-
-	std::string edgeRangeID = "edgeRange";
-	edgeRangeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgeRangeID, edgeRangeSlider);
-
-	std::string scaleChoiceID = "scaleChoice";
-	scaleChoiceAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, scaleChoiceID, scaleChoiceComboBox);
-
-	std::string rootNoteID = "rootNote";
-	rootNoteAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, rootNoteID, rootNoteComboBox);
-
-	std::string edgeTypeID = "edgeType";
-	edgeTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, edgeTypeID, edgeTypeComboBox);
-
-	std::string ballsPositioningTypeID = "ballsPositioningType";
-	ballsPositioningTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, ballsPositioningTypeID, ballsPositioningTypeComboBox);
-
-	std::string snapToGridID = "snapToGrid";
-	snapToGridAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, snapToGridID, snapToGridButton);
-
-	std::string collisionID = "collision";
-	collisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, collisionID, collisionButton);
-	
-	std::string quantizationID = "quantization";
-	quantizationAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, quantizationID, quantizationSlider);
-
-	std::string quantizationDivisionID = "quantizationDivision";
-	quantizationDivisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, quantizationDivisionID, quantizationDivisionComboBox);
-
-	std::string volumeVariationID = "volumeVariation";
-	volumeVariationAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, volumeVariationID, volumeVariationSlider);
-
-	std::string sizePercentageID = "sizePercentage";
-	sizePercentageAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, sizePercentageID, sizePercentageComboBox);
-
-	std::string probabilityID = "probability";
-	probabilityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, probabilityID, probabilitySlider);
+	initiateComponents();
+	configureAttachments();
 	
 	audioProcessor.addChangeListener(this); // Register as listener
 
 	content.addChildComponent(&presetPanel);
-
-	initiateComponents();
 
 	if (audioProcessor.getWasGUIUploaded() == false) // save default state only at first time gui is built
 	{
@@ -269,6 +184,95 @@ void BallPitAudioProcessorEditor::loadGUIState()
 	volumeVariationSlider.setValue(GUIState.getProperty("volumeVariation"), juce::dontSendNotification);
 	sizePercentageComboBox.setSelectedItemIndex(GUIState.getProperty("sizePercentage"), juce::dontSendNotification);
 	probabilitySlider.setValue(GUIState.getProperty("probability"), juce::dontSendNotification);
+}
+
+void BallPitAudioProcessorEditor::configureAttachments()
+{
+	// Configure and attach parameters and sliders and fx
+	for (int i = 0; i < 3; i++)
+	{
+		std::string ballXId = "ballX" + std::to_string(i);
+		ballsSlidersAndAttachments[i].xAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballXId, ballsSlidersAndAttachments[i].xSlider);
+
+		std::string ballYID = "ballY" + std::to_string(i);
+		ballsSlidersAndAttachments[i].yAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballYID, ballsSlidersAndAttachments[i].ySlider);
+
+		std::string ballRadiusID = "ballRadius" + std::to_string(i);
+		ballsSlidersAndAttachments[i].radiusAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballRadiusID, ballsSlidersAndAttachments[i].radiusSlider);
+
+		std::string ballVelocityID = "ballVelocity" + std::to_string(i);
+		ballsSlidersAndAttachments[i].velocityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballVelocityID, ballsSlidersAndAttachments[i].velocitySlider);
+
+		std::string ballAngleID = "ballAngle" + std::to_string(i);
+		ballsSlidersAndAttachments[i].angleAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballAngleID, ballsSlidersAndAttachments[i].angleSlider);
+
+		std::string ballXVelocityID = "ballXVelocity" + std::to_string(i);
+		ballsSlidersAndAttachments[i].xVelocityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballXVelocityID, ballsSlidersAndAttachments[i].xVelocitySlider);
+
+		std::string ballYVelocityID = "ballYVelocity" + std::to_string(i);
+		ballsSlidersAndAttachments[i].yVelocityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, ballYVelocityID, ballsSlidersAndAttachments[i].yVelocitySlider);
+
+		std::string xVelocityInverterID = "xVelocityInverter" + std::to_string(i);
+		ballsSlidersAndAttachments[i].xVelocityInverterAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, xVelocityInverterID, ballsSlidersAndAttachments[i].xVelocityInverter);
+
+		std::string yVelocityInverterID = "yVelocityInverter" + std::to_string(i);
+		ballsSlidersAndAttachments[i].yVelocityInverterAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, yVelocityInverterID, ballsSlidersAndAttachments[i].yVelocityInverter);
+
+		// delay
+		std::string dealyAmountID = "delayAmount" + std::to_string(i);
+		ballEffectsSlidersAndAttachments[i].delayAmountAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, dealyAmountID, ballEffectsSlidersAndAttachments[i].delayAmountSlider);
+
+		std::string delayFeedbackID = "delayFeedback" + std::to_string(i);
+		ballEffectsSlidersAndAttachments[i].delayFeedbackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, delayFeedbackID, ballEffectsSlidersAndAttachments[i].delayFeedbackSlider);
+
+		std::string delayRateID = "delayRate" + std::to_string(i);
+		ballEffectsSlidersAndAttachments[i].delayRateAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, delayRateID, ballEffectsSlidersAndAttachments[i].delayRateComboBox);
+
+		std::string delayNoteMovementID = "delayNoteMovement" + std::to_string(i);
+		ballEffectsSlidersAndAttachments[i].delayNoteMovementAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, delayNoteMovementID, ballEffectsSlidersAndAttachments[i].delayNoteMovementComboBox);
+	}
+
+	std::string edgePhaseID = "edgePhase";
+	edgePhaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgePhaseID, edgePhaseSlider);
+
+	std::string edgeDenomenatorID = "edgeDenomenator";
+	edgeDenomenatorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgeDenomenatorID, edgeDenomenatorSlider);
+
+	std::string edgeRangeID = "edgeRange";
+	edgeRangeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, edgeRangeID, edgeRangeSlider);
+
+	std::string scaleChoiceID = "scaleChoice";
+	scaleChoiceAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, scaleChoiceID, scaleChoiceComboBox);
+
+	std::string rootNoteID = "rootNote";
+	rootNoteAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, rootNoteID, rootNoteComboBox);
+
+	std::string edgeTypeID = "edgeType";
+	edgeTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, edgeTypeID, edgeTypeComboBox);
+
+	std::string ballsPositioningTypeID = "ballsPositioningType";
+	ballsPositioningTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, ballsPositioningTypeID, ballsPositioningTypeComboBox);
+
+	std::string snapToGridID = "snapToGrid";
+	snapToGridAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, snapToGridID, snapToGridButton);
+
+	std::string collisionID = "collision";
+	collisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.valueTreeState, collisionID, collisionButton);
+
+	std::string quantizationID = "quantization";
+	quantizationAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, quantizationID, quantizationSlider);
+
+	std::string quantizationDivisionID = "quantizationDivision";
+	quantizationDivisionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, quantizationDivisionID, quantizationDivisionComboBox);
+
+	std::string volumeVariationID = "volumeVariation";
+	volumeVariationAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, volumeVariationID, volumeVariationSlider);
+
+	std::string sizePercentageID = "sizePercentage";
+	sizePercentageAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.valueTreeState, sizePercentageID, sizePercentageComboBox);
+
+	std::string probabilityID = "probability";
+	probabilityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, probabilityID, probabilitySlider);
 }
 
 void BallPitAudioProcessorEditor::displayKnobsByTab()

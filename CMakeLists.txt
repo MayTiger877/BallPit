@@ -11,10 +11,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 # Minimum MacOS target, set globally
 if (${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
     set(CMAKE_OSX_DEPLOYMENT_TARGET 11.0 CACHE STRING "Minimum OS X deployment version" FORCE)
-
-    #code signing to run on an iOS device:
-    #    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer" CACHE STRING "" FORCE)
-    #    set(CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "XXXXXXXXXX" CACHE STRING "" FORCE)
 else ()
     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.11" CACHE STRING "Minimum OS X deployment version" FORCE)
 endif ()
@@ -29,7 +25,8 @@ endif ()
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 # Set this to the path where JUCE was cloned by GitHub Actions or locally
-set(JUCE_DIR "${CMAKE_SOURCE_DIR}/JUCE")
+# set(JUCE_DIR "${CMAKE_SOURCE_DIR}/../JUCE") # my pc
+set(JUCE_DIR "${CMAKE_SOURCE_DIR}/JUCE") # CI pipeline
 
 # Add JUCE to the project directly (this is the standard way for JUCE projects)
 add_subdirectory(${JUCE_DIR} JUCE)
