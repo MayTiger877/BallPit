@@ -533,6 +533,10 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	startStopButton.setButtonText("Start");
 	startStopButton.onClick = [this]()
 		{
+			if (this->audioProcessor.getPit().areAnyBallsInPit() == false)
+			{
+				return; // Do not start if no balls are in the pit
+			}
 			audioProcessor.togglePlayState();
 			if (audioProcessor.getPit().areBallsMoving())
 			{
@@ -553,6 +557,10 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	addRemoveBallButton.onClick = [this]()
 		{
 			std::string BallActivationId = "BallActivation" + std::to_string(this->currentBallFocused);
+			if (this->audioProcessor.getPit().areBallsMoving() == true)
+			{
+				return; // Do not add/remove balls while the pit is playing
+			}
 			auto* activationParam = audioProcessor.valueTreeState.getParameter(BallActivationId);
 			if (audioProcessor.getPit().getBalls()[this->currentBallFocused]->isActive() == true)
 			{

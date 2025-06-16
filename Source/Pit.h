@@ -44,6 +44,14 @@ public:
 
 	int getPitEdgeType() { return this->edge.getEdgType(); }
 
+	bool areAnyBallsInPit() const 
+	{
+		if (balls[0]->isActive() || balls[1]->isActive() || balls[2]->isActive())
+			return true;
+
+		return false;
+	}
+
 private:
 	
 	Edge edge;
