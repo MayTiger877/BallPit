@@ -195,17 +195,17 @@ int getChosenTabIndex();
 //-----------------------------------------------------------------------
 // Velocity Components
 
-#define BALL_X_VELOCITY_MIN 0.0f
-#define BALL_X_VELOCITY_MAX 10.0f
-#define BALL_X_VELOCITY_STEP 1.0f
-#define BALL_X_VELOCITY_DEFAULT 1.0f
-#define BALL_X_VELOCITY_DOUBLE_CLICK_VALUE 1.0f
+#define BALL_X_VELOCITY_MIN 0
+#define BALL_X_VELOCITY_MAX 10
+#define BALL_X_VELOCITY_STEP 1
+#define BALL_X_VELOCITY_DEFAULT 1
+#define BALL_X_VELOCITY_DOUBLE_CLICK_VALUE 1
 
-#define BALL_Y_VELOCITY_MIN 0.0f
-#define BALL_Y_VELOCITY_MAX 10.0f
-#define BALL_Y_VELOCITY_STEP 1.0f
-#define BALL_Y_VELOCITY_DEFAULT 1.0f
-#define BALL_Y_VELOCITY_DOUBLE_CLICK_VALUE 1.0f
+#define BALL_Y_VELOCITY_MIN 0
+#define BALL_Y_VELOCITY_MAX 10
+#define BALL_Y_VELOCITY_STEP 1
+#define BALL_Y_VELOCITY_DEFAULT 1
+#define BALL_Y_VELOCITY_DOUBLE_CLICK_VALUE 1
 
 //-----------------------------------------------------------------------
 // Edge Phase Values

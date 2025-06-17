@@ -128,8 +128,10 @@ private:
 
 	juce::UndoManager m_undoManager;
 
+	std::set<int> activeNotes;  // store MIDI note numbers
+
+	public:
 	// TODO- check that all params are here!
-public:
 	std::vector<juce::String> paramIDs = {
 	"ballX0", "ballY0", "ballRadius0", "ballVelocity0", "ballAngle0", "ballXVelocity0", "ballYVelocity0", "xVelocityInverter0", "yVelocityInverter0", "delayAmount0", "delayFeedback0", "delayRate0", "delayNoteMovement0",
 	"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "ballYVelocity1", "xVelocityInverter1", "yVelocityInverter1", "delayAmount1", "delayFeedback1", "delayRate1", "delayNoteMovement1",

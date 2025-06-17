@@ -424,13 +424,6 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].xVelocitySlider.setRange(BALL_X_VELOCITY_MIN, BALL_X_VELOCITY_MAX, BALL_X_VELOCITY_STEP);
 		ballsSlidersAndAttachments[i].xVelocitySlider.toFront(false);
 		ballsSlidersAndAttachments[i].xVelocitySlider.setLookAndFeel(&this->m_costumeDialLAF);
-		ballsSlidersAndAttachments[i].xVelocitySlider.onValueChange = [this, i]()
-			{
-				ballsSlidersAndAttachments[i].xVelocitySlider.setValue(
-					static_cast<int>(ballsSlidersAndAttachments[i].xVelocitySlider.getValue() + 0.5),
-					juce::dontSendNotification
-				);
-			};
 		content.addChildComponent(ballsSlidersAndAttachments[i].xVelocitySlider);
 
 		// Y Velocity Slider
@@ -442,14 +435,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 		ballsSlidersAndAttachments[i].yVelocitySlider.setRange(BALL_Y_VELOCITY_MIN, BALL_Y_VELOCITY_MAX, BALL_Y_VELOCITY_STEP);
 		ballsSlidersAndAttachments[i].yVelocitySlider.toFront(false);
 		ballsSlidersAndAttachments[i].yVelocitySlider.setLookAndFeel(&this->m_costumeDialLAF);
-		ballsSlidersAndAttachments[i].yVelocitySlider.onValueChange = [this, i]()
-			{
-				ballsSlidersAndAttachments[i].yVelocitySlider.setValue(
-					static_cast<int>(ballsSlidersAndAttachments[i].yVelocitySlider.getValue() + 0.5),
-					juce::dontSendNotification
-				);
-			};
-		content.addChildComponent(ballsSlidersAndAttachments[i].yVelocitySlider);
+		content.addChildComponent(ballsSlidersAndAttachments[i].yVelocitySlider); 
 
 		// xVelocityInverter
 		ballsSlidersAndAttachments[i].xVelocityInverter.setBounds(BALL_X_VELOCITY_INVERTER_BOUNDS);

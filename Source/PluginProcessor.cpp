@@ -390,6 +390,12 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	{
 		clockTimeSeconds = 0.0;
 		getUpdatedBallParams();
+		for (int note : activeNotes)
+		{
+		    auto panicNoteOff = juce::MidiMessage::noteOff(1, note);
+		    midiMessages.addEvent(panicNoteOff, m_samplesPerBlock - 1);
+		}
+		activeNotes.clear();
 	}
 	else 
 	{
@@ -410,7 +416,8 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	m_probability = valueTreeState.getRawParameterValue("probability")->load();
 	if (randomProbabilityDecider > m_probability)
 	{
-		currentNotePlay = 0.0f;
+		// currentNotePlay = 0.0f;
+		currentNotePlay = 1.0f;
 	}
 	double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm;
 	double secondsPerDivision = (secondsPerBeat * quantizationDivision / 4.0); // 1 division = 1/quantizationDivision of a measure
@@ -424,26 +431,63 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			{
 				if (pendingIt->message.isNoteOn())
 				{
-					float var = getVariedNoteVelocity(pendingIt->message.getVelocity());
-					pendingIt->message.setVelocity((currentNotePlay * var)/127);
-					midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition + 1);
-					int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate);
+					// float var = getVariedNoteVelocity(pendingIt->message.getVelocity());
+					// pendingIt->message.setVelocity((currentNotePlay * var)/127);
+					// midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition + 1);
+					// int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate);
 
-					int offSample = pendingIt->samplePosition + noteDurationSamples;
-					juce::MidiMessage noteOff = juce::MidiMessage::noteOff(pendingIt->message.getChannel(), pendingIt->message.getNoteNumber());
-					midiMessages.addEvent(noteOff, pendingIt->samplePosition);
+					// int offSample = pendingIt->samplePosition + noteDurationSamples;
+					// juce::MidiMessage noteOff = juce::MidiMessage::noteOff(pendingIt->message.getChannel(), pendingIt->message.getNoteNumber());
+					// midiMessages.addEvent(noteOff, pendingIt->samplePosition);
 					
-					if (offSample < m_samplesPerBlock) // now add the real note off...
-					{
-						midiMessages.addEvent(noteOff, offSample);
-					}
-					else
-					{
-						int futureSample = offSample - m_samplesPerBlock;
-						eventsToAdd.push_back({ noteOff, futureSample });
-					}
+					// if (offSample < m_samplesPerBlock) // now add the real note off...
+					// {
+					// 	midiMessages.addEvent(noteOff, offSample);
+					// }
+					// else
+					// {
+					// 	int futureSample = offSample - m_samplesPerBlock;
+					// 	eventsToAdd.push_back({ noteOff, futureSample });
+					// }
 
-					pendingIt = pendingEvents.erase(pendingIt);
+					// pendingIt = pendingEvents.erase(pendingIt);
+
+					float var = getVariedNoteVelocity(pendingIt->message.getVelocity());
+				    pendingIt->message.setVelocity((currentNotePlay * var)/127);
+
+				    // [2] BEFORE noteOn, ensure note is turned off if it's active
+				    if (activeNotes.count(pendingIt->message.getNoteNumber()) > 0)
+				    {
+				        int earlyOffSample = juce::jmax(0, pendingIt->samplePosition - 2);
+				        juce::MidiMessage earlyNoteOff = juce::MidiMessage::noteOff(
+				            pendingIt->message.getChannel(), pendingIt->message.getNoteNumber()
+				        );
+				        midiMessages.addEvent(earlyNoteOff, earlyOffSample);
+				        activeNotes.erase(pendingIt->message.getNoteNumber());
+				    }
+				
+				    // [3] Send the noteOn and mark it as active
+				    midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition + 1);
+				    activeNotes.insert(pendingIt->message.getNoteNumber());
+				
+				    // [4] Schedule proper noteOff
+				    int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate);
+				    int offSample = pendingIt->samplePosition + noteDurationSamples;
+				    juce::MidiMessage noteOff = juce::MidiMessage::noteOff(
+				        pendingIt->message.getChannel(), pendingIt->message.getNoteNumber()
+				    );
+				
+				    if (offSample < m_samplesPerBlock)
+				    {
+				        midiMessages.addEvent(noteOff, offSample);
+				    }
+				    else
+				    {
+				        int futureSample = offSample - m_samplesPerBlock;
+				        eventsToAdd.push_back({ noteOff, futureSample });
+				    }
+				
+				    pendingIt = pendingEvents.erase(pendingIt);
 				}
 				else if (pendingIt->message.isNoteOff())
 				{
@@ -483,10 +527,25 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		msg.setVelocity((currentNotePlay * var) / 127);
 		juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
 
+		// if (finalSamplePos < (m_samplesPerBlock + 1))
+		// {
+		// 	midiMessages.addEvent(msg, (finalSamplePos + 1));
+		// 	midiMessages.addEvent(noteOff, finalSamplePos); // Todo - fast midi issue to do
+		// }
+		if (activeNotes.count(msg.getNoteNumber()) > 0)
+		{
+		    int earlyOffSample = juce::jmax(0, finalSamplePos - 2);
+		    juce::MidiMessage earlyNoteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
+		    midiMessages.addEvent(earlyNoteOff, earlyOffSample);
+		    activeNotes.erase(msg.getNoteNumber());
+		}
+
 		if (finalSamplePos < (m_samplesPerBlock + 1))
 		{
-			midiMessages.addEvent(msg, (finalSamplePos + 1));
-			midiMessages.addEvent(noteOff, finalSamplePos); // Todo - fast midi issue to do
+		    midiMessages.addEvent(msg, finalSamplePos + 1); // NoteOn
+		    activeNotes.insert(msg.getNoteNumber());
+		
+		    midiMessages.addEvent(noteOff, finalSamplePos); // Immediate off (if needed)
 		}
 		else
 		{
@@ -632,8 +691,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", BALL_RADIUS_MIN, BALL_RADIUS_MAX, BALL_RADIUS_STEP));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Velocity", BALL_VELOCITY_MIN, BALL_VELOCITY_MAX, BALL_VELOCITY_STEP));
 		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", BALL_ANGLE_MIN, BALL_ANGLE_MAX, BALL_ANGLE_STEP));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballXVelocityId, "XVelocity", BALL_X_VELOCITY_MIN, BALL_X_VELOCITY_MAX, BALL_X_VELOCITY_STEP));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballYVelocityId, "YVelocity", BALL_Y_VELOCITY_MIN, BALL_Y_VELOCITY_MAX, BALL_Y_VELOCITY_STEP));
+		params.add(std::make_unique<juce::AudioParameterInt>(ballXVelocityId, "XVelocity", BALL_X_VELOCITY_MIN, BALL_X_VELOCITY_MAX, BALL_X_VELOCITY_STEP));
+		params.add(std::make_unique<juce::AudioParameterInt>(ballYVelocityId, "YVelocity", BALL_Y_VELOCITY_MIN, BALL_Y_VELOCITY_MAX, BALL_Y_VELOCITY_STEP));
 		params.add(std::make_unique<juce::AudioParameterBool>(xVelocityInverterId, "x velocity inverter", false));
 		params.add(std::make_unique<juce::AudioParameterBool>(yVelocityInverterId, "x velocity inverter", false));
 		params.add(std::make_unique<juce::AudioParameterBool>(BallActivationId, "BallActivation", ((i == 0) ? true : false)));
