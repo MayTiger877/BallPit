@@ -423,8 +423,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	m_probability = valueTreeState.getRawParameterValue("probability")->load();
 	if (randomProbabilityDecider > m_probability)
 	{
-		// currentNotePlay = 0.0f;
-		currentNotePlay = 1.0f;
+		currentNotePlay = 0.0f;
 	}
 	double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm;
 	double secondsPerDivision = (secondsPerBeat * quantizationDivision / 4.0); // 1 division = 1/quantizationDivision of a measure
@@ -438,27 +437,6 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			{
 				if (pendingIt->message.isNoteOn())
 				{
-					// float var = getVariedNoteVelocity(pendingIt->message.getVelocity());
-					// pendingIt->message.setVelocity((currentNotePlay * var)/127);
-					// midiMessages.addEvent(pendingIt->message, pendingIt->samplePosition + 1);
-					// int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate);
-
-					// int offSample = pendingIt->samplePosition + noteDurationSamples;
-					// juce::MidiMessage noteOff = juce::MidiMessage::noteOff(pendingIt->message.getChannel(), pendingIt->message.getNoteNumber());
-					// midiMessages.addEvent(noteOff, pendingIt->samplePosition);
-					
-					// if (offSample < m_samplesPerBlock) // now add the real note off...
-					// {
-					// 	midiMessages.addEvent(noteOff, offSample);
-					// }
-					// else
-					// {
-					// 	int futureSample = offSample - m_samplesPerBlock;
-					// 	eventsToAdd.push_back({ noteOff, futureSample });
-					// }
-
-					// pendingIt = pendingEvents.erase(pendingIt);
-
 					float var = getVariedNoteVelocity(pendingIt->message.getVelocity());
 				    pendingIt->message.setVelocity((currentNotePlay * var)/127);
 
@@ -529,16 +507,11 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		int quantizedSamplePosRelative = quantizedSamplePosAbsolute - static_cast<int>(clockTimeSeconds * m_sampleRate);
 		int finalSamplePos = static_cast<int>((1.0 - quantizationpercent) * metadata.samplePosition + quantizationpercent * quantizedSamplePosRelative);
 		
-		// add volume variation
+		// add volume variation and 
 		float var = getVariedNoteVelocity(msg.getVelocity());
 		msg.setVelocity((currentNotePlay * var) / 127);
 		juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
 
-		// if (finalSamplePos < (m_samplesPerBlock + 1))
-		// {
-		// 	midiMessages.addEvent(msg, (finalSamplePos + 1));
-		// 	midiMessages.addEvent(noteOff, finalSamplePos); // Todo - fast midi issue to do
-		// }
 		if (activeNotes.count(msg.getNoteNumber()) > 0)
 		{
 		    int earlyOffSample = juce::jmax(0, finalSamplePos - 2);

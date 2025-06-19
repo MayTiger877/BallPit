@@ -25,8 +25,8 @@ endif ()
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 # Set this to the path where JUCE was cloned by GitHub Actions or locally
-# set(JUCE_DIR "${CMAKE_SOURCE_DIR}/../JUCE") # my pc
-set(JUCE_DIR "${CMAKE_SOURCE_DIR}/JUCE") # CI pipeline
+set(JUCE_DIR "${CMAKE_SOURCE_DIR}/../JUCE") # my pc
+# set(JUCE_DIR "${CMAKE_SOURCE_DIR}/JUCE") # CI pipeline
 
 # Add JUCE to the project directly (this is the standard way for JUCE projects)
 add_subdirectory(${JUCE_DIR} JUCE)
@@ -41,7 +41,7 @@ juce_add_plugin(BallPit
     NEEDS_MIDI_INPUT FALSE
     NEEDS_MIDI_OUTPUT TRUE
     EDITOR_WANTS_KEYBOARD_FOCUS TRUE
-    COPY_PLUGIN_AFTER_BUILD TRUE
+    COPY_PLUGIN_AFTER_BUILD FALSE
     PLUGIN_MANUFACTURER_CODE Juce
     PLUGIN_CODE Bpit
     FORMATS VST3
@@ -124,3 +124,6 @@ add_custom_target(clean-all
     COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/*.sln
     COMMENT "Cleaning all build artifacts and CMake generated files"
 )
+
+# cmake -B build -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release
+# cmake --build build --config Release

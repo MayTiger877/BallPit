@@ -68,8 +68,6 @@ public:
 	void addParamListeners(juce::AudioProcessorValueTreeState& apvts);
 	juce::AudioProcessorValueTreeState& getValueTreeState() { return valueTreeState; }
 
-	juce::Atomic<bool> isPlaying;
-
 	juce::ValueTree& getGUIState() { return processorGUIState; }
 	void saveGUIState(juce::ValueTree &GUIState);
 
@@ -77,42 +75,44 @@ public:
 
 	void updateGUIFlag(bool newStatus) { wasGUIUploaded = newStatus; }
 	bool getWasGUIUploaded() { return wasGUIUploaded; }
-
-	std::atomic<double> m_bpm {DEFAULT_BPM};
-	juce::AudioPlayHead::TimeSignature m_timeSignature;
-
+	
 	void getUpdatedBallParams();
 	void getUpdatedEdgeParams();
 	void setXYVelocityByTempo(float& xVelocity, float& yVelocity, float ballRadius);
 	void updateQuantization();
-
+	
 	float getVariedNoteVelocity(int currentNoteVelocity);
-
-	void setWasGUIUpdatedToTrue() { this->wasGUIUpdated = true; }
-
+	
+	void setWasGUIUpdatedToTrue() { this->wasGUIUpdated.store(true); }
+	
 	Service::PresetManager& getPresetManager() { return *presetManager; }
-
+	
 	juce::UndoManager& getUndoManager() { return m_undoManager; }
-
+	
 	double getClockTimeSecond() { return clockTimeSeconds; }
 	void setClockTimeSeconds(double newClockTimeSeconds) { this->clockTimeSeconds = newClockTimeSeconds; }
 	void togglePlayState();
-
-	std::atomic<double> m_sampleRate;
-	std::atomic<int> m_samplesPerBlock;
-
-	std::atomic<float> m_probability = 1.0f; // default to 100% probability
-
-private:
+	
+	private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
-
+	
 	Pit pit;
 	juce::MidiBuffer midiBuffer;
 	std::vector<std::unique_ptr<EdgeEventListener>> listeners;
 	std::vector<PendingMidiEvent> pendingEvents;
+	
+	juce::Atomic<bool> isPlaying;
 
+	std::atomic<double> m_sampleRate;
+	std::atomic<int> m_samplesPerBlock;
+	
+	std::atomic<float> m_probability = 1.0f; // default to 100% probability
+	
 	std::atomic<double> clockTimeSeconds = 0.0;
 
+	std::atomic<double> m_bpm {DEFAULT_BPM};
+	std::atomic<juce::AudioPlayHead::TimeSignature> m_timeSignature;
+	
 	std::atomic<float> quantizationpercent = 0.0;
 	std::atomic<float> quantizationDivision = (1/32);
 
