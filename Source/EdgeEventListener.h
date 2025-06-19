@@ -12,45 +12,51 @@
 #include <unordered_map>
 #include <juce_audio_basics/juce_audio_basics.h>
 
-class EdgeEventListener 
-{
-public:
-	virtual void onEdgeHit(int note, int noteVelocity, double sampleRate, int delayInstances = 0, double delayRate = 0.0, float delayFeedback = 0.0f, int delayNoteMovement = 0) = 0;
-	virtual void onBallsColide(int notes[3], double sampleRate) = 0;
-};
 
-
-static int getNoteFromBallIndex(int ballIndex, int baseNote = 60, int noteMovement = 0)
+static int getNoteFromBallIndex(int noteIndex, int ballIndex, int *scaleNotes, int noteMovement = 0)
 {
 	switch (noteMovement)
 	{
 		case 1: // no movement
-			return baseNote;
+			return scaleNotes[noteIndex];
 		case 2: // up
-			return baseNote + ballIndex;
+			return scaleNotes[(noteIndex + ballIndex) % 8];
 		case 3: // down
-			return baseNote - ballIndex;
+			return scaleNotes[(noteIndex - ballIndex) % 8];
 		case 4: // up and down
-			return (ballIndex % 2 == 0) ? (baseNote + (ballIndex / 2)) : (baseNote - (ballIndex / 2 + 1));
+		{
+			int adjustedIndex = (ballIndex % 2 == 0) ? (ballIndex / 2) : (((((-1) * ballIndex) % 8) / 2 + 1));
+			return scaleNotes[(noteIndex + adjustedIndex) % 8];
+		}
 		case 5: // down and up
-			return (ballIndex % 2 == 0) ? (baseNote - (ballIndex / 2)) : (baseNote + (ballIndex / 2 + 1));
+		{
+			int adjustedIndex = (ballIndex % 2 == 0) ? (((((-1) * ballIndex) % 8) / 2 + 1)) : (ballIndex / 2);
+			return scaleNotes[(noteIndex + adjustedIndex) % 8];
+		}
 		case 6: // Random
-			return baseNote + (rand() % 12) - 6; // Randomly between -6 and +5 semitones
+			return scaleNotes[noteIndex] + (rand() % 12) - 6; // Randomly between -6 and +5 semitones
 		default: // no movement
-			return baseNote;
+			return scaleNotes[noteIndex];
 	}
 
-	return baseNote; // Default case, no movement
+	return scaleNotes[noteIndex]; // Default case, no movement
 }
+
+class EdgeEventListener 
+{
+public:
+	virtual void onEdgeHit(int noteIndex, int *scaleNotes, int noteVelocity, double sampleRate, int delayInstances = 0, double delayRate = 0.0, float delayFeedback = 0.0f, int delayNoteMovement = 0) = 0;
+	virtual void onBallsColide(int *scaleNotes, double sampleRate) = 0;
+};
 
 class BallEdgeEventListener : public EdgeEventListener 
 {
 public:
 	BallEdgeEventListener(juce::MidiBuffer& midiBuffer) : midiBuffer(midiBuffer) {}
 
-	void onEdgeHit(int note, int noteVelocity, double sampleRate, int delayInstances, double delayRate, float delayFeedback, int delayNoteMovement) override
+	void onEdgeHit(int noteIndex, int scaleNotes[8], int noteVelocity, double sampleRate, int delayInstances, double delayRate, float delayFeedback, int delayNoteMovement) override
 	{
-		juce::MidiMessage noteOn = juce::MidiMessage::noteOn(1, note, (juce::uint8)noteVelocity);
+		juce::MidiMessage noteOn = juce::MidiMessage::noteOn(1, scaleNotes[noteIndex], (juce::uint8)noteVelocity);
 		midiBuffer.addEvent(noteOn, 0);
 
 		if (delayInstances > 0 && delayRate > 0.0)
@@ -59,14 +65,14 @@ public:
 			{
 				double delayTime = i * delayRate * sampleRate;
 				float delaySizeRatio = pow(0.8f, i);
-				noteOn = juce::MidiMessage::noteOn(1, getNoteFromBallIndex(i, note, delayNoteMovement),
+				noteOn = juce::MidiMessage::noteOn(1, getNoteFromBallIndex(noteIndex, i, scaleNotes, delayNoteMovement),
 												  (juce::uint8)(delayFeedback * noteVelocity * delaySizeRatio));
 				midiBuffer.addEvent(noteOn, delayTime);
 			}
 		}
 	}
 
-	void onBallsColide(int notes[3], double sampleRate) override
+	void onBallsColide(int scaleNotes[8], double sampleRate) override
 	{
 		return;
 	}
@@ -82,18 +88,18 @@ class BallCollideEventListener : public EdgeEventListener
 public:
 	BallCollideEventListener(juce::MidiBuffer& midiBuffer) : midiBuffer(midiBuffer) {}
 
-	void onEdgeHit(int note, int noteVelocity, double sampleRate, int delayInstances, double delayRate, float delayFeedback, int delayNoteMovement) override
+	void onEdgeHit(int noteIndex, int scaleNotes[8], int noteVelocity, double sampleRate, int delayInstances, double delayRate, float delayFeedback, int delayNoteMovement) override
 	{
 		return;
 	}
 
-	void onBallsColide(int notes[3], double sampleRate) override
+	void onBallsColide(int scaleNotes[8], double sampleRate) override
 	{
-		int noteVelocity = 100; // noteVelocity for the note
+		int noteVelocity = 100;
 
-		juce::MidiMessage noteOn1 = juce::MidiMessage::noteOn(1, notes[0], (juce::uint8)noteVelocity);
-		juce::MidiMessage noteOn2 = juce::MidiMessage::noteOn(1, notes[1], (juce::uint8)noteVelocity);
-		juce::MidiMessage noteOn3 = juce::MidiMessage::noteOn(1, notes[2], (juce::uint8)noteVelocity);
+		juce::MidiMessage noteOn1 = juce::MidiMessage::noteOn(1, scaleNotes[0], (juce::uint8)noteVelocity);
+		juce::MidiMessage noteOn2 = juce::MidiMessage::noteOn(1, scaleNotes[1], (juce::uint8)noteVelocity);
+		juce::MidiMessage noteOn3 = juce::MidiMessage::noteOn(1, scaleNotes[2], (juce::uint8)noteVelocity);
 
 		midiBuffer.addEvent(noteOn1, 0);
 		midiBuffer.addEvent(noteOn2, 0);

@@ -73,7 +73,13 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 
 BallPitAudioProcessor::~BallPitAudioProcessor()
 {
-	valueTreeState.removeParameterListener("someParameter", this);
+	for (const auto& paramID : paramIDs)
+	{
+		if (this->valueTreeState.getParameter(paramID) != nullptr)
+		{
+			this->valueTreeState.removeParameterListener(paramID, this);
+		}
+	}
 }
 
 //==============================================================================
@@ -310,6 +316,7 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 		pit.setBallParams(i, x, y, radius, velocity, angle, ballsPosType, newDelaySettings);
 	}
 	pit.setCollision(static_cast<bool>(valueTreeState.getRawParameterValue("collision")->load()));
+	pit.setBallsTranspose(valueTreeState.getRawParameterValue("transpose")->load());
 }
 
 void BallPitAudioProcessor::getUpdatedEdgeParams()
@@ -686,30 +693,30 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		std::string delayRateId = "delayRate" + std::to_string(i);
 		std::string delayNoteMovementId = "delayNoteMovement" + std::to_string(i);
 
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, BALL_X_SLIDER_STEP));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, BALL_Y_SLIDER_STEP));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", BALL_RADIUS_MIN, BALL_RADIUS_MAX, BALL_RADIUS_STEP));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Velocity", BALL_VELOCITY_MIN, BALL_VELOCITY_MAX, BALL_VELOCITY_STEP));
-		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", BALL_ANGLE_MIN, BALL_ANGLE_MAX, BALL_ANGLE_STEP));
-		params.add(std::make_unique<juce::AudioParameterInt>(ballXVelocityId, "XVelocity", BALL_X_VELOCITY_MIN, BALL_X_VELOCITY_MAX, BALL_X_VELOCITY_STEP));
-		params.add(std::make_unique<juce::AudioParameterInt>(ballYVelocityId, "YVelocity", BALL_Y_VELOCITY_MIN, BALL_Y_VELOCITY_MAX, BALL_Y_VELOCITY_STEP));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballXId, "Ball X", BALL_X_SLIDER_MIN, BALL_X_SLIDER_MAX, BALL_X_DEFAULT_1));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballYId, "Ball Y", BALL_Y_SLIDER_MIN, BALL_Y_SLIDER_MAX, BALL_Y_DEFAULT));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballRadiusId, "Radius", BALL_RADIUS_MIN, BALL_RADIUS_MAX, BALL_RADIUS_DEFAULT));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballVelocityId, "Velocity", BALL_VELOCITY_MIN, BALL_VELOCITY_MAX, BALL_VELOCITY_DEFAULT));
+		params.add(std::make_unique<juce::AudioParameterFloat>(ballAngleId, "Angle", BALL_ANGLE_MIN, BALL_ANGLE_MAX, BALL_ANGLE_DEFAULT_1));
+		params.add(std::make_unique<juce::AudioParameterInt>(ballXVelocityId, "XVelocity", BALL_X_VELOCITY_MIN, BALL_X_VELOCITY_MAX, BALL_X_VELOCITY_DEFAULT));
+		params.add(std::make_unique<juce::AudioParameterInt>(ballYVelocityId, "YVelocity", BALL_Y_VELOCITY_MIN, BALL_Y_VELOCITY_MAX, BALL_Y_VELOCITY_DEFAULT));
 		params.add(std::make_unique<juce::AudioParameterBool>(xVelocityInverterId, "x velocity inverter", false));
 		params.add(std::make_unique<juce::AudioParameterBool>(yVelocityInverterId, "x velocity inverter", false));
 		params.add(std::make_unique<juce::AudioParameterBool>(BallActivationId, "BallActivation", ((i == 0) ? true : false)));
-		params.add(std::make_unique<juce::AudioParameterInt>(delayAmountId, "Delay Amount", DELAY_AMOUNT_MIN, DELAY_AMOUNT_MAX, DELAY_AMOUNT_STEP));
-		params.add(std::make_unique<juce::AudioParameterFloat>(delayFeedbackId, "Delay Feedback", DELAY_FEEDBACK_MIN, DELAY_FEEDBACK_MAX, DELAY_FEEDBACK_STEP));
+		params.add(std::make_unique<juce::AudioParameterInt>(delayAmountId, "Delay Amount", DELAY_AMOUNT_MIN, DELAY_AMOUNT_MAX, DELAY_AMOUNT_DEFAULT));
+		params.add(std::make_unique<juce::AudioParameterFloat>(delayFeedbackId, "Delay Feedback", DELAY_FEEDBACK_MIN, DELAY_FEEDBACK_MAX, DELAY_FEEDBACK_DEFAULT));
 		params.add(std::make_unique<juce::AudioParameterChoice>(delayRateId, "Delay Rate", getDelayRateTypes(), DELAY_RATE_DEFAULT));
 		params.add(std::make_unique<juce::AudioParameterChoice>(delayNoteMovementId, "Delay Note Movement", getDelayNoteMovementTypes(), DELAY_NOTE_MOVEMENT_DEFAULT));
 	}
 
 	std::string edgePhaseId = "edgePhase";
-	params.add(std::make_unique<juce::AudioParameterFloat>(edgePhaseId, "Edge Phase", EDGE_PHASE_MIN, EDGE_PHASE_MAX, EDGE_PHASE_STEP));
+	params.add(std::make_unique<juce::AudioParameterFloat>(edgePhaseId, "Edge Phase", EDGE_PHASE_MIN, EDGE_PHASE_MAX, EDGE_PHASE_DEFAULT));
 
 	std::string edgeDenomenatorId = "edgeDenomenator";
-	params.add(std::make_unique<juce::AudioParameterInt>(edgeDenomenatorId, "Edge Denomenator", EDGE_DENOMINATOR_MIN, EDGE_DENOMINATOR_MAX, EDGE_DENOMINATOR_STEP));
+	params.add(std::make_unique<juce::AudioParameterInt>(edgeDenomenatorId, "Edge Denomenator", EDGE_DENOMINATOR_MIN, EDGE_DENOMINATOR_MAX, EDGE_DENOMINATOR_DEFAULT));
 
 	std::string edgeRangeId = "edgeRange";
-	params.add(std::make_unique<juce::AudioParameterInt>(edgeRangeId, "Edge Range", EDGE_RANGE_MIN, EDGE_RANGE_MAX, EDGE_RANGE_STEP));
+	params.add(std::make_unique<juce::AudioParameterInt>(edgeRangeId, "Edge Range", EDGE_RANGE_MIN, EDGE_RANGE_MAX, EDGE_RANGE_DEFAULT));
 
 	std::string scaleKindId = "scaleChoice";
 	params.add(std::make_unique<juce::AudioParameterChoice>(scaleKindId, "Scale", getScaleOptions(), SCALE_DEFAULT));
@@ -744,6 +751,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	std::string probabilityID = "probability";
 	params.add(std::make_unique<juce::AudioParameterFloat>(probabilityID, "Probability", PROBABILITY_MIN, PROBABILITY_MAX, PROBABILITY_DEFAULT));
 
+	std::string transposeID = "transpose";
+	params.add(std::make_unique<juce::AudioParameterInt>(transposeID, "Transpose", -24, 24, 0));
+	
 	return params;
 }
 
@@ -770,7 +780,7 @@ void BallPitAudioProcessor::parameterChanged(const juce::String& parameterID, fl
 	{
 		if ((parameterID == "edgePhase") || (parameterID == "edgeDenomenator") || 
 			(parameterID == "edgeRange") || (parameterID == "scaleChoice") || 
-			(parameterID == "rootNote")  || (parameterID == "edgeType"))
+			(parameterID == "rootNote")  || (parameterID == "edgeType") || (parameterID == "transpose"))
 		{
 			wasGUIUpdated = true;
 			return;

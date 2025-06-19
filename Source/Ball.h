@@ -102,8 +102,8 @@ private:
     bool isMoving = false;
     bool isMouseOverBall = false;
     
-    int abstractedEdgeDuplicate[1568];
-    int scaleNotes[3];
+	int abstractedEdgeDuplicate[1568] = { 60 };
+    int scaleNotes[8];
 
     BallEdgeEventListener* edgeListener;
 	BallCollideEventListener* collideListener;

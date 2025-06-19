@@ -50,7 +50,7 @@ int getChosenTabIndex();
 
 #define MAIN_BG_COLOUR juce::Colour::fromRGB(50, 60, 67)
 #define BUTTON_BG_COLOUR juce::Colour::fromRGB(98, 128, 143).darker(0.2f)
-#define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(212, 201, 190).darker(0.3f)
+#define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(212, 201, 190).darker()
 
 
 //-----------------------------------------------------------------------
@@ -153,6 +153,7 @@ int getChosenTabIndex();
 #define BALL_X_SLIDER_MIN PIT_MIN_X   // Already defined elsewhere
 #define BALL_X_SLIDER_MAX PIT_MAX_X   // Already defined elsewhere
 #define BALL_X_SLIDER_STEP 10.0f
+
 #define BALL_X_DEFAULT_1 (PIT_MIN_X + 50.0f)
 #define BALL_X_DEFAULT_2 (PIT_MIN_X + 50.0f + 130.0f)
 #define BALL_X_DEFAULT_3 (PIT_MIN_X + 50.0f + 260.0f)

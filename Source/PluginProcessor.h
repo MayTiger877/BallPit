@@ -98,10 +98,10 @@ public:
 	void setClockTimeSeconds(double newClockTimeSeconds) { this->clockTimeSeconds = newClockTimeSeconds; }
 	void togglePlayState();
 
-	double m_sampleRate;
-	int m_samplesPerBlock;
+	std::atomic<double> m_sampleRate;
+	std::atomic<int> m_samplesPerBlock;
 
-	float m_probability = 1.0f; // default to 100% probability
+	std::atomic<float> m_probability = 1.0f; // default to 100% probability
 
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
@@ -111,17 +111,17 @@ private:
 	std::vector<std::unique_ptr<EdgeEventListener>> listeners;
 	std::vector<PendingMidiEvent> pendingEvents;
 
-	double clockTimeSeconds = 0.0;
+	std::atomic<double> clockTimeSeconds = 0.0;
 
-	float quantizationpercent = 0.0;
-	float quantizationDivision = (1/32);
+	std::atomic<float> quantizationpercent = 0.0;
+	std::atomic<float> quantizationDivision = (1/32);
 
-	int samplesPerStep = 0;
-	int sampleCounter = 0;
+	std::atomic<int> samplesPerStep = 0;
+	std::atomic<int> sampleCounter = 0;
 
-	bool wasGUIUploaded;
+	std::atomic<bool> wasGUIUploaded;
 	juce::ValueTree processorGUIState;
-	bool wasGUIUpdated = true; // initialize to true to force the GUI to update on first load
+	std::atomic<bool> wasGUIUpdated = true; // initialize to true to force the GUI to update on first load
 	void parameterChanged(const juce::String& parameterID, float newValue) override;
 
 	std::unique_ptr<Service::PresetManager> presetManager;
@@ -137,6 +137,6 @@ private:
 	"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "ballYVelocity1", "xVelocityInverter1", "yVelocityInverter1", "delayAmount1", "delayFeedback1", "delayRate1", "delayNoteMovement1",
 	"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "ballYVelocity2", "xVelocityInverter2", "yVelocityInverter2", "delayAmount2", "delayFeedback2", "delayRate2", "delayNoteMovement2",
 	"edgePhase", "edgeDenomenator", "edgeRange", "scaleChoice", "rootNote", "edgeType",
-	"ballsPositioningType", "snapToGrid", "collision", "quantization", "quantizationDivision", "volumeVariation", "sizePercentage", "probability",
+	"ballsPositioningType", "snapToGrid", "collision", "quantization", "quantizationDivision", "volumeVariation", "sizePercentage", "probability", "transpose"
 	};
 };

@@ -95,11 +95,13 @@ void Ball::updateBallAbstractedEdge(const int* abstractedEdge)
 	}
 }
 
+
 void Ball::updateScaleNotes(int* newScaleNotes)
 {
-	this->scaleNotes[0] = newScaleNotes[0];
-	this->scaleNotes[1] = newScaleNotes[1];
-	this->scaleNotes[2] = newScaleNotes[2];
+	for (int i = 0; i < 8; i++)
+	{
+		scaleNotes[i] = newScaleNotes[i] + transpose;
+	}
 }
 
 void Ball::draw(juce::Graphics& g) const
@@ -318,6 +320,20 @@ int Ball::getEdgeHitIndex(HitPossition currentHitPosition)
 	return 0;
 }
 
+
+static int findNoteIndexInScale(int note, const int* scaleNotes)
+{
+	for (int i = 0; i < 8; i++)
+	{
+		if (scaleNotes[i] == note)
+		{
+			return i;
+		}
+	}
+	return 0; // default to first note if not found
+}
+
+
 void Ball::edgeBounce()
 {
 	if (this->active == false)
@@ -367,9 +383,9 @@ void Ball::edgeBounce()
 			jassert((edgeIndex >= 0) && (edgeIndex < 1568));
 			if ((this->isMoving) && (speedX != NO_SPEED))
 			{
-				int note = abstractedEdgeDuplicate[edgeIndex] + transpose;
+				int noteIndex = findNoteIndexInScale(abstractedEdgeDuplicate[edgeIndex], scaleNotes);
 				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));
-				this->edgeListener->onEdgeHit(note, noteVelocity, sampleRate, this->delaySettings.delayAmount,
+				this->edgeListener->onEdgeHit(noteIndex, scaleNotes, noteVelocity, sampleRate, this->delaySettings.delayAmount,
 											  this->delaySettings.delayRate, this->delaySettings.delayFeedback, this->delaySettings.delayNoteMovement);
 			}
 		}
@@ -400,9 +416,9 @@ void Ball::edgeBounce()
 			jassert((edgeIndex >= 0) && (edgeIndex < 1568));
 			if ((this->isMoving) && (speedY != NO_SPEED))
 			{
-				int note = abstractedEdgeDuplicate[edgeIndex] + transpose;
+				int noteIndex = findNoteIndexInScale(abstractedEdgeDuplicate[edgeIndex], scaleNotes);
 				int noteVelocity = (int)(60 + (60 * (this->radius / 25)));
-				this->edgeListener->onEdgeHit(note, noteVelocity, sampleRate, this->delaySettings.delayAmount,
+				this->edgeListener->onEdgeHit(noteIndex, scaleNotes, noteVelocity, sampleRate, this->delaySettings.delayAmount,
 											  this->delaySettings.delayRate, this->delaySettings.delayFeedback, this->delaySettings.delayNoteMovement);
 			}
 		}

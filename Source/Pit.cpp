@@ -62,6 +62,7 @@ void Pit::setBallsTranspose(int newTranspose)
 	for (int i = 0; i < 3; i++)
 	{
 		balls[i]->setBallTranspose(newTranspose);
+		setBallsEdgeNotes();
 	}
 }
 
@@ -114,7 +115,8 @@ void Pit::setBallsEdgeNotes()
 	for (auto& ball : balls)
 	{
 		ball->updateBallAbstractedEdge(this->edge.getAbstractedEdge());
-		int scaleNotes[3] = { this->edge.getScaleNotes(0), this->edge.getScaleNotes(1), this->edge.getScaleNotes(2) };
+		int scaleNotes[8] = { this->edge.getScaleNotes(0), this->edge.getScaleNotes(1), this->edge.getScaleNotes(2), this->edge.getScaleNotes(3),
+							  this->edge.getScaleNotes(4), this->edge.getScaleNotes(5), this->edge.getScaleNotes(6), this->edge.getScaleNotes(7) };
 		ball->updateScaleNotes(scaleNotes);
 	}
 }

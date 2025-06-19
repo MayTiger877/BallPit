@@ -1187,7 +1187,12 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 			break;
 		}
 
-		this->audioProcessor.getPit().setBallsTranspose(this->transpose);
+		if (auto* transposeParam = audioProcessor.valueTreeState.getParameter("transpose"))
+		{
+			auto& range = transposeParam->getNormalisableRange();
+			float normalizedValue = range.convertTo0to1((float)this->transpose);
+			transposeParam->setValueNotifyingHost(normalizedValue);
+		}
 
 		repaint();
 		return;
