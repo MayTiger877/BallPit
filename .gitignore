@@ -9,3 +9,5 @@ build/
 ./build/VisualStudio2022/*
 .vscode/
 ./.vscode/
+Source/.vscode
+./Source/.vscode

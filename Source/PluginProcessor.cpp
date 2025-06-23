@@ -23,7 +23,7 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 					   ), midiBuffer(), pit(), valueTreeState(*this, &m_undoManager, juce::Identifier("BallPitParams"), createParameters())
 #endif
 {
-	this->wasGUIUploaded = false;
+	this->wasGUIUploaded.set(false);
 	this->processorGUIState = juce::ValueTree("GUIState");
 
 	// ball 1
@@ -152,8 +152,10 @@ void BallPitAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 	pit.setSampleRate(sampleRate);
 	midiBuffer.clear();
 
-	m_timeSignature.numerator = DEFAULT_TIME_SIGNATURE_NUMERATOR;
-	m_timeSignature.denominator = DEFAULT_TIME_SIGNATURE_DENOMINATOR;
+	auto ts = m_timeSignature.get();
+	ts.numerator = DEFAULT_TIME_SIGNATURE_NUMERATOR;
+	ts.denominator = DEFAULT_TIME_SIGNATURE_DENOMINATOR;
+	m_timeSignature.set(ts);
 
 	clockTimeSeconds = 0.0;
 }
@@ -230,13 +232,14 @@ float getDelayRateInSeconds(int delayRateChoice, float bpm, int sampleRate)
 
 void BallPitAudioProcessor::setXYVelocityByTempo(float& xVelocity, float& yVelocity, float ballRadius)
 {
-	if (m_bpm <= 0)
+	if (m_bpm.get() <= 0)
 		return;
 	
-	const float beatsPerSecond = static_cast<float>(m_bpm) / SECONDS_IN_MINUTE;
+	const float beatsPerSecond = static_cast<float>(m_bpm.get()) / SECONDS_IN_MINUTE;
 	const double pitWidth = static_cast<double>(PIT_WIDTH - (2 * PIT_INNER_DIFF) - (2.0 * ballRadius));
 	const float distancePerSecond = static_cast<float>(pitWidth * beatsPerSecond);
-	const double denominatorRatio = 4.0 / static_cast<double>(m_timeSignature.denominator);
+	auto ts = m_timeSignature.get();
+	const double denominatorRatio = 4.0 / static_cast<double>(ts.denominator);
 	const float effectiveVelocityPerSecond = distancePerSecond / static_cast<float>(denominatorRatio);
 
 	if (std::abs(xVelocity) > 0.0001)
@@ -288,8 +291,8 @@ void BallPitAudioProcessor::getUpdatedBallParams()
 		float angle = valueTreeState.getRawParameterValue(ballAngleId)->load();
 		float xVelocity = valueTreeState.getRawParameterValue(ballXVelocityId)->load();
 		float yVelocity = valueTreeState.getRawParameterValue(ballYVelocityId)->load();
-		float delayRateInSeconds = getDelayRateInSeconds(static_cast<int>(valueTreeState.getRawParameterValue("delayRate" + std::to_string(i))->load()) + 1, this->m_bpm, this->m_sampleRate);
-		
+		float delayRateInSeconds = getDelayRateInSeconds(static_cast<int>(valueTreeState.getRawParameterValue("delayRate" + std::to_string(i))->load()) + 1, this->m_bpm.get(), this->m_sampleRate.get());
+
 		DelaySettings newDelaySettings = { static_cast<int>(valueTreeState.getRawParameterValue("delayAmount" + std::to_string(i))->load()),
 										   valueTreeState.getRawParameterValue("delayFeedback" + std::to_string(i))->load(),
 										   delayRateInSeconds,
@@ -367,7 +370,6 @@ float BallPitAudioProcessor::getVariedNoteVelocity(int currentNoteVelocity)
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	buffer.clear();
-	double timePassed = buffer.getNumSamples() / this->m_sampleRate;
 	juce::Optional<juce::AudioPlayHead::PositionInfo> newPositionInfo;
 	if (auto* playhead = getPlayHead())
 	{
@@ -375,32 +377,35 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		if (newPositionInfo.hasValue())
 		{
 			auto bpm = newPositionInfo->getBpm();
-			m_bpm = bpm.hasValue() ? (*bpm) : DEFAULT_BPM;
+			m_bpm.set(bpm.hasValue() ? (*bpm) : DEFAULT_BPM);
 
 			auto timeSig = newPositionInfo->getTimeSignature();
 			if (timeSig.hasValue())
 			{
-				m_timeSignature.numerator = (*timeSig).numerator;
-				m_timeSignature.denominator = (*timeSig).denominator;
+				auto ts = m_timeSignature.get();
+				ts.numerator = (*timeSig).numerator;
+				ts.denominator = (*timeSig).denominator;
+				m_timeSignature.set(ts);
 			}
 		}
 	}
 
-	if (wasGUIUpdated == true)
+	if (wasGUIUpdated.get() == true)
 	{
 		getUpdatedEdgeParams();
 		updateQuantization();
-		wasGUIUpdated = false;
+		wasGUIUpdated.set(false);
 	}
 
-	if (this->pit.areBallsMoving() == false)
+	double timePassed = buffer.getNumSamples() / this->m_sampleRate.get();
+	if (pit.areBallsMoving() == false)
 	{
 		clockTimeSeconds = 0.0;
 		getUpdatedBallParams();
 		for (int note : activeNotes)
 		{
 		    auto panicNoteOff = juce::MidiMessage::noteOff(1, note);
-		    midiMessages.addEvent(panicNoteOff, m_samplesPerBlock - 1);
+		    midiMessages.addEvent(panicNoteOff, m_samplesPerBlock.get() - 1);
 		}
 		activeNotes.clear();
 	}
@@ -415,25 +420,25 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			//}
 		}
 		clockTimeSeconds += timePassed;
-		pit.update(timePassed, clockTimeSeconds);
+		pit.update(timePassed, clockTimeSeconds.get());
 	}
 
 	int randomProbabilityDecider = (rand() % 100) + 1;
 	float currentNotePlay = 1.0f;
 	m_probability = valueTreeState.getRawParameterValue("probability")->load();
-	if (randomProbabilityDecider > m_probability)
+	if (randomProbabilityDecider > m_probability.get())
 	{
 		currentNotePlay = 0.0f;
 	}
-	double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm;
-	double secondsPerDivision = (secondsPerBeat * quantizationDivision / 4.0); // 1 division = 1/quantizationDivision of a measure
+	double secondsPerBeat = SECONDS_IN_MINUTE / m_bpm.get();
+	double secondsPerDivision = (secondsPerBeat * quantizationDivision.get() / 4.0); // 1 division = 1/quantizationDivision of a measure
 	std::vector<PendingMidiEvent> eventsToAdd;
 
 	if (!pendingEvents.empty())
 	{
 		for (auto pendingIt = pendingEvents.begin(); pendingIt != pendingEvents.end();)
 		{
-			if (pendingIt->samplePosition < (m_samplesPerBlock - 1)) // -1 because i want to add the noteoff at samplePosition and 1 after the noteon
+			if (pendingIt->samplePosition < (m_samplesPerBlock.get() - 1)) // -1 because i want to add the noteoff at samplePosition and 1 after the noteon
 			{
 				if (pendingIt->message.isNoteOn())
 				{
@@ -456,19 +461,19 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 				    activeNotes.insert(pendingIt->message.getNoteNumber());
 				
 				    // [4] Schedule proper noteOff
-				    int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate);
+				    int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate.get());
 				    int offSample = pendingIt->samplePosition + noteDurationSamples;
 				    juce::MidiMessage noteOff = juce::MidiMessage::noteOff(
 				        pendingIt->message.getChannel(), pendingIt->message.getNoteNumber()
 				    );
 				
-				    if (offSample < m_samplesPerBlock)
+				    if (offSample < m_samplesPerBlock.get())
 				    {
 				        midiMessages.addEvent(noteOff, offSample);
 				    }
 				    else
 				    {
-				        int futureSample = offSample - m_samplesPerBlock;
+				        int futureSample = offSample - m_samplesPerBlock.get();
 				        eventsToAdd.push_back({ noteOff, futureSample });
 				    }
 				
@@ -482,7 +487,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			}
 			else
 			{
-				pendingIt->samplePosition -= m_samplesPerBlock;
+				pendingIt->samplePosition -= m_samplesPerBlock.get();
 				++pendingIt;
 			}
 		}
@@ -499,13 +504,13 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		if (!msg.isNoteOn())
 			continue;
 
-		double messageTimeSec = clockTimeSeconds + (metadata.samplePosition / m_sampleRate);
+		double messageTimeSec = clockTimeSeconds.get() + (metadata.samplePosition / m_sampleRate.get());
 		double quantizedTimeSec = std::ceil(messageTimeSec / secondsPerDivision) * secondsPerDivision;
 
 		// Convert quantized time to sample position relative to block enntry time
-		int quantizedSamplePosAbsolute = static_cast<int>(quantizedTimeSec * m_sampleRate);
-		int quantizedSamplePosRelative = quantizedSamplePosAbsolute - static_cast<int>(clockTimeSeconds * m_sampleRate);
-		int finalSamplePos = static_cast<int>((1.0 - quantizationpercent) * metadata.samplePosition + quantizationpercent * quantizedSamplePosRelative);
+		int quantizedSamplePosAbsolute = static_cast<int>(quantizedTimeSec * m_sampleRate.get());
+		int quantizedSamplePosRelative = quantizedSamplePosAbsolute - static_cast<int>(clockTimeSeconds.get() * m_sampleRate.get());
+		int finalSamplePos = static_cast<int>((1.0 - quantizationpercent.get()) * metadata.samplePosition + quantizationpercent.get() * quantizedSamplePosRelative);
 		
 		// add volume variation and 
 		float var = getVariedNoteVelocity(msg.getVelocity());
@@ -520,7 +525,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		    activeNotes.erase(msg.getNoteNumber());
 		}
 
-		if (finalSamplePos < (m_samplesPerBlock + 1))
+		if (finalSamplePos < (m_samplesPerBlock.get() + 1))
 		{
 		    midiMessages.addEvent(msg, finalSamplePos + 1); // NoteOn
 		    activeNotes.insert(msg.getNoteNumber());
@@ -529,20 +534,20 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		}
 		else
 		{
-			finalSamplePos = finalSamplePos - m_samplesPerBlock;
+			finalSamplePos = finalSamplePos - m_samplesPerBlock.get();
 			pendingEvents.push_back({ msg, finalSamplePos });
 		}
 
-		int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate);
+		int noteDurationSamples = static_cast<int>(NOTE_MIDI_DURATION * m_sampleRate.get());
 		int noteOffPos = finalSamplePos + noteDurationSamples;
 
-		if (noteOffPos < m_samplesPerBlock)
+		if (noteOffPos < m_samplesPerBlock.get())
 		{
 			midiMessages.addEvent(noteOff, noteOffPos);
 		}
 		else
 		{
-			int futureSample = noteOffPos - m_samplesPerBlock;
+			int futureSample = noteOffPos - m_samplesPerBlock.get();
 			juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
 			pendingEvents.push_back({ noteOff, futureSample });
 		}
@@ -590,11 +595,6 @@ void BallPitAudioProcessor::setStateInformation (const void* data, int sizeInByt
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
 	return new BallPitAudioProcessor();
-}
-
-Pit& BallPitAudioProcessor::getPit()
-{
-	return pit;
 }
 
 void BallPitAudioProcessor::togglePlayState()
@@ -748,12 +748,12 @@ void BallPitAudioProcessor::saveGUIState(juce::ValueTree &currentGUIState)
 
 void BallPitAudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
 {
-	int currentEdgeType = this->getPit().getPitEdgeType();
+	int currentEdgeType = pit.getPitEdgeType();
 	if (currentEdgeType == 4) //random
 	{
 		if ((parameterID == "edgePhase") || (parameterID == "edgeDenomenator") || 
-			(parameterID == "edgeRange") || (parameterID == "scaleChoice") || 
-			(parameterID == "rootNote")  || (parameterID == "edgeType") || (parameterID == "transpose"))
+		(parameterID == "edgeRange") || (parameterID == "scaleChoice") || 
+		(parameterID == "rootNote")  || (parameterID == "edgeType") || (parameterID == "transpose"))
 		{
 			wasGUIUpdated = true;
 			return;
@@ -769,3 +769,107 @@ void BallPitAudioProcessor::parameterChanged(const juce::String& parameterID, fl
 		wasGUIUpdated = true;
 	}
 }
+
+//--------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+//getters and setters
+
+bool BallPitAudioProcessor::getIsPlaying()
+{
+ 	return isPlaying.get();
+}
+void BallPitAudioProcessor::setIsPlaying(bool newState)
+{
+ 	isPlaying.set(newState);
+}
+double BallPitAudioProcessor::getSampleRate() const
+{
+ 	return m_sampleRate.get();
+}
+void BallPitAudioProcessor::setSampleRate(double newSampleRate)
+{
+ 	m_sampleRate.set(newSampleRate);
+}
+int BallPitAudioProcessor::getSamplesPerBlock() const
+{
+ 	return m_samplesPerBlock.get();
+}
+void BallPitAudioProcessor::setSamplesPerBlock(int newSamplesPerBlock)
+{
+ 	m_samplesPerBlock.set(newSamplesPerBlock);
+}
+float BallPitAudioProcessor::getProbability() const
+{
+ 	return m_probability.get();
+}
+void BallPitAudioProcessor::setProbability(float newProbability)
+{
+ 	m_probability.set(newProbability);
+}
+double BallPitAudioProcessor::getBPM() const
+{
+	return m_bpm.get();
+}
+void BallPitAudioProcessor::setBPM(double newBPM)
+{
+ 	m_bpm.set(newBPM);
+}
+juce::AudioPlayHead::TimeSignature BallPitAudioProcessor::getTimeSignature() const
+{
+ 	return m_timeSignature.get();
+}
+void BallPitAudioProcessor::setTimeSignature(juce::AudioPlayHead::TimeSignature newTimeSignature)
+{
+ 	m_timeSignature = newTimeSignature;
+}
+float BallPitAudioProcessor::getQuantizationPercent() const
+{
+	return quantizationpercent.get();
+}
+void BallPitAudioProcessor::setQuantizationPercent(float newQuantizationPercent)
+{
+ 	quantizationpercent.set(newQuantizationPercent);
+}
+float BallPitAudioProcessor::getQuantizationDivision() const
+{
+	return quantizationDivision.get();
+}
+void BallPitAudioProcessor::setQuantizationDivision(float newQuantizationDivision)
+{
+ 	quantizationDivision.set(newQuantizationDivision);
+}
+int BallPitAudioProcessor::getSamplesPerStep() const
+{
+	return samplesPerStep.get();
+}
+void BallPitAudioProcessor::setSamplesPerStep(int newSamplesPerStep)
+{
+	samplesPerStep.set(newSamplesPerStep);
+}
+int BallPitAudioProcessor::getSampleCounter() const
+{
+	return sampleCounter.get();
+}
+void BallPitAudioProcessor::setSampleCounter(int newSampleCounter)
+{
+ 	sampleCounter.set(newSampleCounter);
+}
+
+bool BallPitAudioProcessor::getWasGUIUpdated() const
+{
+	return this->wasGUIUpdated.get();
+}
+void BallPitAudioProcessor::setWasGUIUpdated(bool newStatus)
+{
+ 	this->wasGUIUpdated.set(newStatus);
+}
+double BallPitAudioProcessor::getClockTimeSeconds() const
+{
+ 	return clockTimeSeconds.get();
+}
+void BallPitAudioProcessor::setClockTimeSeconds(double newClockTimeSeconds)
+{
+ 	this->clockTimeSeconds.set(newClockTimeSeconds);
+}
+
+//-----------------------------------------------------------------

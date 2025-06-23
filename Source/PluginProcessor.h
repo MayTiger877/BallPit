@@ -9,7 +9,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-
 #include "Pit.h"
 #include "EdgeEventListener.h"
 #include "Scales.h"
@@ -70,11 +69,6 @@ public:
 
 	juce::ValueTree& getGUIState() { return processorGUIState; }
 	void saveGUIState(juce::ValueTree &GUIState);
-
-	Pit& getPit();
-
-	void updateGUIFlag(bool newStatus) { wasGUIUploaded = newStatus; }
-	bool getWasGUIUploaded() { return wasGUIUploaded; }
 	
 	void getUpdatedBallParams();
 	void getUpdatedEdgeParams();
@@ -83,17 +77,45 @@ public:
 	
 	float getVariedNoteVelocity(int currentNoteVelocity);
 	
-	void setWasGUIUpdatedToTrue() { this->wasGUIUpdated.store(true); }
-	
 	Service::PresetManager& getPresetManager() { return *presetManager; }
 	
 	juce::UndoManager& getUndoManager() { return m_undoManager; }
 	
-	double getClockTimeSecond() { return clockTimeSeconds; }
-	void setClockTimeSeconds(double newClockTimeSeconds) { this->clockTimeSeconds = newClockTimeSeconds; }
+	
 	void togglePlayState();
 	
-	private:
+	//------------------------------------------------------------------
+	//getters and setters
+	
+	bool getIsPlaying();
+	void setIsPlaying(bool newState);
+	double getSampleRate() const;
+	void setSampleRate(double newSampleRate);
+	int getSamplesPerBlock() const;
+	void setSamplesPerBlock(int newSamplesPerBlock);
+	float getProbability() const;
+	void setProbability(float newProbability);
+	double getBPM() const;
+	void setBPM(double newBPM);
+	juce::AudioPlayHead::TimeSignature getTimeSignature() const;
+	void setTimeSignature(juce::AudioPlayHead::TimeSignature newTimeSignature);
+	float getQuantizationPercent() const;
+	void setQuantizationPercent(float newQuantizationPercent);
+	float getQuantizationDivision() const;
+	void setQuantizationDivision(float newQuantizationDivision);
+	int getSamplesPerStep() const;
+	void setSamplesPerStep(int newSamplesPerStep);
+	int getSampleCounter() const;
+	void setSampleCounter(int newSampleCounter);
+	double getClockTimeSeconds() const;
+	void setClockTimeSeconds(double newClockTimeSeconds);
+	bool getWasGUIUpdated() const;
+	void setWasGUIUpdated(bool newStatus);
+	void setWasGUIUploaded(bool newStatus) { wasGUIUploaded.set(newStatus); }
+	bool getWasGUIUploaded() { return wasGUIUploaded.get(); }
+	//==============================================================================
+	
+private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessor)
 	
 	Pit pit;
@@ -103,25 +125,25 @@ public:
 	
 	juce::Atomic<bool> isPlaying;
 
-	std::atomic<double> m_sampleRate;
-	std::atomic<int> m_samplesPerBlock;
+	juce::Atomic<double> m_sampleRate;
+	juce::Atomic<int> m_samplesPerBlock;
 	
-	std::atomic<float> m_probability = 1.0f; // default to 100% probability
+	juce::Atomic<float> m_probability = 1.0f; // default to 100% probability
 	
-	std::atomic<double> clockTimeSeconds = 0.0;
+	juce::Atomic<double> clockTimeSeconds = 0.0;
 
-	std::atomic<double> m_bpm {DEFAULT_BPM};
-	std::atomic<juce::AudioPlayHead::TimeSignature> m_timeSignature;
+	juce::Atomic<double> m_bpm {DEFAULT_BPM};
+	juce::Atomic<juce::AudioPlayHead::TimeSignature> m_timeSignature;
 	
-	std::atomic<float> quantizationpercent = 0.0;
-	std::atomic<float> quantizationDivision = (1/32);
+	juce::Atomic<float> quantizationpercent = 0.0;
+	juce::Atomic<float> quantizationDivision = (1/32);
 
-	std::atomic<int> samplesPerStep = 0;
-	std::atomic<int> sampleCounter = 0;
+	juce::Atomic<int> samplesPerStep = 0;
+	juce::Atomic<int> sampleCounter = 0;
 
-	std::atomic<bool> wasGUIUploaded;
+	juce::Atomic<bool> wasGUIUploaded;
 	juce::ValueTree processorGUIState;
-	std::atomic<bool> wasGUIUpdated = true; // initialize to true to force the GUI to update on first load
+	juce::Atomic<bool> wasGUIUpdated = true; // initialize to true to force the GUI to update on first load
 	void parameterChanged(const juce::String& parameterID, float newValue) override;
 
 	std::unique_ptr<Service::PresetManager> presetManager;

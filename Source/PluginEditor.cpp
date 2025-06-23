@@ -34,7 +34,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	if (audioProcessor.getWasGUIUploaded() == false) // save default state only at first time gui is built
 	{
 		saveGUIState();
-		audioProcessor.updateGUIFlag(true);
+		audioProcessor.setWasGUIUploaded(true);
 	}
 	else
 	{
@@ -343,7 +343,8 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 	ballEffectsSlidersAndAttachments[otherTab2].delayRateComboBox.setVisible(false);
 	ballEffectsSlidersAndAttachments[otherTab2].delayNoteMovementComboBox.setVisible(false);
 	
-	if (audioProcessor.getPit().getBalls()[this->currentBallFocused]->isActive() == true)
+    const auto& balls = pit.getBalls();
+	if (balls[this->currentBallFocused]->isActive() == true)
 	{
 		addRemoveBallButton.setButtonText("Remove");
 	}
@@ -519,12 +520,12 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	startStopButton.setButtonText("Start");
 	startStopButton.onClick = [this]()
 		{
-			if (this->audioProcessor.getPit().areAnyBallsInPit() == false)
+			if (pit.areAnyBallsInPit() == false)
 			{
 				return; // Do not start if no balls are in the pit
 			}
 			audioProcessor.togglePlayState();
-			if (audioProcessor.getPit().areBallsMoving())
+			if (pit.areBallsMoving())
 			{
 				startStopButton.setButtonText("Stop");
 			}
@@ -542,22 +543,23 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	addRemoveBallButton.setButtonText("Add");
 	addRemoveBallButton.onClick = [this]()
 		{
+    		const auto& balls = pit.getBalls();
 			std::string BallActivationId = "BallActivation" + std::to_string(this->currentBallFocused);
-			if (this->audioProcessor.getPit().areBallsMoving() == true)
+			if (pit.areBallsMoving() == true)
 			{
 				return; // Do not add/remove balls while the pit is playing
 			}
 			auto* activationParam = audioProcessor.valueTreeState.getParameter(BallActivationId);
-			if (audioProcessor.getPit().getBalls()[this->currentBallFocused]->isActive() == true)
+			if (balls[this->currentBallFocused]->isActive() == true)
 			{
 				addRemoveBallButton.setButtonText("Add");
-				audioProcessor.getPit().getBalls()[this->currentBallFocused]->setActive(false);
+				balls[this->currentBallFocused]->setActive(false);
 				if (activationParam) { activationParam->setValueNotifyingHost(false); }
 			}
 			else
 			{
 				addRemoveBallButton.setButtonText("Remove");
-				audioProcessor.getPit().getBalls()[this->currentBallFocused]->setActive(true);
+				balls[this->currentBallFocused]->setActive(true);
 				if (activationParam) { activationParam->setValueNotifyingHost(true); }
 			}
 		};
@@ -782,7 +784,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	}
 
 	// draw ballzzz
-	const auto& balls = audioProcessor.getPit().getBalls();
+    const auto& balls = pit.getBalls();
 	for (const auto& ball : balls)
 	{
 		if (ball->isActive() == true)
@@ -803,7 +805,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 
 	displayKnobsByTab();
 	presetPanel.setPluginBounds(getLocalBounds());
-	audioProcessor.getPit().drawPitEdge(g, edgeColors);
+	pit.drawPitEdge(g, edgeColors);
 
 	// draw pit corner "polls"
 	g.setColour(juce::Colours::silver);
@@ -857,13 +859,14 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 
 		content.setTransform(juce::AffineTransform::scale(sizePercentage));
 		setSize((int)(APP_WINDOW_WIDTH * sizePercentage), (int)(APP_WINDOW_HIGHT * sizePercentage));
-		this->audioProcessor.getPit().setBallsSizePercentage(sizePercentage);
+		pit.setBallsSizePercentage(sizePercentage);
 		resized();
 	}
 }
 
 void BallPitAudioProcessorEditor::timerCallback() 
 {
+	
 	repaint();
 }
 
@@ -871,7 +874,7 @@ void BallPitAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster
 {
 	if (source == &audioProcessor)
 	{
-		juce::Atomic<bool> isPlaying = audioProcessor.isPlaying.get();
+		juce::Atomic<bool> isPlaying = audioProcessor.getIsPlaying();
 		this->startStopButton.setToggleState(isPlaying.get(), juce::dontSendNotification);
 		this->startStopButton.onClick();
 	}
@@ -1035,19 +1038,20 @@ static int isMouseOverTranspose(const juce::MouseEvent& event, float sizePercent
 void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 {
 	float result = MOUSE_NOT_IN_BALL;
-	for (const auto& ball : this->audioProcessor.getPit().getBalls())
+    const auto& balls = pit.getBalls();
+	for (const auto& ball : balls)
 	{
 		result = ball->isMouseInsideBall(event.position);
 		if (result != MOUSE_NOT_IN_BALL)
 		{
 			ballBeingDragged.first = ball->getBallIndex();
 			ballBeingDragged.second = result;
-			this->audioProcessor.getPit().getBalls()[ball->getBallIndex()]->setIsMouseOverBall(true);
+			balls[ball->getBallIndex()]->setIsMouseOverBall(true);
 			return;
 		}
 		else
 		{
-			this->audioProcessor.getPit().getBalls()[ball->getBallIndex()]->setIsMouseOverBall(false);
+			balls[ball->getBallIndex()]->setIsMouseOverBall(false);
 		}
 	}
 	ballBeingDragged.first = (int)MOUSE_NOT_IN_BALL;
@@ -1086,7 +1090,8 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 {
 	if (ballBeingDragged.first > (int)MOUSE_NOT_IN_BALL)
 	{
-		if (this->audioProcessor.getPit().getBalls()[ballBeingDragged.first]->isActive() == true)
+    	const auto& balls = pit.getBalls();
+		if (balls[ballBeingDragged.first]->isActive() == true)
 		{
 			currentBallFocused = ballBeingDragged.first;
 			setChosenTabIndex(currentBallFocused);
@@ -1105,7 +1110,6 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 				auto tabsSVG = juce::MemoryInputStream(BinaryData::Ball_tab_2_svg, BinaryData::Ball_tab_2_svgSize, false);
 				tabsDrawable = juce::Drawable::createFromImageDataStream(tabsSVG);
 			}
-			
 			mouseIsDragging = true;
 		}
 	}
@@ -1117,8 +1121,8 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 		{
 			*param = 3; // random - 1 --> 4 - 1 = 3
 		}
-		this->audioProcessor.setWasGUIUpdatedToTrue();
-		this->audioProcessor.getPit().setEdgeTypeToRandom();
+		this->audioProcessor.setWasGUIUpdated(true);
+		pit.setEdgeTypeToRandom();
 	}
 	else if (mouseOverScaleDice == true)
 	{
@@ -1136,7 +1140,7 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 		{
 			*rootNoteParam = randomRootNote;
 		}
-		this->audioProcessor.setWasGUIUpdatedToTrue();
+		this->audioProcessor.setWasGUIUpdated(true);
 	}
 	else if (mouseOverTab != MOUSE_NOT_IN_TAB)
 	{
@@ -1160,7 +1164,6 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 			auto tabsSVG = juce::MemoryInputStream(BinaryData::Ball_tab_2_svg, BinaryData::Ball_tab_2_svgSize, false);
 			tabsDrawable = juce::Drawable::createFromImageDataStream(tabsSVG);
 		}
-
 		mouseOverTab = MOUSE_NOT_IN_TAB;
 	}
 	else if (mouseOverTranspose != -1)
