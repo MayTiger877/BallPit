@@ -69,6 +69,8 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 
 	m_undoManager.setMaxNumberOfStoredUnits(20, 1);
 
+	//updateBallsSnapshot();
+	//updateAbstractedEdgeColors();
 }
 
 BallPitAudioProcessor::~BallPitAudioProcessor()

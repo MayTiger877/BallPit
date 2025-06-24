@@ -65,12 +65,11 @@ struct BallGUIEssentials{
     bool active = false; 
     int ballIndex = 0; // 0, 1, or 2
     bool isMoving = false;
-    bool isMouseOverBall = false;
     int ballSpeedType = 0; // byTempo or chaos
     int delayAmount = 0;
-	  float delayFeedback = 0.0f;
-	  float delayRate = 0.0f;
-	  int delayNoteMovement = 0;
+	float delayFeedback = 0.0f;
+	float delayRate = 0.0f;
+	int delayNoteMovement = 0;
     juce::Point<float> delayPoints[3] = {
         {0.0f, 0.0f},
         {0.0f, 0.0f},

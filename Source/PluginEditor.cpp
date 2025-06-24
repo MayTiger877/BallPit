@@ -45,6 +45,27 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	setWantsKeyboardFocus(true);
 	addKeyListener(this);
 	addAndMakeVisible(content);
+
+	BallGUIEssentials GUIBallToEnter = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, false, 0, 0, 0.0, 0.0, 0.0 };
+	for (int i = 0; i < 3; i++)
+	{
+		GUIBallToEnter.ballIndex = i;
+		GUIBallToEnter.x = 0.0;
+		GUIBallToEnter.y = 0.0;
+		GUIBallToEnter.radius = 0.0;
+		GUIBallToEnter.angle = 0.0;
+		GUIBallToEnter.velocity = 0.0;
+		GUIBallToEnter.isMoving = 0.0;
+		GUIBallToEnter.ballSpeedType = 0;
+		GUIBallToEnter.delayAmount = 0;
+		GUIBallToEnter.delayFeedback = 0.0;
+		GUIBallToEnter.delayRate = 0.0;
+		GUIBallToEnter.delayNoteMovement = 0;
+		GUIBallToEnter.delayPoints[0] = { 0.0, 0.0 };
+		GUIBallToEnter.delayPoints[1] = { 0.0, 0.0 };
+		GUIBallToEnter.delayPoints[2] = { 0.0, 0.0 };
+		GUIBalls.push_back(std::make_unique<BallGUIEssentials>(GUIBallToEnter));
+	}
 }
 
 BallPitAudioProcessorEditor::~BallPitAudioProcessorEditor()
@@ -921,7 +942,7 @@ void BallPitAudioProcessorEditor::drawBall(juce::Graphics& g, const BallGUIEssen
 		break;
 	}
 
-	float mouseOnMagnifier = (currentBall.isMouseOverBall == true) ?6.0f : 0.0f;
+	float mouseOnMagnifier = (ballBeingDragged.first!= (int)MOUSE_NOT_IN_BALL) ? 6.0f : 0.0f;
 
 	//black outline ball
 	float x = currentBall.x;
@@ -1116,7 +1137,6 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 void BallPitAudioProcessorEditor::timerCallback() 
 {
 	auto snapshot = audioProcessor.latestBallsSnapshot.load(std::memory_order_acquire);
-
 	if (snapshot) 
 	{
     	for (const auto& ball : *snapshot) 
@@ -1127,13 +1147,16 @@ void BallPitAudioProcessorEditor::timerCallback()
 			GUIBalls[ball.ballIndex]->radius = ball.radius;
 		 	GUIBalls[ball.ballIndex]->angle = ball.angle;
 		 	GUIBalls[ball.ballIndex]->velocity = ball.velocity;
+			GUIBalls[ball.ballIndex]->active = ball.active;
 		 	GUIBalls[ball.ballIndex]->isMoving = ball.isMoving;
-		 	GUIBalls[ball.ballIndex]->isMouseOverBall = ball.isMouseOverBall;
 			GUIBalls[ball.ballIndex]->ballSpeedType = ball.ballSpeedType;
 		 	GUIBalls[ball.ballIndex]->delayAmount = ball.delayAmount;
 		 	GUIBalls[ball.ballIndex]->delayFeedback = ball.delayFeedback;
 		 	GUIBalls[ball.ballIndex]->delayRate = ball.delayRate;
 		 	GUIBalls[ball.ballIndex]->delayNoteMovement = ball.delayNoteMovement;
+			GUIBalls[ball.ballIndex]->delayPoints[0] = ball.delayPoints[0];
+			GUIBalls[ball.ballIndex]->delayPoints[1] = ball.delayPoints[1];
+			GUIBalls[ball.ballIndex]->delayPoints[2] = ball.delayPoints[2];
     	}
 	}
 	repaint();

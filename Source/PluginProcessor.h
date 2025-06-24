@@ -169,7 +169,7 @@ private:
 	std::atomic<std::shared_ptr<const std::vector<BallGUIEssentials>>> latestBallsSnapshot;
 	juce::Atomic<int*> abstractedEdgeColors = nullptr; // to store the edge colors
 
-	void updateBallsSnapshot() //TODO= call it somewhere
+	void updateBallsSnapshot()
 	{
     	auto snapshot = std::make_shared<std::vector<BallGUIEssentials>>();
     	for (const auto& ball : this->pit.getBalls()) 
@@ -178,7 +178,7 @@ private:
 			ball->getBallGUINesseceities(currentBallEssentials);
         	snapshot->push_back(currentBallEssentials);
     	}
-    	latestBallsSnapshot.store(snapshot, std::memory_order_acquire);
+    	latestBallsSnapshot.store(snapshot, std::memory_order_release);
 	}
 
 	void updateAbstractedEdgeColors()
