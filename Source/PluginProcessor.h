@@ -161,4 +161,18 @@ private:
 	"edgePhase", "edgeDenomenator", "edgeRange", "scaleChoice", "rootNote", "edgeType",
 	"ballsPositioningType", "snapToGrid", "collision", "quantization", "quantizationDivision", "volumeVariation", "sizePercentage", "probability", "transpose"
 	};
+
+	std::atomic<std::shared_ptr<const std::vector<BallGUIEssentials>>> latestBallsSnapshot;
+
+	void updateBallsSnapshot() 
+	{
+    	auto snapshot = std::make_shared<std::vector<BallGUIEssentials>>();
+    	for (const auto& ball : this->pit.getBalls()) 
+		{
+			BallGUIEssentials currentBallEssentials;
+			ball->getBallGUINesseceities(currentBallEssentials);
+        	snapshot->push_back(currentBallEssentials);
+    	}
+    	latestBallsSnapshot.store(snapshot, std::memory_order_release);
+	}
 };

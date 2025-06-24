@@ -52,6 +52,30 @@ int getChosenTabIndex();
 #define BUTTON_BG_COLOUR juce::Colour::fromRGB(98, 128, 143).darker(0.2f)
 #define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(212, 201, 190).darker()
 
+//-----------------------------------------------------------------------
+// Threads protection stuff
+
+struct BallGUIEssentials{
+    float x = 0.0f;
+    float y = 0.0f;
+    float radius = DEFAULT_BALL_RADIUS;
+    double angle = 0.0f;
+    double velocity = DEFAULT_BALL_VELOCITY;
+    bool active = false; 
+    int ballIndex = 0; // 0, 1, or 2
+    bool isMoving = false;
+    bool isMouseOverBall = false;
+    int ballSpeedType = 0; // byTempo or chaos
+    int delayAmount = 0;
+	  float delayFeedback = 0.0f;
+	  float delayRate = 0.0f;
+	  int delayNoteMovement = 0;
+    juce::Point<float> delayPoints[3] = {
+        {0.0f, 0.0f},
+        {0.0f, 0.0f},
+        {0.0f, 0.0f}
+    };
+}
 
 //-----------------------------------------------------------------------
 // Sizes and positions map

@@ -27,6 +27,8 @@ class Ball : public juce::Component
 {
 public:
     Ball(int ballndex, float x, float y, float radius, float velocity, float angle);
+    
+    void getBallGUINesseceities(BallGUIEssentials &ballSnapshot);
 
     void setBallEdgeEventListener(BallEdgeEventListener* l);
 	void setBallCollideEventListener(BallCollideEventListener* l);
@@ -66,8 +68,6 @@ public:
 	void setBallMoving(bool isMoving) { this->isMoving = isMoving; }
 
 	void setBallTranspose(int newTranspose) { this->transpose = newTranspose; }
-
-    void draw(juce::Graphics& g) const;
 
 	float isMouseInsideBall(juce::Point<float> mousePosition) const;
     void setIsMouseOverBall(bool newIsMouseOverBall) { this->isMouseOverBall = newIsMouseOverBall; }

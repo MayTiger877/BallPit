@@ -95,7 +95,7 @@ private:
 	void configureAttachments();
 	void initiateComponents();
 	void displayKnobsByTab();
-
+	void drawBall(juce::Graphics& g, const BallGUIEssentials currentBall) const;
 	void changeXAndYToSnapToGrid();
 	void changeXAndYToFree();
 
@@ -175,6 +175,8 @@ private:
 
 	juce::TextButton openPresetManager;
 	PresetPanel presetPanel;
+
+	std::vector<std::unique_ptr<BallGUIEssentials>> GUIBalls;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessorEditor)
 };

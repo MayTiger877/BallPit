@@ -761,6 +761,111 @@ void BallPitAudioProcessorEditor::initiateComponents()
 
 //==============================================================================
 
+void BallPitAudioProcessorEditor::drawBall(juce::Graphics& g, const BallGUIEssentials currentBall) const
+{
+	juce::Colour ballColor;
+	switch (currentBall.ballIndex)
+	{
+		case 0:
+			ballColor = BALL_1_COLOUR;
+			break;
+		case 1:
+			ballColor = BALL_2_COLOUR;
+			break;
+		case 2:
+			ballColor = BALL_3_COLOUR;
+			break;
+	default:
+		break;
+	}
+
+	float mouseOnMagnifier = (currentBall.isMouseOverBall == true) ?6.0f : 0.0f;
+
+	//black outline ball
+	float x = currentBall.x;
+ 	float y = currentBall.y;
+	float radius = currentBall.radius;
+	double angle = currentBall.angle;
+	double velocity = currentBall.velocity;
+
+	g.setColour(juce::Colours::black);
+	g.fillEllipse(x - radius - 1.0 - mouseOnMagnifier,
+				  y - radius - 1.0 - mouseOnMagnifier,
+				  radius * 2.0f + 2.0 + mouseOnMagnifier * 2,
+				  radius * 2.0f + 2.0 + mouseOnMagnifier * 2);
+	// colored ball
+	g.setColour(ballColor);
+	g.fillEllipse(x - radius - mouseOnMagnifier,
+				  y - radius - mouseOnMagnifier,
+				  radius * 2.0f + mouseOnMagnifier * 2,
+				  radius * 2.0f + mouseOnMagnifier * 2);
+
+	float angleInRadians = angle * (PI / 180.0f);
+	float radiusRatio = pow(radius, 1.2);
+	float arrowLenghtMultiplierByVelocity = 0.0f;
+	if (currentBall.ballSpeedType == 1) // chaos
+	{
+		angleInRadians = (angle - 90.0f) * (PI / 180.0f);
+		arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 2000.0, 0.0, 30.0);
+	}
+	else // byTempo
+	{
+		arrowLenghtMultiplierByVelocity = juce::jmap<float>(velocity, 0.0, 8300.0, 0.0, 30.0);
+	}
+
+	if (currentBall.isMoving == false) // draw direction and length arrow and also delay balls
+	{
+		float startX = x + (5.0f + mouseOnMagnifier + radius) * cos(angleInRadians);
+		float endX = x + (20.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * cos(angleInRadians);
+		float startY = y + (5.0f + mouseOnMagnifier + radius) * sin(angleInRadians);
+		float endY = y + (20.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * sin(angleInRadians);
+		float arrowThickness = (2.5f + (radius / 6.0f));
+		float arrowHeadWidth = (6.0f + (radius / 3.0f) + arrowLenghtMultiplierByVelocity / 3.0);
+		float arrowHeadLength = (8.0f + (radius / 8.0f) + arrowLenghtMultiplierByVelocity / 3.0);
+		juce::Line<float> line(startX, startY, endX, endY);
+		startX = x + (3.0f + mouseOnMagnifier + radius) * cos(angleInRadians);
+		endX = x + (24.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * cos(angleInRadians);
+		startY = y + (3.0f + mouseOnMagnifier + radius) * sin(angleInRadians);
+		endY = y + (24.0f + mouseOnMagnifier + radiusRatio + arrowLenghtMultiplierByVelocity) * sin(angleInRadians);
+		juce::Line<float> thickLine(startX, startY, endX, endY);
+
+		g.setColour(juce::Colours::black);
+		g.drawArrow(thickLine, arrowThickness + 3.0f, arrowHeadWidth + 3.0f, arrowHeadLength + 5.0f);
+		g.setColour(ballColor);
+		g.drawArrow(line, arrowThickness, arrowHeadWidth, arrowHeadLength);
+
+		// ----------- draw delay balls -----------
+		if (currentBall.delayAmount <= 0)
+		{
+			return;
+		}
+
+		for (int i = 1; i < (currentBall.delayAmount + 1); i++)
+		{
+			float delaySizeRatio = pow(0.7f, i);
+			float delayBallRadius = radius * delaySizeRatio;
+			float delayBallX = x - (2.0f * radius * i + (currentBall.delayRate * i)) * cos(angleInRadians);
+			float delayBallY = y - (2.0f * radius * i + (currentBall.delayRate * i)) * sin(angleInRadians);
+			g.setColour(ballColor.withAlpha(0.1f + currentBall.delayFeedback * delaySizeRatio));
+			g.fillEllipse(delayBallX - delayBallRadius, delayBallY - delayBallRadius, 
+						  delayBallRadius * 2.0f, delayBallRadius * 2.0f);
+		}
+	}
+	else
+	{
+		for (int i = 1; i < (currentBall.delayAmount + 1); i++)
+		{
+			float delaySizeRatio = pow(0.7f, i);
+			float delayBallRadius = radius * delaySizeRatio;
+			g.setColour(ballColor.withAlpha(0.1f + currentBall.delayFeedback * delaySizeRatio));
+			g.fillEllipse(currentBall.delayPoints[i-1].getX() - delayBallRadius,
+						  currentBall.delayPoints[i-1].getY() - delayBallRadius,
+						  delayBallRadius * 2.0f,
+						  delayBallRadius * 2.0f);
+		}
+	}
+}
+
 void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 {
 	g.fillAll(juce::Colours::black);
@@ -799,7 +904,7 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 				ball->setPosition(ball->getX(), PIT_MIN_Y + ball->getRadius());
 				ballsSlidersAndAttachments[ball->getBallIndex()].ySlider.setValue(PIT_MIN_Y + ball->getRadius(), juce::sendNotification);
 			}
-			ball->draw(g);
+			drawBall(g, );
 		}
 	}
 
@@ -866,7 +971,26 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 
 void BallPitAudioProcessorEditor::timerCallback() 
 {
-	
+	auto snapshot = audioProcessor.latestBallsSnapshot.load(std::memory_order_acquire);
+	if (snapshot) 
+	{
+    	for (const auto& ball : *snapshot) 
+		{
+			GUIBalls[ball.ballIndex]->ballIndex = ball.ballIndex;
+        	GUIBalls[ball.ballIndex]->x = ball.x;
+		 	GUIBalls[ball.ballIndex]->y = ball.y;
+			GUIBalls[ball.ballIndex]->radius = ball.radius;
+		 	GUIBalls[ball.ballIndex]->angle = ball.angle;
+		 	GUIBalls[ball.ballIndex]->velocity = ball.velocity;
+		 	GUIBalls[ball.ballIndex]->isMoving = ball.isMoving;
+		 	GUIBalls[ball.ballIndex]->isMouseOverBall = ball.isMouseOverBall;
+			GUIBalls[ball.ballIndex]->ballSpeedType = ball.ballSpeedType;
+		 	GUIBalls[ball.ballIndex]->delayAmount = ball.delayAmount;
+		 	GUIBalls[ball.ballIndex]->delayFeedback = ball.delayFeedback;
+		 	GUIBalls[ball.ballIndex]->delayRate = ball.delayRate;
+		 	GUIBalls[ball.ballIndex]->delayNoteMovement = ball.delayNoteMovement;
+    	}
+	}
 	repaint();
 }
 
