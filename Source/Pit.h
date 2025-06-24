@@ -30,7 +30,6 @@ public:
 	}
 
 	bool areBallsMoving() const { return isMoving; }
-	void setBallsSizePercentage(float newSizePercentage);
 
 	void setBallsTranspose(int newTranspose);
 
@@ -40,17 +39,8 @@ public:
 	void setEdgeTypeToRandom();
 	void setScaleTypeToRandom(int scaleChoice, int rootNote);
 	void setEdgeScale(Scale::ScaleKinds scaleKind, int rootNote, uint8_t mode = 0);
-	void drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors);
-
+	const int* getAbstractedEdgeColors() { return edge.getAbstractedEdgeColors(); }
 	int getPitEdgeType() { return this->edge.getEdgType(); }
-
-	bool areAnyBallsInPit() const 
-	{
-		if (balls[0]->isActive() || balls[1]->isActive() || balls[2]->isActive())
-			return true;
-
-		return false;
-	}
 
 private:
 	

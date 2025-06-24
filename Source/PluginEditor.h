@@ -95,6 +95,7 @@ private:
 	void configureAttachments();
 	void initiateComponents();
 	void displayKnobsByTab();
+	void drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors);
 	void drawBall(juce::Graphics& g, const BallGUIEssentials currentBall) const;
 	void changeXAndYToSnapToGrid();
 	void changeXAndYToFree();

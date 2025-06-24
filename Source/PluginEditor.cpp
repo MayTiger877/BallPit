@@ -343,8 +343,7 @@ void BallPitAudioProcessorEditor::displayKnobsByTab()
 	ballEffectsSlidersAndAttachments[otherTab2].delayRateComboBox.setVisible(false);
 	ballEffectsSlidersAndAttachments[otherTab2].delayNoteMovementComboBox.setVisible(false);
 	
-    const auto& balls = pit.getBalls();
-	if (balls[this->currentBallFocused]->isActive() == true)
+	if (GUIBalls[this->currentBallFocused]->active == true)
 	{
 		addRemoveBallButton.setButtonText("Remove");
 	}
@@ -520,12 +519,17 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	startStopButton.setButtonText("Start");
 	startStopButton.onClick = [this]()
 		{
-			if (pit.areAnyBallsInPit() == false)
+			if ((GUIBalls[0]->active == false) && (GUIBalls[1]->active == false) && (GUIBalls[2]->active == false))
 			{
-				return; // Do not start if no balls are in the pit
+				startStopButton.setButtonText("Start"); // good habbit or just trauma?
+				return; // do not start if no balls are active
 			}
-			audioProcessor.togglePlayState();
-			if (pit.areBallsMoving())
+			if (auto* toggleStateParam = audioProcessor.valueTreeState.getParameter("toggleState"))
+			{
+				bool changeTo = !toggleStateParam->getValue();
+				toggleStateParam->setValueNotifyingHost(changeTo);
+			}
+			if (audioProcessor.getAreBallsMoving() == true)
 			{
 				startStopButton.setButtonText("Stop");
 			}
@@ -543,23 +547,22 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	addRemoveBallButton.setButtonText("Add");
 	addRemoveBallButton.onClick = [this]()
 		{
-    		const auto& balls = pit.getBalls();
-			std::string BallActivationId = "BallActivation" + std::to_string(this->currentBallFocused);
-			if (pit.areBallsMoving() == true)
+			if (audioProcessor.getAreBallsMoving() == true)
 			{
 				return; // Do not add/remove balls while the pit is playing
 			}
+			std::string BallActivationId = "BallActivation" + std::to_string(this->currentBallFocused);
 			auto* activationParam = audioProcessor.valueTreeState.getParameter(BallActivationId);
-			if (balls[this->currentBallFocused]->isActive() == true)
+			if (GUIBalls[this->currentBallFocused]->active == true)
 			{
 				addRemoveBallButton.setButtonText("Add");
-				balls[this->currentBallFocused]->setActive(false);
+				// balls[this->currentBallFocused]->setActive(false);
 				if (activationParam) { activationParam->setValueNotifyingHost(false); }
 			}
 			else
 			{
 				addRemoveBallButton.setButtonText("Remove");
-				balls[this->currentBallFocused]->setActive(true);
+				// balls[this->currentBallFocused]->setActive(true);
 				if (activationParam) { activationParam->setValueNotifyingHost(true); }
 			}
 		};
@@ -761,6 +764,145 @@ void BallPitAudioProcessorEditor::initiateComponents()
 
 //==============================================================================
 
+static int getCurrentRectSize(int currentIndex, int noteRectSize)
+{
+	jassert((noteRectSize > 0) && (currentIndex > (-1)));
+
+	int endOfColor = currentIndex + noteRectSize;
+
+	if ((currentIndex < 392) && (endOfColor > 392))
+	{
+		return 392 - currentIndex;
+	}
+	else if ((currentIndex < 784) && (endOfColor > 784))
+	{
+		return 784 - currentIndex;
+	}
+	else if ((currentIndex < 1176) && (endOfColor > 1176))
+	{
+		return 1176 - currentIndex;
+	}
+	else if ((currentIndex < 1568) && (endOfColor > 1568))
+	{
+		return 1568 - currentIndex;
+	}
+
+	return -1; // no need
+}
+
+static void drawSingleRect(juce::Graphics& g, int index, int rectSizeToDraw)
+{
+	if (index < 392)
+	{
+		g.fillRect(PIT_MIN_X + 1, PIT_MIN_Y + 1 + (index % 392), PIT_EDGE_THICKNESS, rectSizeToDraw);
+	}
+	else if ((index >= 392) && (index < 784))
+	{
+		g.fillRect(PIT_MIN_X + 2 + (index % 392), PIT_MAX_Y - 3, rectSizeToDraw, PIT_EDGE_THICKNESS);
+	}
+	else if ((index >= 784) && (index < 1176))
+	{
+		g.fillRect(PIT_MAX_X - 3, PIT_MAX_Y - 1 - (index % 392) - rectSizeToDraw, PIT_EDGE_THICKNESS, rectSizeToDraw);
+	}
+	else if ((index >= 1176) && (index < 1568))
+	{
+		g.fillRect(PIT_MAX_X - 1 - rectSizeToDraw - (index % 392), PIT_MIN_Y + 1, rectSizeToDraw, PIT_EDGE_THICKNESS);
+	}
+}
+
+static void drawSingleRectDivider(juce::Graphics& g, int dividerSize, int currentIndex)
+{
+	if (currentIndex < 392)
+	{
+		currentIndex = currentIndex - (dividerSize / 2);
+		g.fillRect(PIT_MIN_X, PIT_MIN_Y + 1 + (currentIndex % 392), PIT_EDGE_THICKNESS + 1, dividerSize);
+	}
+	else if ((currentIndex >= 392) && (currentIndex < 784))
+	{
+		g.fillRect(PIT_MIN_X + (currentIndex % 392), PIT_MAX_Y - 3, dividerSize, PIT_EDGE_THICKNESS + 1);
+	}
+	else if ((currentIndex >= 784) && (currentIndex < 1176))
+	{
+		g.fillRect(PIT_MAX_X - 3, PIT_MAX_Y - 1 - (currentIndex % 392) - dividerSize, PIT_EDGE_THICKNESS + 1, dividerSize);
+	}
+	else if ((currentIndex >= 1176) && (currentIndex < 1568))
+	{
+		g.fillRect(PIT_MAX_X - 1 - dividerSize - (currentIndex % 392), PIT_MIN_Y, dividerSize, PIT_EDGE_THICKNESS + 1);
+	}
+}
+
+static void drawRectDividers(juce::Graphics& g, int numOfSplits, int currentPhase)
+{
+	if (numOfSplits == 1)
+		return;
+
+	g.setColour(juce::Colours::white);
+	int currentSplitPos = 0;
+	int dividerSize = 4; // must be even
+	jassert((numOfSplits > 0) && (dividerSize % 2 == 0));
+
+	for (int i = 0; i < numOfSplits; i++)
+	{
+		currentSplitPos = (static_cast<int>(i * 1568 / numOfSplits) + currentPhase) % 1568;
+		drawSingleRectDivider(g, dividerSize, currentSplitPos);
+	}
+}
+
+void BallPitAudioProcessorEditor::drawPitEdge(juce::Graphics& g, juce::Colour* edgeColors)
+{
+	int numOfSplits = static_cast<int>(audioProcessor.valueTreeState.getRawParameterValue("edgeDenomenator")->load());
+	int numOfColors = static_cast<int>(audioProcessor.valueTreeState.getRawParameterValue("edgeRange")->load());
+	int currentPhase = juce::jmap<int>(audioProcessor.valueTreeState.getRawParameterValue("edgePhase")->load(), 0, 360, 0, 1567);
+	if (currentPhase == 1567) { currentPhase = 0; } // weird but does the job.....
+	const int* pointerToAbstractedEdgeColors = audioProcessor.abstractedEdgeColors.get();
+	int noteRectSize = 1568 / numOfSplits;
+	int reminder = 1568 % numOfSplits;
+	int index = currentPhase;
+	int currentRectSize = -1;
+	g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
+
+	for (int i = 0; i < numOfSplits;)
+	{
+		do
+		{
+			currentRectSize = getCurrentRectSize(index, noteRectSize);
+			
+			if (currentRectSize == -1)
+			{
+				drawSingleRect(g, index, noteRectSize);
+				index = (index + noteRectSize) % 1568;
+				if ((index > 1560) && (reminder != 0))
+				{
+					drawSingleRect(g, index, reminder);
+					index = (index + reminder) % 1568;
+					reminder = 0;
+				}
+				i++;
+			}
+			else
+			{
+				drawSingleRect(g, index, currentRectSize);
+				index = (index + currentRectSize) % 1568;
+				noteRectSize -= currentRectSize;
+			}
+		} while (currentRectSize > 0);
+
+		noteRectSize = 1568 / numOfSplits;
+		g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
+	}
+
+	if (numOfColors > 1)
+	{
+		drawRectDividers(g, numOfSplits, currentPhase);
+	}
+
+	if (reminder != 0) 
+	{
+		g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
+		g.fillRect(PIT_MIN_X + 3, PIT_MIN_Y, reminder, 4);
+	}
+}
+
 void BallPitAudioProcessorEditor::drawBall(juce::Graphics& g, const BallGUIEssentials currentBall) const
 {
 	juce::Colour ballColor;
@@ -889,28 +1031,31 @@ void BallPitAudioProcessorEditor::paint(juce::Graphics& g)
 	}
 
 	// draw ballzzz
-    const auto& balls = pit.getBalls();
-	for (const auto& ball : balls)
+	for (int i = 0; i < 3; i++)
 	{
-		if (ball->isActive() == true)
+		if (GUIBalls[i]->active == true)
 		{
-			if (std::isnan(ball->getX()) || ball->getX() < PIT_MIN_X || ball->getX() > PIT_MAX_X)
+			if (std::isnan(GUIBalls[i]->x) || GUIBalls[i]->x < PIT_MIN_X || GUIBalls[i]->x > PIT_MAX_X)
 			{
-				ball->setPosition(PIT_MIN_X + ball->getRadius(), ball->getY());
-				ballsSlidersAndAttachments[ball->getBallIndex()].xSlider.setValue(PIT_MIN_X + ball->getRadius(), juce::sendNotification);
+				// ball->setPosition(PIT_MIN_X + GUIBalls[i]->radius, GUIBalls[i]->y);
+				GUIBalls[i]->x = PIT_MIN_X + GUIBalls[i]->radius;
+				GUIBalls[i]->y = GUIBalls[i]->y;
+				ballsSlidersAndAttachments[GUIBalls[i]->ballIndex].xSlider.setValue(PIT_MIN_X + GUIBalls[i]->radius, juce::sendNotification);
 			}
-			if (std::isnan(ball->getY()) || ball->getY() < PIT_MIN_Y || ball->getY() > PIT_MAX_Y)
+			if (std::isnan(GUIBalls[i]->y) || GUIBalls[i]->y < PIT_MIN_Y || GUIBalls[i]->y > PIT_MAX_Y)
 			{
-				ball->setPosition(ball->getX(), PIT_MIN_Y + ball->getRadius());
-				ballsSlidersAndAttachments[ball->getBallIndex()].ySlider.setValue(PIT_MIN_Y + ball->getRadius(), juce::sendNotification);
+				// ball->setPosition(GUIBalls[i]->x, PIT_MIN_Y + GUIBalls[i]->radius);
+				GUIBalls[i]->x = GUIBalls[i]->x;
+				GUIBalls[i]->y = PIT_MIN_Y + GUIBalls[i]->radius;
+				ballsSlidersAndAttachments[GUIBalls[i]->ballIndex].ySlider.setValue(PIT_MIN_Y + GUIBalls[i]->radius, juce::sendNotification);
 			}
-			drawBall(g, );
+			drawBall(g, *GUIBalls[i]);
 		}
 	}
 
 	displayKnobsByTab();
 	presetPanel.setPluginBounds(getLocalBounds());
-	pit.drawPitEdge(g, edgeColors);
+	drawPitEdge(g, edgeColors);
 
 	// draw pit corner "polls"
 	g.setColour(juce::Colours::silver);
@@ -964,7 +1109,6 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 
 		content.setTransform(juce::AffineTransform::scale(sizePercentage));
 		setSize((int)(APP_WINDOW_WIDTH * sizePercentage), (int)(APP_WINDOW_HIGHT * sizePercentage));
-		pit.setBallsSizePercentage(sizePercentage);
 		resized();
 	}
 }
@@ -972,6 +1116,7 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 void BallPitAudioProcessorEditor::timerCallback() 
 {
 	auto snapshot = audioProcessor.latestBallsSnapshot.load(std::memory_order_acquire);
+
 	if (snapshot) 
 	{
     	for (const auto& ball : *snapshot) 
@@ -1069,6 +1214,13 @@ void BallPitAudioProcessorEditor::changeXAndYToFree()
 	}
 }
 
+static float isMouseInsideBall(juce::Point<float> mousePosition, BallGUIEssentials currentBall, float sizePercentage)
+{
+	juce::Point<float> ballPosition(currentBall.x * sizePercentage, currentBall.y * sizePercentage);
+	float distance = mousePosition.getDistanceFrom(ballPosition);
+	return (distance <= currentBall.radius) ? distance : MOUSE_NOT_IN_BALL;
+}
+
 static bool isMouseOverEdgeDice(const juce::MouseEvent& event, float sizePercentage)
 {
 	if (event.position.x > EDGE_RANDOM_DICE_MIN_X * sizePercentage &&
@@ -1162,20 +1314,18 @@ static int isMouseOverTranspose(const juce::MouseEvent& event, float sizePercent
 void BallPitAudioProcessorEditor::mouseMove(const juce::MouseEvent& event)
 {
 	float result = MOUSE_NOT_IN_BALL;
-    const auto& balls = pit.getBalls();
-	for (const auto& ball : balls)
+	for (int i = 0; i < 3; i++)
 	{
-		result = ball->isMouseInsideBall(event.position);
+		result = isMouseInsideBall(event.position, *GUIBalls[i], sizePercentage);
 		if (result != MOUSE_NOT_IN_BALL)
 		{
-			ballBeingDragged.first = ball->getBallIndex();
+			ballBeingDragged.first = i;
 			ballBeingDragged.second = result;
-			balls[ball->getBallIndex()]->setIsMouseOverBall(true);
 			return;
 		}
 		else
 		{
-			balls[ball->getBallIndex()]->setIsMouseOverBall(false);
+			// TODO
 		}
 	}
 	ballBeingDragged.first = (int)MOUSE_NOT_IN_BALL;
@@ -1214,8 +1364,7 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 {
 	if (ballBeingDragged.first > (int)MOUSE_NOT_IN_BALL)
 	{
-    	const auto& balls = pit.getBalls();
-		if (balls[ballBeingDragged.first]->isActive() == true)
+		if (GUIBalls[ballBeingDragged.first]->active == true)
 		{
 			currentBallFocused = ballBeingDragged.first;
 			setChosenTabIndex(currentBallFocused);
@@ -1246,7 +1395,7 @@ void BallPitAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 			*param = 3; // random - 1 --> 4 - 1 = 3
 		}
 		this->audioProcessor.setWasGUIUpdated(true);
-		pit.setEdgeTypeToRandom();
+		// pit.setEdgeTypeToRandom();
 	}
 	else if (mouseOverScaleDice == true)
 	{

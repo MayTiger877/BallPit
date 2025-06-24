@@ -553,6 +553,8 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		}
 	}
 
+	updateBallsSnapshot();
+	updateAbstractedEdgeColors();
 	midiBuffer.clear();
 }
 
@@ -595,11 +597,6 @@ void BallPitAudioProcessor::setStateInformation (const void* data, int sizeInByt
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
 	return new BallPitAudioProcessor();
-}
-
-void BallPitAudioProcessor::togglePlayState()
-{
-	this->pit.toggleBallMovement();
 }
 
 juce::StringArray getScaleOptions()
@@ -727,6 +724,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 	std::string transposeID = "transpose";
 	params.add(std::make_unique<juce::AudioParameterInt>(transposeID, "Transpose", -24, 24, 0));
 	
+	std::string toggleStateID = "toggleState";
+ 	params.add(std::make_unique<juce::AudioParameterBool>(toggleStateID,  "Toggle State", false));
+	
 	return params;
 }
 
@@ -768,12 +768,37 @@ void BallPitAudioProcessor::parameterChanged(const juce::String& parameterID, fl
 	{
 		wasGUIUpdated = true;
 	}
+	
+	if (parameterID == "toggleState")
+	{
+		this->pit.toggleBallMovement();
+	}
+	else if (parameterID == "BallActivation0")
+	{
+		this->pit.getBalls()[0]->setActive(newValue > 0.5f);
+	}
+	  else if (parameterID == "BallActivation1")
+  	{
+  	 this->pit.getBalls()[1]->setActive(newValue > 0.5f);
+  	}
+  	else if (parameterID == "BallActivation2")
+  	{
+  	 this->pit.getBalls()[2]->setActive(newValue > 0.5f);
+  	}
 }
 
 //--------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------
 //getters and setters
 
+bool BallPitAudioProcessor::getToggleState()
+{
+ 	return toggleState.get();
+}
+void BallPitAudioProcessor::setToggleState(bool newState)
+{
+ 	toggleState.set(newState);
+}
 bool BallPitAudioProcessor::getIsPlaying()
 {
  	return isPlaying.get();
@@ -871,5 +896,20 @@ void BallPitAudioProcessor::setClockTimeSeconds(double newClockTimeSeconds)
 {
  	this->clockTimeSeconds.set(newClockTimeSeconds);
 }
-
+void BallPitAudioProcessor::setWasGUIUploaded(bool newStatus)
+{
+	wasGUIUploaded.set(newStatus);
+}
+bool BallPitAudioProcessor::getWasGUIUploaded()
+{
+	return wasGUIUploaded.get();
+}
+void BallPitAudioProcessor::setAreBallsMoving(bool newState)
+{
+	areBallsMoving.set(newState);
+}
+bool BallPitAudioProcessor::getAreBallsMoving()
+{
+	return areBallsMoving.get();
+}
 //-----------------------------------------------------------------

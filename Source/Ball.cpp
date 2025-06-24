@@ -20,7 +20,6 @@ void Ball::getBallGUINesseceities(BallGUIEssentials &ballSnapshot)
 	ballSnapshot.active = active;
  	ballSnapshot.ballIndex = ballIndex;
 	ballSnapshot.isMoving = isMoving;
-	ballSnapshot.isMouseOverBall = isMouseOverBall;
 	ballSnapshot.ballSpeedType = ballSpeedType;
 	ballSnapshot.delayAmount = delaySettings.delayAmount;
 	ballSnapshot.delayFeedback = delaySettings.delayFeedback;
@@ -225,7 +224,7 @@ void Ball::setDelaySettings(const DelaySettings& newDelaySettings)
 	clearQueue(ballPathPoints[2]);
 }
 
-int Ball::getEdgeHitIndex(HitPossition currentHitPosition)
+int Ball::getEdgeHitIndex(HitPosition currentHitPosition)
 {
 	switch (currentHitPosition)
 	{
@@ -265,7 +264,7 @@ void Ball::edgeBounce()
 		return;
 	}
 
-	HitPossition currentHitPos = LEFT;
+	HitPosition currentHitPos = LEFT;
 	float yBeforeCorrection = -1;
 	
 	if ((x - radius <= minX || x + radius >= maxX) && (speedX != 0))
@@ -415,11 +414,4 @@ void Ball::resolveCollision(Ball& other)
 	{
 		if (this->collideListener) this->collideListener->onBallsColide(scaleNotes, sampleRate);
 	}
-}
-
-float Ball::isMouseInsideBall(juce::Point<float> mousePosition) const
-{
-	juce::Point<float> ballPosition(this->x * sizePercentage, this->y * sizePercentage);
-	float distance = mousePosition.getDistanceFrom(ballPosition);
-	return (distance <= radius) ? distance : MOUSE_NOT_IN_BALL;
 }

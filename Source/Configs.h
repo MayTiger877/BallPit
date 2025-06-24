@@ -27,10 +27,11 @@ int getChosenTabIndex();
 // defines and constants
 
 #define VISUAL_FRAMES_PER_SECOND 50.0f
-
 #define SECONDS_IN_MINUTE 60.0f
-
 #define PI 3.14159265f
+#define NO_SPEED 0.0f
+#define MOUSE_NOT_IN_BALL -1.0
+#define MOUSE_NOT_IN_TAB -1
 
 //-----------------------------------------------------------------------
 // defaults values for the BallPit multiverse
@@ -75,7 +76,7 @@ struct BallGUIEssentials{
         {0.0f, 0.0f},
         {0.0f, 0.0f}
     };
-}
+};
 
 //-----------------------------------------------------------------------
 // Sizes and positions map

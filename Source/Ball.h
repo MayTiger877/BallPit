@@ -3,16 +3,12 @@
 #include "EdgeEventListener.h"
 #include "Configs.h"
 
-#define NO_SPEED 0.0f
-#define MOUSE_NOT_IN_BALL -1.0
-#define MOUSE_NOT_IN_TAB -1
-
 typedef enum {
     UP,
     DOWN,
     LEFT,
     RIGHT
-}HitPossition;
+}HitPosition;
 
 typedef struct DelaySettings
 {
@@ -69,11 +65,6 @@ public:
 
 	void setBallTranspose(int newTranspose) { this->transpose = newTranspose; }
 
-	float isMouseInsideBall(juce::Point<float> mousePosition) const;
-    void setIsMouseOverBall(bool newIsMouseOverBall) { this->isMouseOverBall = newIsMouseOverBall; }
-
-    void setsizePercentage(float newsizePercentage) { this->sizePercentage = newsizePercentage; }
-
 private:
     // pit coordinates- stupid simple
     const float minX = PIT_MIN_X + PIT_INNER_DIFF;
@@ -98,9 +89,7 @@ private:
     juce::Path ballArrow;
 
     double sampleRate;
-    float sizePercentage = 1.0f;
     bool isMoving = false;
-    bool isMouseOverBall = false;
     
 	int abstractedEdgeDuplicate[1568] = { 60 };
     int scaleNotes[8];
@@ -108,7 +97,7 @@ private:
     BallEdgeEventListener* edgeListener;
 	BallCollideEventListener* collideListener;
 
-    int getEdgeHitIndex(HitPossition currentPosition);
+    int getEdgeHitIndex(HitPosition currentPosition);
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Ball)
 };

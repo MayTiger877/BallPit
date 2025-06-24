@@ -81,12 +81,11 @@ public:
 	
 	juce::UndoManager& getUndoManager() { return m_undoManager; }
 	
-	
-	void togglePlayState();
-	
 	//------------------------------------------------------------------
 	//getters and setters
 	
+	bool getToggleState();
+	void setToggleState(bool newState);
 	bool getIsPlaying();
 	void setIsPlaying(bool newState);
 	double getSampleRate() const;
@@ -111,8 +110,10 @@ public:
 	void setClockTimeSeconds(double newClockTimeSeconds);
 	bool getWasGUIUpdated() const;
 	void setWasGUIUpdated(bool newStatus);
-	void setWasGUIUploaded(bool newStatus) { wasGUIUploaded.set(newStatus); }
-	bool getWasGUIUploaded() { return wasGUIUploaded.get(); }
+	bool getWasGUIUploaded();
+	void setWasGUIUploaded(bool newStatus);
+	bool getAreBallsMoving();
+	void setAreBallsMoving(bool newState);
 	//==============================================================================
 	
 private:
@@ -123,7 +124,9 @@ private:
 	std::vector<std::unique_ptr<EdgeEventListener>> listeners;
 	std::vector<PendingMidiEvent> pendingEvents;
 	
-	juce::Atomic<bool> isPlaying;
+	juce::Atomic<bool> toggleState = false;
+	juce::Atomic<bool> isPlaying = false;
+	juce::Atomic<bool> areBallsMoving = false; // to track if balls are moving
 
 	juce::Atomic<double> m_sampleRate;
 	juce::Atomic<int> m_samplesPerBlock;
@@ -155,16 +158,18 @@ private:
 	public:
 	// TODO- check that all params are here!
 	std::vector<juce::String> paramIDs = {
-	"ballX0", "ballY0", "ballRadius0", "ballVelocity0", "ballAngle0", "ballXVelocity0", "ballYVelocity0", "xVelocityInverter0", "yVelocityInverter0", "delayAmount0", "delayFeedback0", "delayRate0", "delayNoteMovement0",
-	"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "ballYVelocity1", "xVelocityInverter1", "yVelocityInverter1", "delayAmount1", "delayFeedback1", "delayRate1", "delayNoteMovement1",
-	"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "ballYVelocity2", "xVelocityInverter2", "yVelocityInverter2", "delayAmount2", "delayFeedback2", "delayRate2", "delayNoteMovement2",
+	"ballX0", "ballY0", "ballRadius0", "ballVelocity0", "ballAngle0", "ballXVelocity0", "BallActivation0" "ballYVelocity0", "xVelocityInverter0", "yVelocityInverter0", "delayAmount0", "delayFeedback0", "delayRate0", "delayNoteMovement0",
+	"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "BallActivation1" "ballYVelocity1", "xVelocityInverter1", "yVelocityInverter1", "delayAmount1", "delayFeedback1", "delayRate1", "delayNoteMovement1",
+	"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "BallActivation2" "ballYVelocity2", "xVelocityInverter2", "yVelocityInverter2", "delayAmount2", "delayFeedback2", "delayRate2", "delayNoteMovement2",
 	"edgePhase", "edgeDenomenator", "edgeRange", "scaleChoice", "rootNote", "edgeType",
-	"ballsPositioningType", "snapToGrid", "collision", "quantization", "quantizationDivision", "volumeVariation", "sizePercentage", "probability", "transpose"
+	"ballsPositioningType", "snapToGrid", "collision", "quantization", "quantizationDivision", "volumeVariation", "sizePercentage", "probability", "transpose",
+	"toggleState"
 	};
 
 	std::atomic<std::shared_ptr<const std::vector<BallGUIEssentials>>> latestBallsSnapshot;
+	juce::Atomic<int*> abstractedEdgeColors = nullptr; // to store the edge colors
 
-	void updateBallsSnapshot() 
+	void updateBallsSnapshot() //TODO= call it somewhere
 	{
     	auto snapshot = std::make_shared<std::vector<BallGUIEssentials>>();
     	for (const auto& ball : this->pit.getBalls()) 
@@ -173,6 +178,17 @@ private:
 			ball->getBallGUINesseceities(currentBallEssentials);
         	snapshot->push_back(currentBallEssentials);
     	}
-    	latestBallsSnapshot.store(snapshot, std::memory_order_release);
+    	latestBallsSnapshot.store(snapshot, std::memory_order_acquire);
+	}
+
+	void updateAbstractedEdgeColors()
+	{
+		int abstractedEdgeColoursCopy[1568] = { 0 }; // initialize with zeros
+		const int *abstractedEdgeColours = pit.getAbstractedEdgeColors();
+		for (int i = 0; i < 1568; ++i)
+  		{
+  			abstractedEdgeColoursCopy[i] = abstractedEdgeColours[i];
+  		}
+		abstractedEdgeColors.set(abstractedEdgeColoursCopy);
 	}
 };
