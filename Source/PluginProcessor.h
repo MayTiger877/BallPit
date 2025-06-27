@@ -167,7 +167,7 @@ private:
 	};
 
 	std::atomic<std::shared_ptr<const std::vector<BallGUIEssentials>>> latestBallsSnapshot;
-	juce::Atomic<int*> abstractedEdgeColors = nullptr; // to store the edge colors
+	std::atomic<std::shared_ptr<std::vector<int>>> abstractedEdgeColors;
 
 	void updateBallsSnapshot()
 	{
@@ -183,12 +183,13 @@ private:
 
 	void updateAbstractedEdgeColors()
 	{
-		int abstractedEdgeColoursCopy[1568] = { 0 }; // initialize with zeros
-		const int *abstractedEdgeColours = pit.getAbstractedEdgeColors();
-		for (int i = 0; i < 1568; ++i)
-  		{
-  			abstractedEdgeColoursCopy[i] = abstractedEdgeColours[i];
-  		}
-		abstractedEdgeColors.set(abstractedEdgeColoursCopy);
+		// Create a new shared vector
+		auto newCopy = std::make_shared<std::vector<int>>(1568);
+
+		const int* src = pit.getAbstractedEdgeColors();
+		std::copy(src, src + 1568, newCopy->begin());
+
+		// Atomically store the new shared pointer
+		abstractedEdgeColors.store(newCopy, std::memory_order_release);
 	}
 };

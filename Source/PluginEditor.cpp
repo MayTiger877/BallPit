@@ -540,6 +540,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 	startStopButton.setButtonText("Start");
 	startStopButton.onClick = [this]()
 		{
+			bool changeTo = false;
 			if ((GUIBalls[0]->active == false) && (GUIBalls[1]->active == false) && (GUIBalls[2]->active == false))
 			{
 				startStopButton.setButtonText("Start"); // good habbit or just trauma?
@@ -550,7 +551,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 				bool changeTo = !toggleStateParam->getValue();
 				toggleStateParam->setValueNotifyingHost(changeTo);
 			}
-			if (audioProcessor.getAreBallsMoving() == true)
+			if (changeTo == true)
 			{
 				startStopButton.setButtonText("Stop");
 			}
@@ -875,12 +876,13 @@ void BallPitAudioProcessorEditor::drawPitEdge(juce::Graphics& g, juce::Colour* e
 	int numOfColors = static_cast<int>(audioProcessor.valueTreeState.getRawParameterValue("edgeRange")->load());
 	int currentPhase = juce::jmap<int>(audioProcessor.valueTreeState.getRawParameterValue("edgePhase")->load(), 0, 360, 0, 1567);
 	if (currentPhase == 1567) { currentPhase = 0; } // weird but does the job.....
-	const int* pointerToAbstractedEdgeColors = audioProcessor.abstractedEdgeColors.get();
+	auto pointerToAbstractedEdgeColors = audioProcessor.abstractedEdgeColors.load(std::memory_order_acquire);
+	jassert(pointerToAbstractedEdgeColors && pointerToAbstractedEdgeColors->size() == 1568);
 	int noteRectSize = 1568 / numOfSplits;
 	int reminder = 1568 % numOfSplits;
 	int index = currentPhase;
 	int currentRectSize = -1;
-	g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
+	g.setColour(edgeColors[(*pointerToAbstractedEdgeColors)[index]]);
 
 	for (int i = 0; i < numOfSplits;)
 	{
@@ -909,7 +911,8 @@ void BallPitAudioProcessorEditor::drawPitEdge(juce::Graphics& g, juce::Colour* e
 		} while (currentRectSize > 0);
 
 		noteRectSize = 1568 / numOfSplits;
-		g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
+		int temp = (*pointerToAbstractedEdgeColors)[index];
+		g.setColour(edgeColors[temp]);
 	}
 
 	if (numOfColors > 1)
@@ -919,7 +922,7 @@ void BallPitAudioProcessorEditor::drawPitEdge(juce::Graphics& g, juce::Colour* e
 
 	if (reminder != 0) 
 	{
-		g.setColour(edgeColors[pointerToAbstractedEdgeColors[index]]);
+		g.setColour(edgeColors[(*pointerToAbstractedEdgeColors)[index]]);
 		g.fillRect(PIT_MIN_X + 3, PIT_MIN_Y, reminder, 4);
 	}
 }

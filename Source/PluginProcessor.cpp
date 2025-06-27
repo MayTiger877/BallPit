@@ -758,12 +758,10 @@ void BallPitAudioProcessor::parameterChanged(const juce::String& parameterID, fl
 		(parameterID == "rootNote")  || (parameterID == "edgeType") || (parameterID == "transpose"))
 		{
 			wasGUIUpdated = true;
-			return;
 		}
 		else 
 		{
 			wasGUIUpdated = false;
-			return;
 		}
 	}
 	else
