@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.16)
 
 project(BallPit VERSION 1.0.0)
 
+# Enable JUCE modules
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # First, we'll add the CMake folder, incase we'll need to find_package later:
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
@@ -25,14 +29,20 @@ endif ()
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 # Set this to the path where JUCE was cloned by GitHub Actions or locally
-set(JUCE_DIR "${CMAKE_SOURCE_DIR}/../JUCE") # my pc
+# set(JUCE_DIR "${CMAKE_SOURCE_DIR}/../JUCE") # my pc
 # set(JUCE_DIR "${CMAKE_SOURCE_DIR}/JUCE") # CI pipeline
+if(EXISTS "${CMAKE_SOURCE_DIR}/../JUCE")
+    set(JUCE_DIR "${CMAKE_SOURCE_DIR}/../JUCE")
+    message(STATUS "Using JUCE from parent directory")
+elseif(EXISTS "${CMAKE_SOURCE_DIR}/JUCE")
+    set(JUCE_DIR "${CMAKE_SOURCE_DIR}/JUCE")
+    message(STATUS "Using JUCE from current directory")
+else()
+    message(FATAL_ERROR "JUCE directory not found in either location")
+endif()
 
 # Add JUCE to the project directly (this is the standard way for JUCE projects)
 add_subdirectory(${JUCE_DIR} JUCE)
-
-# Enable JUCE modules
-set(CMAKE_CXX_STANDARD 20)
 
 juce_add_plugin(BallPit
     COMPANY_NAME "MayTigerPlugins"

@@ -9,8 +9,9 @@ Ball::Ball(int ballIndex, float x, float y, float radius, float velocity, float 
 	setWantsKeyboardFocus(true);
 }
 
-void Ball::getBallGUINesseceities(BallGUIEssentials &ballSnapshot)
+BallGUIEssentials Ball::getBallGUINesseceities()
 {
+	BallGUIEssentials ballSnapshot;
 	// Copy relevant info
 	ballSnapshot.x = x;
 	ballSnapshot.y = y;
@@ -29,6 +30,8 @@ void Ball::getBallGUINesseceities(BallGUIEssentials &ballSnapshot)
  	{
  		ballSnapshot.delayPoints[i] = delayPoints[i];
 	}
+
+	return ballSnapshot;
 }
 
 void Ball::setBallEdgeEventListener(BallEdgeEventListener* l)
@@ -350,6 +353,9 @@ void Ball::edgeBounce()
 
 bool Ball::checkCollision(const Ball& other) const 
 {
+	if (!this->active || !other.active)
+		return false;
+
 	float dx = x - other.x;
 	float dy = y - other.y;
 	float distance = std::sqrt(dx * dx + dy * dy);

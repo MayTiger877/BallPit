@@ -46,7 +46,7 @@ BallPitAudioProcessorEditor::BallPitAudioProcessorEditor (BallPitAudioProcessor&
 	addKeyListener(this);
 	addAndMakeVisible(content);
 
-	BallGUIEssentials GUIBallToEnter = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, false, 0, 0, 0.0, 0.0, 0.0 };
+	BallGUIEssentials GUIBallToEnter = { 0.0f, 0.0f, 0.0f, 0.0, 0.0, false, 0, false, 0, 0, 0.0f, 0.0f, 0};
 	for (int i = 0; i < 3; i++)
 	{
 		GUIBallToEnter.ballIndex = i;
@@ -548,7 +548,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 			}
 			if (auto* toggleStateParam = audioProcessor.valueTreeState.getParameter("toggleState"))
 			{
-				bool changeTo = !toggleStateParam->getValue();
+				changeTo = !toggleStateParam->getValue();
 				toggleStateParam->setValueNotifyingHost(changeTo);
 			}
 			if (changeTo == true)
@@ -876,7 +876,7 @@ void BallPitAudioProcessorEditor::drawPitEdge(juce::Graphics& g, juce::Colour* e
 	int numOfColors = static_cast<int>(audioProcessor.valueTreeState.getRawParameterValue("edgeRange")->load());
 	int currentPhase = juce::jmap<int>(audioProcessor.valueTreeState.getRawParameterValue("edgePhase")->load(), 0, 360, 0, 1567);
 	if (currentPhase == 1567) { currentPhase = 0; } // weird but does the job.....
-	auto pointerToAbstractedEdgeColors = audioProcessor.abstractedEdgeColors.load(std::memory_order_acquire);
+	auto pointerToAbstractedEdgeColors = audioProcessor.getAbstractedEdgeColors();
 	jassert(pointerToAbstractedEdgeColors && pointerToAbstractedEdgeColors->size() == 1568);
 	int noteRectSize = 1568 / numOfSplits;
 	int reminder = 1568 % numOfSplits;
@@ -1139,7 +1139,7 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 
 void BallPitAudioProcessorEditor::timerCallback() 
 {
-	auto snapshot = audioProcessor.latestBallsSnapshot.load(std::memory_order_acquire);
+	auto snapshot = audioProcessor.getBallsSnapshot();
 	if (snapshot) 
 	{
     	for (const auto& ball : *snapshot) 

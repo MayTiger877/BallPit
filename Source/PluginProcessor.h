@@ -106,14 +106,22 @@ public:
 	void setSamplesPerStep(int newSamplesPerStep);
 	int getSampleCounter() const;
 	void setSampleCounter(int newSampleCounter);
-	double getClockTimeSeconds() const;
-	void setClockTimeSeconds(double newClockTimeSeconds);
+	// double getClockTimeSeconds() const;
+	// void setClockTimeSeconds(double newClockTimeSeconds);
 	bool getWasGUIUpdated() const;
 	void setWasGUIUpdated(bool newStatus);
 	bool getWasGUIUploaded();
 	void setWasGUIUploaded(bool newStatus);
 	bool getAreBallsMoving();
 	void setAreBallsMoving(bool newState);
+
+	// Thread safe methods
+	std::shared_ptr<const std::vector<BallGUIEssentials>> getBallsSnapshot() const;
+	void updateBallsSnapshot(std::shared_ptr<const std::vector<BallGUIEssentials>> newSnapshot);
+	
+	std::shared_ptr<std::vector<int>> getAbstractedEdgeColors() const;
+	void updateAbstractedEdgeColors(std::shared_ptr<std::vector<int>> newColors);
+
 	//==============================================================================
 	
 private:
@@ -133,7 +141,7 @@ private:
 	
 	juce::Atomic<float> m_probability = 1.0f; // default to 100% probability
 	
-	juce::Atomic<double> clockTimeSeconds = 0.0;
+	double clockTimeSeconds = 0.0;
 
 	juce::Atomic<double> m_bpm {DEFAULT_BPM};
 	juce::Atomic<juce::AudioPlayHead::TimeSignature> m_timeSignature;
@@ -155,41 +163,27 @@ private:
 
 	std::set<int> activeNotes;  // store MIDI note numbers
 
-	public:
+	std::vector<BallGUIEssentials> latestBallsSnapshot = {
+		{0.0f, 0.0f, 0.0f, 0.0, 0.0, false, 0, false, 0, 0, 0.0f, 0.0f, 0},
+		{0.0f, 0.0f, 0.0f, 0.0, 0.0, false, 1, false, 1, 1, 0.0f, 0.0f, 1},
+		{0.0f, 0.0f, 0.0f, 0.0, 0.0, false, 2, false, 2, 2, 0.0f, 0.0f, 2}
+	};
+	std::vector<int> abstractedEdgeColors;
+
+	std::shared_ptr<const std::vector<BallGUIEssentials>> latestBallsSnapshotPointer;
+	mutable juce::CriticalSection ballsSnapshotPointerLock;
+	
+	std::shared_ptr<std::vector<int>> abstractedEdgeColorsPointer;
+	mutable juce::CriticalSection edgeColorsPointerLock;
+	
+public:
 	// TODO- check that all params are here!
 	std::vector<juce::String> paramIDs = {
-	"ballX0", "ballY0", "ballRadius0", "ballVelocity0", "ballAngle0", "ballXVelocity0", "BallActivation0" "ballYVelocity0", "xVelocityInverter0", "yVelocityInverter0", "delayAmount0", "delayFeedback0", "delayRate0", "delayNoteMovement0",
-	"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "BallActivation1" "ballYVelocity1", "xVelocityInverter1", "yVelocityInverter1", "delayAmount1", "delayFeedback1", "delayRate1", "delayNoteMovement1",
-	"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "BallActivation2" "ballYVelocity2", "xVelocityInverter2", "yVelocityInverter2", "delayAmount2", "delayFeedback2", "delayRate2", "delayNoteMovement2",
-	"edgePhase", "edgeDenomenator", "edgeRange", "scaleChoice", "rootNote", "edgeType",
-	"ballsPositioningType", "snapToGrid", "collision", "quantization", "quantizationDivision", "volumeVariation", "sizePercentage", "probability", "transpose",
-	"toggleState"
+		"ballX0", "ballY0", "ballRadius0", "ballVelocity0", "ballAngle0", "ballXVelocity0", "BallActivation0" "ballYVelocity0", "xVelocityInverter0", "yVelocityInverter0", "delayAmount0", "delayFeedback0", "delayRate0", "delayNoteMovement0",
+		"ballX1", "ballY1", "ballRadius1", "ballVelocity1", "ballAngle1", "ballXVelocity1", "BallActivation1" "ballYVelocity1", "xVelocityInverter1", "yVelocityInverter1", "delayAmount1", "delayFeedback1", "delayRate1", "delayNoteMovement1",
+		"ballX2", "ballY2", "ballRadius2", "ballVelocity2", "ballAngle2", "ballXVelocity2", "BallActivation2" "ballYVelocity2", "xVelocityInverter2", "yVelocityInverter2", "delayAmount2", "delayFeedback2", "delayRate2", "delayNoteMovement2",
+		"edgePhase", "edgeDenomenator", "edgeRange", "scaleChoice", "rootNote", "edgeType",
+		"ballsPositioningType", "snapToGrid", "collision", "quantization", "quantizationDivision", "volumeVariation", "sizePercentage", "probability", "transpose",
+		"toggleState"
 	};
-
-	std::atomic<std::shared_ptr<const std::vector<BallGUIEssentials>>> latestBallsSnapshot;
-	std::atomic<std::shared_ptr<std::vector<int>>> abstractedEdgeColors;
-
-	void updateBallsSnapshot()
-	{
-    	auto snapshot = std::make_shared<std::vector<BallGUIEssentials>>();
-    	for (const auto& ball : this->pit.getBalls()) 
-		{
-			BallGUIEssentials currentBallEssentials;
-			ball->getBallGUINesseceities(currentBallEssentials);
-        	snapshot->push_back(currentBallEssentials);
-    	}
-    	latestBallsSnapshot.store(snapshot, std::memory_order_release);
-	}
-
-	void updateAbstractedEdgeColors()
-	{
-		// Create a new shared vector
-		auto newCopy = std::make_shared<std::vector<int>>(1568);
-
-		const int* src = pit.getAbstractedEdgeColors();
-		std::copy(src, src + 1568, newCopy->begin());
-
-		// Atomically store the new shared pointer
-		abstractedEdgeColors.store(newCopy, std::memory_order_release);
-	}
 };
