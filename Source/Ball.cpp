@@ -350,6 +350,9 @@ void Ball::edgeBounce()
 
 bool Ball::checkCollision(const Ball& other) const 
 {
+	if (!this->active || !other.active)
+		return false;
+
 	float dx = x - other.x;
 	float dy = y - other.y;
 	float distance = std::sqrt(dx * dx + dy * dy);

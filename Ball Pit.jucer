@@ -4,7 +4,7 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut"
               pluginFormats="buildVST3" pluginVST3Category="Generator,Instrument,Synth"
               pluginVSTCategory="kPlugCategSynth" cppLanguageStandard="20"
-              version="0.9.0">
+              version="0.9.0" companyName="MayTigerPlugins">
   <MAINGROUP id="U9BnPz" name="BallPit">
     <GROUP id="{69F35049-CA00-8238-08A9-0404F25C31A4}" name="Source">
       <GROUP id="{E60B96AE-AA03-A525-681B-BE8AB1346E74}" name="MyLookAndFeel">

@@ -41,7 +41,7 @@
 namespace ProjectInfo
 {
     const char* const  projectName    = "BallPit";
-    const char* const  companyName    = "";
+    const char* const  companyName    = "MayTigerPlugins";
     const char* const  versionString  = "0.9.0";
     const int          versionNumber  = 0x900;
 }

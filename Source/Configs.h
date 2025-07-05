@@ -50,8 +50,8 @@ int getChosenTabIndex();
 #define NOTE_MIDI_DURATION 0.015 //ms
 
 #define MAIN_BG_COLOUR juce::Colour::fromRGB(50, 60, 67)
-#define BUTTON_BG_COLOUR juce::Colour::fromRGB(98, 128, 143).darker(0.2f)
-#define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(212, 201, 190).darker()
+#define BUTTON_BG_COLOUR juce::Colour::fromRGB(98, 128, 143).darker(0.1f)
+#define BUTTON_TEXT_COLOUR juce::Colour::fromRGB(212, 201, 190)
 
 //-----------------------------------------------------------------------
 // Threads protection stuff
@@ -108,9 +108,9 @@ struct BallGUIEssentials{
 #define PIT_CORNER_BL juce::Rectangle<float>(PIT_MIN_X - (PIT_CORNER_THICKNESS / 4), PIT_MAX_Y - (3 * PIT_CORNER_THICKNESS / 4), PIT_CORNER_THICKNESS, PIT_CORNER_THICKNESS)
 #define PIT_CORNER_BR juce::Rectangle<float>(PIT_MAX_X - (3 * PIT_CORNER_THICKNESS / 4), PIT_MAX_Y - (3 * PIT_CORNER_THICKNESS / 4), PIT_CORNER_THICKNESS, PIT_CORNER_THICKNESS)
 
-#define BALL_1_COLOUR juce::Colours::blue
-#define BALL_2_COLOUR juce::Colours::crimson
-#define BALL_3_COLOUR juce::Colours::orange
+#define BALL_1_COLOUR juce::Colour::fromRGB(255, 0, 96)
+#define BALL_2_COLOUR juce::Colour::fromRGB(0, 223, 162)
+#define BALL_3_COLOUR juce::Colour::fromRGB(246, 250, 112)
 
 #define BALLS_TABS_BOUNDS juce::Rectangle<int>(417, 238, 412, 410)
 #define BALLS_TAB_0_BOUNDS juce::Rectangle<int>(420, 496, 68, 43)

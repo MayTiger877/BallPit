@@ -548,7 +548,7 @@ void BallPitAudioProcessorEditor::initiateComponents()
 			}
 			if (auto* toggleStateParam = audioProcessor.valueTreeState.getParameter("toggleState"))
 			{
-				bool changeTo = !toggleStateParam->getValue();
+				changeTo = !toggleStateParam->getValue();
 				toggleStateParam->setValueNotifyingHost(changeTo);
 			}
 			if (changeTo == true)
