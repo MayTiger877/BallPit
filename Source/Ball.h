@@ -24,7 +24,7 @@ class Ball : public juce::Component
 public:
     Ball(int ballndex, float x, float y, float radius, float velocity, float angle);
     
-    void getBallGUINesseceities(BallGUIEssentials &ballSnapshot);
+    BallGUIEssentials getBallGUINesseceities();
 
     void setBallEdgeEventListener(BallEdgeEventListener* l);
 	void setBallCollideEventListener(BallCollideEventListener* l);

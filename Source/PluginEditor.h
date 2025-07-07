@@ -47,18 +47,18 @@ public:
 
 //-------------------------------------------------------------------------------------------
 
-class BallPitAudioProcessorEditor  : public juce::AudioProcessorEditor, 
-									 public juce::Timer, 
-									 private juce::ChangeListener,
-									 public juce::KeyListener,
-									 public juce::ComboBox::Listener
+class BallPitAudioProcessorEditor : public juce::AudioProcessorEditor,
+	public juce::Timer,
+	private juce::ChangeListener,
+	public juce::KeyListener,
+	public juce::ComboBox::Listener
 {
 public:
-	BallPitAudioProcessorEditor (BallPitAudioProcessor&);
+	BallPitAudioProcessorEditor(BallPitAudioProcessor&);
 	~BallPitAudioProcessorEditor() override;
 
 	//====================================================================================
-	void paint (juce::Graphics&) override;
+	void paint(juce::Graphics&) override;
 	void resized() override;
 	void timerCallback() override;
 	void saveGUIState();
@@ -79,7 +79,6 @@ public:
 
 	bool keyPressed(const juce::KeyPress& key, juce::Component* originatingComponent) override;
 	//----------------------------------------------------------------------
-
 
 private:
 	// This reference is provided as a quick way for your editor to
@@ -178,6 +177,9 @@ private:
 	PresetPanel presetPanel;
 
 	std::vector<std::unique_ptr<BallGUIEssentials>> GUIBalls;
+
+	std::shared_ptr<const std::vector<BallGUIEssentials>> ballsSnapshot;
+	std::shared_ptr<const std::vector<int>> abstractedEdgeColorsSnapshot;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BallPitAudioProcessorEditor)
 };

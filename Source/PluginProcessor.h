@@ -14,6 +14,7 @@
 #include "Scales.h"
 #include "Configs.h"
 #include "PresetManagerBackend.h"
+#include <mutex>
 
 double velocityToInterval(int velocity);
 
@@ -166,30 +167,79 @@ private:
 	"toggleState"
 	};
 
-	std::atomic<std::shared_ptr<const std::vector<BallGUIEssentials>>> latestBallsSnapshot;
-	std::atomic<std::shared_ptr<std::vector<int>>> abstractedEdgeColors;
+	std::vector<BallGUIEssentials> currentBallsSnapshot;
+	std::shared_ptr<std::vector<BallGUIEssentials>> ballsSnapshot;
+	mutable std::mutex ballsSnapshotMutex;
+
+	std::vector<int> currentAbstractedEdgeColorsSnapshot;
+	std::shared_ptr<std::vector<int>> abstractedEdgeColorsSnapshot;
+	mutable std::mutex abstractedEdgeColorsMutex;
 
 	void updateBallsSnapshot()
 	{
-    	auto snapshot = std::make_shared<std::vector<BallGUIEssentials>>();
-    	for (const auto& ball : this->pit.getBalls()) 
+		auto newCopy = std::vector<BallGUIEssentials>();
+		newCopy.push_back(pit.getBalls()[0]->getBallGUINesseceities());
+		newCopy.push_back(pit.getBalls()[1]->getBallGUINesseceities());
+		newCopy.push_back(pit.getBalls()[2]->getBallGUINesseceities());
+
+		auto newBallsSnapshot = std::make_shared<std::vector<BallGUIEssentials>>(std::move(newCopy));
+
 		{
-			BallGUIEssentials currentBallEssentials;
-			ball->getBallGUINesseceities(currentBallEssentials);
-        	snapshot->push_back(currentBallEssentials);
-    	}
-    	latestBallsSnapshot.store(snapshot, std::memory_order_release);
+			std::lock_guard<std::mutex> lock(ballsSnapshotMutex);
+			ballsSnapshot = newBallsSnapshot;
+		}
 	}
 
-	void updateAbstractedEdgeColors()
+	std::shared_ptr<const std::vector<BallGUIEssentials>> getBallsSnapshot() const
 	{
-		// Create a new shared vector
-		auto newCopy = std::make_shared<std::vector<int>>(1568);
-
-		const int* src = pit.getAbstractedEdgeColors();
-		std::copy(src, src + 1568, newCopy->begin());
-
-		// Atomically store the new shared pointer
-		abstractedEdgeColors.store(newCopy, std::memory_order_release);
+		std::lock_guard<std::mutex> lock(ballsSnapshotMutex);
+		return ballsSnapshot;
 	}
+
+	//-------------------------
+
+	void updateAbstractedEdgeColorsSnapshot()
+	{
+		auto newCopy = std::vector<int>(1568);
+		const int* src = pit.getAbstractedEdgeColors();
+		std::copy(src, src + 1568, newCopy.begin());
+
+		auto newAbstractedEdgeColorsSnapshot = std::make_shared<std::vector<int>>(std::move(newCopy));
+
+		{
+			std::lock_guard<std::mutex> lock(abstractedEdgeColorsMutex);
+			abstractedEdgeColorsSnapshot = newAbstractedEdgeColorsSnapshot;
+		}
+	}
+
+	std::shared_ptr<const std::vector<int>> getAbstractedEdgeColorsSnapshot() const
+	{
+		std::lock_guard<std::mutex> lock(abstractedEdgeColorsMutex);
+		return abstractedEdgeColorsSnapshot;
+	}
+
+	//void updateBallsSnapshot()
+	//{
+ //   	auto snapshot = std::make_shared<std::vector<BallGUIEssentials>>();
+ //   	for (const auto& ball : this->pit.getBalls()) 
+	//	{
+	//		BallGUIEssentials currentBallEssentials;
+	//		ball->getBallGUINesseceities(currentBallEssentials);
+ //       	snapshot->push_back(currentBallEssentials);
+ //   	}
+ //   	latestBallsSnapshot.store(snapshot, std::memory_order_release);
+	//}
+
+	//void updateAbstractedEdgeColors()
+	//{
+	//	// Create a new shared vector
+	//	auto newCopy = std::make_shared<std::vector<int>>(1568);
+
+	//	const int* src = pit.getAbstractedEdgeColors();
+	//	std::copy(src, src + 1568, newCopy->begin());
+
+	//	// Atomically store the new shared pointer
+	//	abstractedEdgeColors.store(newCopy, std::memory_order_release);
+	//}
+
 };

@@ -69,8 +69,14 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 
 	m_undoManager.setMaxNumberOfStoredUnits(20, 1);
 
-	//updateBallsSnapshot();
-	//updateAbstractedEdgeColors();
+	currentBallsSnapshot = {
+		pit.getBalls()[0]->getBallGUINesseceities(),
+		pit.getBalls()[1]->getBallGUINesseceities(),
+		pit.getBalls()[2]->getBallGUINesseceities()	};
+	ballsSnapshot = std::make_shared<std::vector<BallGUIEssentials>>(std::move(currentBallsSnapshot));
+
+	currentAbstractedEdgeColorsSnapshot = std::vector<int>(1568, 0);
+	abstractedEdgeColorsSnapshot = std::make_shared<std::vector<int>>(std::move(currentAbstractedEdgeColorsSnapshot));
 }
 
 BallPitAudioProcessor::~BallPitAudioProcessor()
@@ -555,8 +561,8 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		}
 	}
 
-	updateBallsSnapshot();
-	updateAbstractedEdgeColors();
+	updateBallsSnapshot();	
+	updateAbstractedEdgeColorsSnapshot();
 	midiBuffer.clear();
 }
 

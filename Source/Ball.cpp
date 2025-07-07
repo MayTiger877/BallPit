@@ -9,9 +9,10 @@ Ball::Ball(int ballIndex, float x, float y, float radius, float velocity, float 
 	setWantsKeyboardFocus(true);
 }
 
-void Ball::getBallGUINesseceities(BallGUIEssentials &ballSnapshot)
+BallGUIEssentials Ball::getBallGUINesseceities()
 {
-	// Copy relevant info
+	BallGUIEssentials ballSnapshot;
+	
 	ballSnapshot.x = x;
 	ballSnapshot.y = y;
 	ballSnapshot.radius = radius;
@@ -29,6 +30,8 @@ void Ball::getBallGUINesseceities(BallGUIEssentials &ballSnapshot)
  	{
  		ballSnapshot.delayPoints[i] = delayPoints[i];
 	}
+
+	return ballSnapshot;
 }
 
 void Ball::setBallEdgeEventListener(BallEdgeEventListener* l)
