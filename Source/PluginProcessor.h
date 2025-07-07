@@ -116,10 +116,10 @@ public:
 	void setAreBallsMoving(bool newState);
 
 	// Thread safe methods
-	const std::vector<BallGUIEssentials> getBallsSnapshot() const;
+	std::vector<BallGUIEssentials> getBallsSnapshot() const;
 	void updateBallsSnapshot();
 	
-	const std::vector<int> getAbstractedEdgeColors() const;
+	std::vector<int> getAbstractedEdgeColors() const;
 	void updateAbstractedEdgeColors();
 
 	//==============================================================================

@@ -69,14 +69,11 @@ BallPitAudioProcessor::BallPitAudioProcessor()
 
 	m_undoManager.setMaxNumberOfStoredUnits(20, 1);
 
-	ballsSnapshot[0] = ball1->getBallGUINesseceities();
-	ballsSnapshot[1] = ball2->getBallGUINesseceities();
-	ballsSnapshot[2] = ball3->getBallGUINesseceities();
+	ballsSnapshot[0] = pit.getBalls()[0]->getBallGUINesseceities();
+	ballsSnapshot[1] = pit.getBalls()[1]->getBallGUINesseceities();
+	ballsSnapshot[2] = pit.getBalls()[2]->getBallGUINesseceities();
 
 	abstractedEdgeColors = std::vector<int>(1568, 0); // Initialize with 0s
-
-	updateBallsSnapshot();
-	updateAbstractedEdgeColors();
 }
 
 BallPitAudioProcessor::~BallPitAudioProcessor()
@@ -920,7 +917,7 @@ bool BallPitAudioProcessor::getAreBallsMoving()
 }
 //-----------------------------------------------------------------
 
-const std::vector<BallGUIEssentials> BallPitAudioProcessor::getBallsSnapshot() const
+std::vector<BallGUIEssentials> BallPitAudioProcessor::getBallsSnapshot() const
 {
     const juce::ScopedLock lock(ballsSnapshotPointerLock);
     return ballsSnapshot;
@@ -930,12 +927,12 @@ void BallPitAudioProcessor::updateBallsSnapshot()
 {
     const juce::ScopedLock lock(ballsSnapshotPointerLock);
 	ballsSnapshot.clear();
-	ballsSnapshot[0] = pit.getBalls()[0]->getBallGUINesseceities();
-	ballsSnapshot[1] = pit.getBalls()[1]->getBallGUINesseceities();
-	ballsSnapshot[2] = pit.getBalls()[2]->getBallGUINesseceities();
+	ballsSnapshot.push_back(pit.getBalls()[0]->getBallGUINesseceities());
+	ballsSnapshot.push_back(pit.getBalls()[1]->getBallGUINesseceities());
+	ballsSnapshot.push_back(pit.getBalls()[2]->getBallGUINesseceities());
 }
 
-const std::vector<int> BallPitAudioProcessor::getAbstractedEdgeColors() const
+std::vector<int> BallPitAudioProcessor::getAbstractedEdgeColors() const
 {
 	const juce::ScopedLock lock(edgeColorsPointerLock);
 
