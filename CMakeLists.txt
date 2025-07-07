@@ -30,16 +30,17 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 # Set this to the path where JUCE was cloned by GitHub Actions or locally
 # set(JUCE_DIR "${CMAKE_SOURCE_DIR}/../JUCE") # my pc
-# set(JUCE_DIR "${CMAKE_SOURCE_DIR}/JUCE") # CI pipeline
-if(EXISTS "${CMAKE_SOURCE_DIR}/../JUCE")
-    set(JUCE_DIR "${CMAKE_SOURCE_DIR}/../JUCE")
-    message(STATUS "Using JUCE from parent directory")
-elseif(EXISTS "${CMAKE_SOURCE_DIR}/JUCE")
-    set(JUCE_DIR "${CMAKE_SOURCE_DIR}/JUCE")
-    message(STATUS "Using JUCE from current directory")
-else()
-    message(FATAL_ERROR "JUCE directory not found in either location")
-endif()
+set(JUCE_DIR "${CMAKE_SOURCE_DIR}/JUCE") # CI pipeline
+
+# if(EXISTS "${CMAKE_SOURCE_DIR}/../JUCE")
+#     set(JUCE_DIR "${CMAKE_SOURCE_DIR}/../JUCE")
+#     message(STATUS "Using JUCE from parent directory")
+# elseif(EXISTS "${CMAKE_SOURCE_DIR}/JUCE")
+#     set(JUCE_DIR "${CMAKE_SOURCE_DIR}/JUCE")
+#     message(STATUS "Using JUCE from current directory")
+# else()
+#     message(FATAL_ERROR "JUCE directory not found in either location")
+# endif()
 
 # Add JUCE to the project directly (this is the standard way for JUCE projects)
 add_subdirectory(${JUCE_DIR} JUCE)

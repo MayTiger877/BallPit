@@ -116,11 +116,11 @@ public:
 	void setAreBallsMoving(bool newState);
 
 	// Thread safe methods
-	std::shared_ptr<const std::vector<BallGUIEssentials>> getBallsSnapshot() const;
-	void updateBallsSnapshot(std::shared_ptr<const std::vector<BallGUIEssentials>> newSnapshot);
+	const std::vector<BallGUIEssentials> getBallsSnapshot() const;
+	void updateBallsSnapshot();
 	
-	std::shared_ptr<std::vector<int>> getAbstractedEdgeColors() const;
-	void updateAbstractedEdgeColors(std::shared_ptr<std::vector<int>> newColors);
+	const std::vector<int> getAbstractedEdgeColors() const;
+	void updateAbstractedEdgeColors();
 
 	//==============================================================================
 	
@@ -163,17 +163,14 @@ private:
 
 	std::set<int> activeNotes;  // store MIDI note numbers
 
-	std::vector<BallGUIEssentials> latestBallsSnapshot = {
+	std::vector<BallGUIEssentials> ballsSnapshot = {
 		{0.0f, 0.0f, 0.0f, 0.0, 0.0, false, 0, false, 0, 0, 0.0f, 0.0f, 0},
 		{0.0f, 0.0f, 0.0f, 0.0, 0.0, false, 1, false, 1, 1, 0.0f, 0.0f, 1},
 		{0.0f, 0.0f, 0.0f, 0.0, 0.0, false, 2, false, 2, 2, 0.0f, 0.0f, 2}
 	};
-	std::vector<int> abstractedEdgeColors;
-
-	std::shared_ptr<const std::vector<BallGUIEssentials>> latestBallsSnapshotPointer;
 	mutable juce::CriticalSection ballsSnapshotPointerLock;
-	
-	std::shared_ptr<std::vector<int>> abstractedEdgeColorsPointer;
+
+	std::vector<int> abstractedEdgeColors;
 	mutable juce::CriticalSection edgeColorsPointerLock;
 	
 public:

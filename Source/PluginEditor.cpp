@@ -877,12 +877,12 @@ void BallPitAudioProcessorEditor::drawPitEdge(juce::Graphics& g, juce::Colour* e
 	int currentPhase = juce::jmap<int>(audioProcessor.valueTreeState.getRawParameterValue("edgePhase")->load(), 0, 360, 0, 1567);
 	if (currentPhase == 1567) { currentPhase = 0; } // weird but does the job.....
 	auto pointerToAbstractedEdgeColors = audioProcessor.getAbstractedEdgeColors();
-	jassert(pointerToAbstractedEdgeColors && pointerToAbstractedEdgeColors->size() == 1568);
+	//jassert(pointerToAbstractedEdgeColors && pointerToAbstractedEdgeColors->size() == 1568);
 	int noteRectSize = 1568 / numOfSplits;
 	int reminder = 1568 % numOfSplits;
 	int index = currentPhase;
 	int currentRectSize = -1;
-	g.setColour(edgeColors[(*pointerToAbstractedEdgeColors)[index]]);
+	g.setColour(edgeColors[(pointerToAbstractedEdgeColors)[index]]);
 
 	for (int i = 0; i < numOfSplits;)
 	{
@@ -911,7 +911,7 @@ void BallPitAudioProcessorEditor::drawPitEdge(juce::Graphics& g, juce::Colour* e
 		} while (currentRectSize > 0);
 
 		noteRectSize = 1568 / numOfSplits;
-		int temp = (*pointerToAbstractedEdgeColors)[index];
+		int temp = (pointerToAbstractedEdgeColors)[index];
 		g.setColour(edgeColors[temp]);
 	}
 
@@ -922,7 +922,7 @@ void BallPitAudioProcessorEditor::drawPitEdge(juce::Graphics& g, juce::Colour* e
 
 	if (reminder != 0) 
 	{
-		g.setColour(edgeColors[(*pointerToAbstractedEdgeColors)[index]]);
+		g.setColour(edgeColors[(pointerToAbstractedEdgeColors)[index]]);
 		g.fillRect(PIT_MIN_X + 3, PIT_MIN_Y, reminder, 4);
 	}
 }
@@ -1140,9 +1140,9 @@ void BallPitAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHa
 void BallPitAudioProcessorEditor::timerCallback() 
 {
 	auto snapshot = audioProcessor.getBallsSnapshot();
-	if (snapshot) 
+	if (!snapshot.empty()) 
 	{
-    	for (const auto& ball : *snapshot) 
+    	for (const auto& ball : snapshot) 
 		{
 			GUIBalls[ball.ballIndex]->ballIndex = ball.ballIndex;
         	GUIBalls[ball.ballIndex]->x = ball.x;
