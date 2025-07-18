@@ -162,7 +162,7 @@ void BallPitAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 	ts.denominator = DEFAULT_TIME_SIGNATURE_DENOMINATOR;
 	m_timeSignature.set(ts);
 
-	clockTimeSeconds = 0.0;
+	m_clockTimeSeconds = 0.0;
 }
 
 void BallPitAudioProcessor::releaseResources()
@@ -375,6 +375,8 @@ float BallPitAudioProcessor::getVariedNoteVelocity(int currentNoteVelocity)
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	buffer.clear();
+	midiMessages.clear();
+	
 	juce::Optional<juce::AudioPlayHead::PositionInfo> newPositionInfo;
 	if (auto* playhead = getPlayHead())
 	{
@@ -405,7 +407,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 	double timePassed = buffer.getNumSamples() / this->m_sampleRate.get();
 	if (pit.areBallsMoving() == false)
 	{
-		clockTimeSeconds = 0.0;
+		m_clockTimeSeconds = 0.0;
 		getUpdatedBallParams();
 		for (int note : activeNotes)
 		{
@@ -424,8 +426,8 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			//	// TODO- maybe quantize 1 time to closest ppq...
 			//}
 		}
-		clockTimeSeconds += timePassed;
-		pit.update(timePassed, clockTimeSeconds);
+		m_clockTimeSeconds += timePassed;
+		pit.update(timePassed, m_clockTimeSeconds);
 	}
 
 	int randomProbabilityDecider = (rand() % 100) + 1;
@@ -509,12 +511,12 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		if (!msg.isNoteOn())
 			continue;
 
-		double messageTimeSec = clockTimeSeconds + (metadata.samplePosition / m_sampleRate.get());
+		double messageTimeSec = m_clockTimeSeconds + (metadata.samplePosition / m_sampleRate.get());
 		double quantizedTimeSec = std::ceil(messageTimeSec / secondsPerDivision) * secondsPerDivision;
 
 		// Convert quantized time to sample position relative to block enntry time
 		int quantizedSamplePosAbsolute = static_cast<int>(quantizedTimeSec * m_sampleRate.get());
-		int quantizedSamplePosRelative = quantizedSamplePosAbsolute - static_cast<int>(clockTimeSeconds * m_sampleRate.get());
+		int quantizedSamplePosRelative = quantizedSamplePosAbsolute - static_cast<int>(m_clockTimeSeconds * m_sampleRate.get());
 		int finalSamplePos = static_cast<int>((1.0 - quantizationpercent.get()) * metadata.samplePosition + quantizationpercent.get() * quantizedSamplePosRelative);
 		
 		// add volume variation and 
@@ -535,7 +537,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 		    midiMessages.addEvent(msg, finalSamplePos + 1); // NoteOn
 		    activeNotes.insert(msg.getNoteNumber());
 		
-		    midiMessages.addEvent(noteOff, finalSamplePos); // Immediate off (if needed)
+		    //midiMessages.addEvent(noteOff, finalSamplePos); // Immediate off (if needed)
 		}
 		else
 		{
@@ -556,7 +558,7 @@ void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 			juce::MidiMessage noteOff = juce::MidiMessage::noteOff(msg.getChannel(), msg.getNoteNumber());
 			pendingEvents.push_back({ noteOff, futureSample });
 		}
-	}
+	}	
 
 	updateBallsSnapshot();
 	updateAbstractedEdgeColors();

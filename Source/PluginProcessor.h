@@ -141,7 +141,7 @@ private:
 	
 	juce::Atomic<float> m_probability = 1.0f; // default to 100% probability
 	
-	double clockTimeSeconds = 0.0;
+	double m_clockTimeSeconds = 0.0;
 
 	juce::Atomic<double> m_bpm {DEFAULT_BPM};
 	juce::Atomic<juce::AudioPlayHead::TimeSignature> m_timeSignature;
