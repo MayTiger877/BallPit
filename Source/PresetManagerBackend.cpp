@@ -32,6 +32,8 @@ namespace Service
 			}
 		}
 
+		initialiseFactoryPresets();
+
 		valueTreeState.state.addListener(this);
 		currentPreset.referTo(valueTreeState.state.getPropertyAsValue(presetNameProperty, nullptr));
 	}
@@ -95,6 +97,18 @@ namespace Service
 		const auto presetFile = defaultDirectory.getChildFile(presetName + "." + extension);
 		if (!presetFile.existsAsFile())
 		{
+			// try factory presets
+			for (auto& p : factoryPresets)
+			{
+				if (p.name == presetName)
+				{
+					if (auto xml = XmlDocument::parse(p.xml))
+						valueTreeState.replaceState(ValueTree::fromXml(*xml));
+					currentPreset.setValue(p.name);
+					return;
+				}
+			}
+
 			DBG("Preset file " + presetFile.getFullPathName() + " does not exist");
 			jassertfalse;
 			return;
@@ -135,17 +149,24 @@ namespace Service
 		return previousIndex;
 	}
 
-	StringArray PresetManager::getAllPresets() const
+	StringArray Service::PresetManager::getAllPresets() const
 	{
-		StringArray presets;
-		const auto fileArray = defaultDirectory.findChildFiles(
-			File::TypesOfFileToFind::findFiles, false, "*." + extension);
-		for (const auto& file : fileArray)
+		StringArray allPresets;
+
+		// Factory
+		for (auto& p : factoryPresets)
+			allPresets.add(p.name);
+
+		// User
+		if (defaultDirectory.exists())
 		{
-			presets.add(file.getFileNameWithoutExtension());
+			for (auto& f : defaultDirectory.findChildFiles(File::findFiles, false, "*." + extension))
+				allPresets.add(f.getFileNameWithoutExtension());
 		}
-		return presets;
+
+		return allPresets;
 	}
+
 
 	String PresetManager::getCurrentPreset() const
 	{
@@ -155,5 +176,44 @@ namespace Service
 	void PresetManager::valueTreeRedirected(ValueTree& treeWhichHasBeenChanged)
 	{
 		currentPreset.referTo(treeWhichHasBeenChanged.getPropertyAsValue(presetNameProperty, nullptr));
+	}
+
+	void Service::PresetManager::initialiseFactoryPresets()
+	{
+		factoryPresets.push_back({ "Default", String::fromUTF8(BinaryData::Init_preset, BinaryData::Init_presetSize) });
+		factoryPresets.push_back({ "Dance Of Fire", String::fromUTF8(BinaryData::Dance_Of_Fire_preset, BinaryData::Dance_Of_Fire_presetSize )});
+		factoryPresets.push_back({ "Drip Drop", String::fromUTF8(BinaryData::Drip_Drop_preset, BinaryData::Drip_Drop_presetSize) });
+		factoryPresets.push_back({ "Harpeggio", String::fromUTF8(BinaryData::Harpeggio_preset, BinaryData::Harpeggio_presetSize )});
+		factoryPresets.push_back({ "Juggling", String::fromUTF8(BinaryData::Juggling_preset, BinaryData::Juggling_presetSize) });
+		factoryPresets.push_back({ "Master Card", String::fromUTF8(BinaryData::Master_Card_preset, BinaryData::Master_Card_presetSize) });
+		factoryPresets.push_back({ "Polyrythm 1", String::fromUTF8(BinaryData::Polyrythm_1_preset, BinaryData::Polyrythm_1_presetSize) });
+		factoryPresets.push_back({ "Polyrythm 2", String::fromUTF8(BinaryData::Polyrythm_2_preset, BinaryData::Polyrythm_2_presetSize) });
+		factoryPresets.push_back({ "Shuffle Hussle", String::fromUTF8(BinaryData::Shuffle_Hussle_preset, BinaryData::Shuffle_Hussle_presetSize) });
+		factoryPresets.push_back({ "Stress Timer", String::fromUTF8(BinaryData::Stress_Timer_preset, BinaryData::Stress_Timer_presetSize) });
+		factoryPresets.push_back({ "Total Chaos", String::fromUTF8(BinaryData::Total_Chaos_preset, BinaryData::Total_Chaos_presetSize) });
+		factoryPresets.push_back({ "Wiggling Snake", String::fromUTF8(BinaryData::Wiggling_Snake_preset, BinaryData::Wiggling_Snake_presetSize)});
+	}
+
+	StringArray Service::PresetManager::getFactoryPresets() const
+	{
+		StringArray names;
+		for (auto& p : factoryPresets)
+			names.add(p.name);
+		return names;
+	}
+
+	void Service::PresetManager::loadFactoryPreset(const String& presetName)
+	{
+		for (auto& p : factoryPresets)
+		{
+			if (p.name == presetName)
+			{
+				if (auto xml = XmlDocument::parse(p.xml))
+					valueTreeState.replaceState(ValueTree::fromXml(*xml));
+
+				currentPreset.setValue(p.name);
+				break;
+			}
+		}
 	}
 }

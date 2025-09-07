@@ -30,11 +30,21 @@ namespace Service
 		int loadNextPreset();
 		int loadPreviousPreset();
 		StringArray getAllPresets() const;
-		String getCurrentPreset() const;		
-	private:
-		void valueTreeRedirected(ValueTree& treeWhichHasBeenChanged) override;
+		String getCurrentPreset() const;
+        StringArray getFactoryPresets() const;
+        void loadFactoryPreset(const String& presetName);
 
+	private:
+        struct Preset {	
+			String name; 
+			String xml; 
+		};
+
+		void valueTreeRedirected(ValueTree& treeWhichHasBeenChanged) override;
 		AudioProcessorValueTreeState& valueTreeState;
 		Value currentPreset;
+        std::vector<Preset> factoryPresets;
+        void initialiseFactoryPresets();
 	};
 }
+

@@ -57,6 +57,28 @@
     <FILE id="v8bR37" name="Ball_tab_2.svg" compile="0" resource="1" file="Resources/Ball_tab_2.svg"/>
     <FILE id="BHGDHg" name="ByKnobs.svg" compile="0" resource="1" file="Resources/ByKnobs.svg"/>
     <FILE id="Ir0Pty" name="ByTempo.svg" compile="0" resource="1" file="Resources/ByTempo.svg"/>
+    <FILE id="dbmtWD" name="Harpeggio.preset" compile="0" resource="1"
+          file="Presets/Harpeggio.preset"/>
+    <FILE id="sSSSQ1" name="Juggling.preset" compile="0" resource="1" file="Presets/Juggling.preset"/>
+    <FILE id="XzlP4F" name="Dance Of Fire.preset" compile="0" resource="1"
+          file="Presets/Dance Of Fire.preset"/>
+    <FILE id="vzyFER" name="Drip Drop.preset" compile="0" resource="1"
+          file="Presets/Drip Drop.preset"/>
+    <FILE id="uGeyil" name="Init.preset" compile="0" resource="1" file="Presets/Init.preset"/>
+    <FILE id="iOE7DD" name="Master Card.preset" compile="0" resource="1"
+          file="Presets/Master Card.preset"/>
+    <FILE id="qucYih" name="Polyrythm 1.preset" compile="0" resource="1"
+          file="Presets/Polyrythm 1.preset"/>
+    <FILE id="sYJeyA" name="Polyrythm 2.preset" compile="0" resource="1"
+          file="Presets/Polyrythm 2.preset"/>
+    <FILE id="uW8S4R" name="Shuffle Hussle.preset" compile="0" resource="1"
+          file="Presets/Shuffle Hussle.preset"/>
+    <FILE id="R3QuRW" name="Stress Timer.preset" compile="0" resource="1"
+          file="Presets/Stress Timer.preset"/>
+    <FILE id="dRoBLd" name="Total Chaos.preset" compile="0" resource="1"
+          file="Presets/Total Chaos.preset"/>
+    <FILE id="PrnJk3" name="Wiggling Snake.preset" compile="0" resource="1"
+          file="Presets/Wiggling Snake.preset"/>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
@@ -72,7 +94,8 @@
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
   </MODULES>
-  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
+               JUCE_WEB_BROWSER="0"/>
   <EXPORTFORMATS>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>

@@ -34,4 +34,28 @@
   <PARAM id="quantizationDivision" value="0.0"/>
   <PARAM id="snapToGrid"/>
   <PARAM id="volumeVariation"/>
+  <PARAM id="BallActivation0"/>
+  <PARAM id="BallActivation1" value="1.0"/>
+  <PARAM id="BallActivation2" value="1.0"/>
+  <PARAM id="delayAmount0"/>
+  <PARAM id="delayAmount1"/>
+  <PARAM id="delayAmount2"/>
+  <PARAM id="delayFeedback0"/>
+  <PARAM id="delayFeedback1"/>
+  <PARAM id="delayFeedback2"/>
+  <PARAM id="delayNoteMovement0"/>
+  <PARAM id="delayNoteMovement1"/>
+  <PARAM id="delayNoteMovement2"/>
+  <PARAM id="delayRate0"/>
+  <PARAM id="delayRate1"/>
+  <PARAM id="delayRate2"/>
+  <PARAM id="probability"/>
+  <PARAM id="toggleState" value="0.0"/>
+  <PARAM id="transpose"/>
+  <PARAM id="xVelocityInverter0"/>
+  <PARAM id="xVelocityInverter1"/>
+  <PARAM id="xVelocityInverter2"/>
+  <PARAM id="yVelocityInverter0"/>
+  <PARAM id="yVelocityInverter1"/>
+  <PARAM id="yVelocityInverter2"/>
 </BallPitParams>

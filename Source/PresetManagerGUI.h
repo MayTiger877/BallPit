@@ -63,12 +63,12 @@ public:
         g.fillAll(darrrrkGreen); // Fill color of the rectangle
         g.setColour(Colour(0x00000000));
         g.drawRect(getLocalBounds(), 2); // Border
-        g.setColour(Colour(0xff006400));
+        g.setColour(Colour(0x00000000));
     }
 
 	void setPluginBounds(juce::Rectangle<int> newPluginBounds)
 	{
-        Point<int> newPresetPanelTopLeft = Point(newPluginBounds.getTopLeft().getX() + 10, newPluginBounds.getTopLeft().getY() + 40);
+        Point<int> newPresetPanelTopLeft = Point(newPluginBounds.getTopLeft().getX() + 10, newPluginBounds.getTopLeft().getY() + 50);
         Point<int> newPresetPanelBottomRight = Point(newPluginBounds.getBottomRight().getX() - 10, newPluginBounds.getBottomRight().getY() - 120);
 		this->setBounds(Rectangle(newPresetPanelTopLeft, newPresetPanelBottomRight));
 	}
@@ -83,7 +83,9 @@ public:
 		deleteButton.setBounds(nextPresetButton.getBounds().getTopRight().getX() + 10, nextPresetButton.getBounds().getY(), 80, 50);
     }
 
+
 private:
+
     void buttonClicked(juce::Button* button) override
     {
         if (button == &saveButton)

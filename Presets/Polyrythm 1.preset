@@ -21,7 +21,7 @@
   <PARAM id="edgeRange" value="6.0"/>
   <PARAM id="rootNote" value="5.0"/>
   <PARAM id="scaleChoice" value="17.0"/>
-  <PARAM id="ballXVelocity0"/>
+  <PARAM id="ballXVelocity0" value="1.0"/>
   <PARAM id="ballXVelocity1" value="2.0"/>
   <PARAM id="ballXVelocity2" value="4.0"/>
   <PARAM id="ballYVelocity0" value="0.0"/>
@@ -33,7 +33,7 @@
   <PARAM id="quantization"/>
   <PARAM id="quantizationDivision" value="0.0"/>
   <PARAM id="snapToGrid" value="1.0"/>
-  <PARAM id="volumeVariation"/>
+  <PARAM id="volumeVariation" value="0.0"/>
   <PARAM id="BallActivation0"/>
   <PARAM id="BallActivation1" value="1.0"/>
   <PARAM id="BallActivation2" value="1.0"/>
@@ -43,4 +43,19 @@
   <PARAM id="yVelocityInverter0"/>
   <PARAM id="yVelocityInverter1"/>
   <PARAM id="yVelocityInverter2"/>
+  <PARAM id="delayAmount0"/>
+  <PARAM id="delayAmount1"/>
+  <PARAM id="delayAmount2"/>
+  <PARAM id="delayFeedback0"/>
+  <PARAM id="delayFeedback1"/>
+  <PARAM id="delayFeedback2"/>
+  <PARAM id="delayNoteMovement0"/>
+  <PARAM id="delayNoteMovement1"/>
+  <PARAM id="delayNoteMovement2"/>
+  <PARAM id="delayRate0"/>
+  <PARAM id="delayRate1"/>
+  <PARAM id="delayRate2"/>
+  <PARAM id="probability"/>
+  <PARAM id="toggleState"/>
+  <PARAM id="transpose"/>
 </BallPitParams>
