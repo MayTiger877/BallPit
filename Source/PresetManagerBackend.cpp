@@ -45,9 +45,10 @@ namespace Service
 
 		currentPreset.setValue(presetName);
 		const auto xml = valueTreeState.copyState().createXml();
+
 		if (xml != nullptr)
 		{
-			// remove size percentage and link nextParam to keep xml validityyy
+			// First, remove size percentage as before
 			for (auto* param = xml->getFirstChildElement(); param != nullptr;)
 			{
 				auto* nextParam = param->getNextElement();
@@ -55,9 +56,11 @@ namespace Service
 				{
 					xml->removeChildElement(param, true);
 				}
-
 				param = nextParam;
 			}
+
+			// Now add missing values to parameters that don't have them
+			addMissingParameterValues(xml.get());
 
 			const auto presetFile = defaultDirectory.getChildFile(presetName + "." + extension);
 			if (!xml->writeTo(presetFile))
@@ -66,6 +69,60 @@ namespace Service
 				jassertfalse;
 			}
 		}
+	}
+
+	void PresetManager::addMissingParameterValues(XmlElement* xml)
+	{
+		// Helper lambda to add value attribute if it's missing
+		auto addValueIfMissing = [xml](const String& paramId, const var& defaultValue) {
+			for (auto* param = xml->getFirstChildElement(); param != nullptr; param = param->getNextElement())
+			{
+				if (param->hasTagName("PARAM") && param->getStringAttribute("id") == paramId)
+				{
+					if (!param->hasAttribute("value"))
+					{
+						param->setAttribute("value", defaultValue.toString());
+					}
+					return;
+				}
+			}
+			};
+
+		// Add missing values for ball parameters
+		for (int i = 0; i < 3; i++)
+		{
+			addValueIfMissing("ballX" + String(i), BALL_X_DEFAULT_1);
+			addValueIfMissing("ballY" + String(i), BALL_Y_DEFAULT);
+			addValueIfMissing("ballRadius" + String(i), BALL_RADIUS_DEFAULT);
+			addValueIfMissing("ballVelocity" + String(i), BALL_VELOCITY_DEFAULT);
+			addValueIfMissing("ballAngle" + String(i), BALL_ANGLE_DEFAULT_1);
+			addValueIfMissing("ballXVelocity" + String(i), BALL_X_VELOCITY_DEFAULT);
+			addValueIfMissing("ballYVelocity" + String(i), BALL_Y_VELOCITY_DEFAULT);
+			addValueIfMissing("xVelocityInverter" + String(i), false);
+			addValueIfMissing("yVelocityInverter" + String(i), false);
+			addValueIfMissing("BallActivation" + String(i), (i == 0) ? true : false);
+			addValueIfMissing("delayAmount" + String(i), DELAY_AMOUNT_DEFAULT);
+			addValueIfMissing("delayFeedback" + String(i), DELAY_FEEDBACK_DEFAULT);
+			addValueIfMissing("delayRate" + String(i), DELAY_RATE_DEFAULT);
+			addValueIfMissing("delayNoteMovement" + String(i), DELAY_NOTE_MOVEMENT_DEFAULT);
+		}
+
+		// Add missing values for global parameters
+		addValueIfMissing("edgePhase", EDGE_PHASE_DEFAULT);
+		addValueIfMissing("edgeDenomenator", EDGE_DENOMINATOR_DEFAULT);
+		addValueIfMissing("edgeRange", EDGE_RANGE_DEFAULT);
+		addValueIfMissing("scaleChoice", SCALE_DEFAULT);
+		addValueIfMissing("rootNote", ROOT_NOTE_DEFAULT);
+		addValueIfMissing("edgeType", EDGE_TYPE_DEFAULT);
+		addValueIfMissing("ballsPositioningType", BALLS_POSITIONING_DEFAULT);
+		addValueIfMissing("snapToGrid", false);
+		addValueIfMissing("collision", false);
+		addValueIfMissing("quantization", QUANTIZATION_DEFAULT);
+		addValueIfMissing("quantizationDivision", QUANTIZATION_DIV_DEFAULT);
+		addValueIfMissing("volumeVariation", VOLUME_VARIATION_DEFAULT);
+		addValueIfMissing("probability", PROBABILITY_DEFAULT);
+		addValueIfMissing("transpose", 0);
+		addValueIfMissing("toggleState", false);
 	}
 
 	void PresetManager::deletePreset(const String& presetName)

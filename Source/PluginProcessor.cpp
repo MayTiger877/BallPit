@@ -678,7 +678,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout BallPitAudioProcessor::creat
 		params.add(std::make_unique<juce::AudioParameterInt>(ballXVelocityId, "XVelocity", BALL_X_VELOCITY_MIN, BALL_X_VELOCITY_MAX, BALL_X_VELOCITY_DEFAULT));
 		params.add(std::make_unique<juce::AudioParameterInt>(ballYVelocityId, "YVelocity", BALL_Y_VELOCITY_MIN, BALL_Y_VELOCITY_MAX, BALL_Y_VELOCITY_DEFAULT));
 		params.add(std::make_unique<juce::AudioParameterBool>(xVelocityInverterId, "x velocity inverter", false));
-		params.add(std::make_unique<juce::AudioParameterBool>(yVelocityInverterId, "x velocity inverter", false));
+		params.add(std::make_unique<juce::AudioParameterBool>(yVelocityInverterId, "y velocity inverter", false));
 		params.add(std::make_unique<juce::AudioParameterBool>(BallActivationId, "BallActivation", ((i == 0) ? true : false)));
 		params.add(std::make_unique<juce::AudioParameterInt>(delayAmountId, "Delay Amount", DELAY_AMOUNT_MIN, DELAY_AMOUNT_MAX, DELAY_AMOUNT_DEFAULT));
 		params.add(std::make_unique<juce::AudioParameterFloat>(delayFeedbackId, "Delay Feedback", DELAY_FEEDBACK_MIN, DELAY_FEEDBACK_MAX, DELAY_FEEDBACK_DEFAULT));

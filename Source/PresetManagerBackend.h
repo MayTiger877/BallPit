@@ -11,6 +11,8 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Configs.h"
+
 using namespace juce;
 
 namespace Service
@@ -45,6 +47,7 @@ namespace Service
 		Value currentPreset;
         std::vector<Preset> factoryPresets;
         void initialiseFactoryPresets();
+		void addMissingParameterValues(XmlElement* xml);
 	};
 }
 
