@@ -97,11 +97,23 @@ juce_add_binary_data(ResourcesData SOURCES
     Resources/Ball_tab_2.svg
     Resources/ByKnobs.svg
     Resources/ByTempo.svg
+    Presets/Init.preset
+    Presets/DanceOfFire.preset
+    Presets/DripDrop.preset
+    Presets/Harpeggio.preset
+    Presets/Juggling.preset
+    Presets/MasterCard.preset
+    Presets/Polyrythm.preset
+    Presets/OvalGalaxy.preset
+    Presets/ShuffleHussle.preset
+    Presets/StressTimer.preset
+    Presets/TotalChaos.preset
+    Presets/WigglingSnake.preset
 )
 
-# Get all preset files automatically
-file(GLOB PRESET_FILES "Presets/*.preset")
-juce_add_binary_data(PresetsData SOURCES ${PRESET_FILES})
+# # Get all preset files automatically
+# file(GLOB PRESET_FILES "Presets/*.preset")
+# juce_add_binary_data(PresetsData SOURCES ${PRESET_FILES})
 
 target_link_libraries(BallPit PRIVATE
     juce::juce_audio_basics
@@ -136,5 +148,5 @@ add_custom_target(clean-all
     COMMENT "Cleaning all build artifacts and CMake generated files"
 )
 
-# cmake -B build -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release
+# cmake -B build -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release 
 # cmake --build build --config Release
