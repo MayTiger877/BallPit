@@ -151,37 +151,62 @@ namespace Service
 		if (presetName.isEmpty())
 			return;
 
+		// Initialize shared variables once
+		const float currentSizePercentage = valueTreeState.getRawParameterValue("sizePercentage")->load();
+		ValueTree valueTreeToLoad;
+		bool presetLoaded = false;
+		String loadedPresetName;
+
+		// Try loading from file first
 		const auto presetFile = defaultDirectory.getChildFile(presetName + "." + extension);
-		if (!presetFile.existsAsFile())
+		if (presetFile.existsAsFile())
 		{
-			// try factory presets
-			for (auto& p : factoryPresets)
+			XmlDocument xmlDocument{ presetFile };
+			if (auto docElement = xmlDocument.getDocumentElement())
 			{
-				if (p.name == presetName)
+				valueTreeToLoad = ValueTree::fromXml(*docElement);
+				loadedPresetName = presetName;
+				presetLoaded = true;
+			}
+		}
+
+		// If file loading failed, try factory presets
+		if (!presetLoaded)
+		{
+			for (const auto& preset : factoryPresets)
+			{
+				if (preset.name == presetName)
 				{
-					if (auto xml = XmlDocument::parse(p.xml))
-						valueTreeState.replaceState(ValueTree::fromXml(*xml));
-					currentPreset.setValue(p.name);
-					return;
+					if (auto xml = XmlDocument::parse(preset.xml))
+					{
+						valueTreeToLoad = ValueTree::fromXml(*xml);
+						loadedPresetName = preset.name;
+						presetLoaded = true;
+						break; // Exit loop once found
+					}
 				}
 			}
-
-			DBG("Preset file " + presetFile.getFullPathName() + " does not exist");
-			jassertfalse;
-			return;
 		}
-		// presetFile (XML) -> (ValueTree)
-		XmlDocument xmlDocument{ presetFile };
 
-		const auto valueTreeToLoad = ValueTree::fromXml(*xmlDocument.getDocumentElement());
-		float currentSizePercentage = valueTreeState.getRawParameterValue("sizePercentage")->load();
-		valueTreeState.replaceState(valueTreeToLoad);
-		if (auto* sizeParam = valueTreeState.getParameter("sizePercentage"))
+		// Apply the loaded preset if successful
+		if (presetLoaded && valueTreeToLoad.isValid())
 		{
-			sizeParam->setValueNotifyingHost(currentSizePercentage);
-		}
-		currentPreset.setValue(presetName);
+			valueTreeState.replaceState(valueTreeToLoad);
 
+			// Restore the size percentage
+			if (auto* sizeParam = valueTreeState.getParameter("sizePercentage"))
+			{
+				sizeParam->setValueNotifyingHost(currentSizePercentage);
+			}
+
+			currentPreset.setValue(loadedPresetName);
+		}
+		else
+		{
+			// Only debug/assert if neither source worked
+			DBG("Preset '" + presetName + "' not found in files or factory presets");
+			jassertfalse;
+		}
 	}
 
 	int PresetManager::loadNextPreset()
