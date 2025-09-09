@@ -263,17 +263,17 @@ namespace Service
 	void Service::PresetManager::initialiseFactoryPresets()
 	{
 		factoryPresets.push_back({ "Init", String::fromUTF8(BinaryData::Init_preset, BinaryData::Init_presetSize) });
-		factoryPresets.push_back({ "Dance Of Fire", String::fromUTF8(BinaryData::Dance_Of_Fire_preset, BinaryData::Dance_Of_Fire_presetSize )});
-		factoryPresets.push_back({ "Drip Drop", String::fromUTF8(BinaryData::Drip_Drop_preset, BinaryData::Drip_Drop_presetSize) });
+		factoryPresets.push_back({ "Dance Of Fire", String::fromUTF8(BinaryData::DanceOfFire_preset, BinaryData::DanceOfFire_presetSize )});
+		factoryPresets.push_back({ "Drip Drop", String::fromUTF8(BinaryData::DripDrop_preset, BinaryData::DripDrop_presetSize) });
 		factoryPresets.push_back({ "Harpeggio", String::fromUTF8(BinaryData::Harpeggio_preset, BinaryData::Harpeggio_presetSize )});
 		factoryPresets.push_back({ "Juggling", String::fromUTF8(BinaryData::Juggling_preset, BinaryData::Juggling_presetSize) });
-		factoryPresets.push_back({ "Master Card", String::fromUTF8(BinaryData::Master_Card_preset, BinaryData::Master_Card_presetSize) });
+		factoryPresets.push_back({ "Master Card", String::fromUTF8(BinaryData::MasterCard_preset, BinaryData::MasterCard_presetSize) });
 		factoryPresets.push_back({ "Polyrythm", String::fromUTF8(BinaryData::Polyrythm_preset, BinaryData::Polyrythm_presetSize) });
-		factoryPresets.push_back({ "Oval Galaxy", String::fromUTF8(BinaryData::Oval_Galaxy_preset, BinaryData::Oval_Galaxy_presetSize) });
-		factoryPresets.push_back({ "Shuffle Hussle", String::fromUTF8(BinaryData::Shuffle_Hussle_preset, BinaryData::Shuffle_Hussle_presetSize) });
-		factoryPresets.push_back({ "Stress Timer", String::fromUTF8(BinaryData::Stress_Timer_preset, BinaryData::Stress_Timer_presetSize) });
-		factoryPresets.push_back({ "Total Chaos", String::fromUTF8(BinaryData::Total_Chaos_preset, BinaryData::Total_Chaos_presetSize) });
-		factoryPresets.push_back({ "Wiggling Snake", String::fromUTF8(BinaryData::Wiggling_Snake_preset, BinaryData::Wiggling_Snake_presetSize)});
+		factoryPresets.push_back({ "Oval Galaxy", String::fromUTF8(BinaryData::OvalGalaxy_preset, BinaryData::OvalGalaxy_presetSize) });
+		factoryPresets.push_back({ "Shuffle Hussle", String::fromUTF8(BinaryData::ShuffleHussle_preset, BinaryData::ShuffleHussle_presetSize) });
+		factoryPresets.push_back({ "Stress Timer", String::fromUTF8(BinaryData::StressTimer_preset, BinaryData::StressTimer_presetSize) });
+		factoryPresets.push_back({ "Total Chaos", String::fromUTF8(BinaryData::TotalChaos_preset, BinaryData::TotalChaos_presetSize) });
+		factoryPresets.push_back({ "Wiggling Snake", String::fromUTF8(BinaryData::WigglingSnake_preset, BinaryData::WigglingSnake_presetSize)});
 	}
 
 	StringArray Service::PresetManager::getFactoryPresets() const

@@ -57,28 +57,27 @@
     <FILE id="v8bR37" name="Ball_tab_2.svg" compile="0" resource="1" file="Resources/Ball_tab_2.svg"/>
     <FILE id="BHGDHg" name="ByKnobs.svg" compile="0" resource="1" file="Resources/ByKnobs.svg"/>
     <FILE id="Ir0Pty" name="ByTempo.svg" compile="0" resource="1" file="Resources/ByTempo.svg"/>
-    <FILE id="ZzHmlj" name="Wiggling Snake.preset" compile="0" resource="1"
-          file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Wiggling Snake.preset"/>
-    <FILE id="gH8xLM" name="Total Chaos.preset" compile="0" resource="1"
-          file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Total Chaos.preset"/>
-    <FILE id="xzFx6W" name="Stress Timer.preset" compile="0" resource="1"
-          file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Stress Timer.preset"/>
-    <FILE id="qktVZ4" name="Shuffle Hussle.preset" compile="0" resource="1"
-          file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Shuffle Hussle.preset"/>
-    <FILE id="cCsG53" name="Oval Galaxy.preset" compile="0" resource="1"
-          file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Oval Galaxy.preset"/>
-    <FILE id="epraTJ" name="Polyrythm.preset" compile="0" resource="1"
-          file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Polyrythm.preset"/>
-    <FILE id="P8Cii0" name="Master Card.preset" compile="0" resource="1"
-          file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Master Card.preset"/>
-    <FILE id="gFzlhC" name="Juggling.preset" compile="0" resource="1" file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Juggling.preset"/>
-    <FILE id="UJOO16" name="Harpeggio.preset" compile="0" resource="1"
-          file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Harpeggio.preset"/>
-    <FILE id="ZQS0VF" name="Drip Drop.preset" compile="0" resource="1"
-          file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Drip Drop.preset"/>
-    <FILE id="miLvzf" name="Dance Of Fire.preset" compile="0" resource="1"
-          file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Dance Of Fire.preset"/>
-    <FILE id="GgkdKP" name="Init.preset" compile="0" resource="1" file="C:/Users/Public/Documents/MayTigerPlugins/BallPit/Init.preset"/>
+    <FILE id="RN00kW" name="DanceOfFire.preset" compile="0" resource="1"
+          file="Presets/DanceOfFire.preset"/>
+    <FILE id="JblXYh" name="DripDrop.preset" compile="0" resource="1" file="Presets/DripDrop.preset"/>
+    <FILE id="qR5U9X" name="Harpeggio.preset" compile="0" resource="1"
+          file="Presets/Harpeggio.preset"/>
+    <FILE id="b4UQq6" name="Init.preset" compile="0" resource="1" file="Presets/Init.preset"/>
+    <FILE id="Vw6vD0" name="Juggling.preset" compile="0" resource="1" file="Presets/Juggling.preset"/>
+    <FILE id="vOSvGJ" name="MasterCard.preset" compile="0" resource="1"
+          file="Presets/MasterCard.preset"/>
+    <FILE id="EJOkEE" name="OvalGalaxy.preset" compile="0" resource="1"
+          file="Presets/OvalGalaxy.preset"/>
+    <FILE id="HLhqBh" name="Polyrythm.preset" compile="0" resource="1"
+          file="Presets/Polyrythm.preset"/>
+    <FILE id="LLGOEB" name="ShuffleHussle.preset" compile="0" resource="1"
+          file="Presets/ShuffleHussle.preset"/>
+    <FILE id="WEALqu" name="StressTimer.preset" compile="0" resource="1"
+          file="Presets/StressTimer.preset"/>
+    <FILE id="Np8Oua" name="TotalChaos.preset" compile="0" resource="1"
+          file="Presets/TotalChaos.preset"/>
+    <FILE id="J7cRA0" name="WigglingSnake.preset" compile="0" resource="1"
+          file="Presets/WigglingSnake.preset"/>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
