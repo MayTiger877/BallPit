@@ -262,14 +262,14 @@ namespace Service
 
 	void Service::PresetManager::initialiseFactoryPresets()
 	{
-		factoryPresets.push_back({ "Default", String::fromUTF8(BinaryData::Init_preset, BinaryData::Init_presetSize) });
+		factoryPresets.push_back({ "Init", String::fromUTF8(BinaryData::Init_preset, BinaryData::Init_presetSize) });
 		factoryPresets.push_back({ "Dance Of Fire", String::fromUTF8(BinaryData::Dance_Of_Fire_preset, BinaryData::Dance_Of_Fire_presetSize )});
 		factoryPresets.push_back({ "Drip Drop", String::fromUTF8(BinaryData::Drip_Drop_preset, BinaryData::Drip_Drop_presetSize) });
 		factoryPresets.push_back({ "Harpeggio", String::fromUTF8(BinaryData::Harpeggio_preset, BinaryData::Harpeggio_presetSize )});
 		factoryPresets.push_back({ "Juggling", String::fromUTF8(BinaryData::Juggling_preset, BinaryData::Juggling_presetSize) });
 		factoryPresets.push_back({ "Master Card", String::fromUTF8(BinaryData::Master_Card_preset, BinaryData::Master_Card_presetSize) });
-		factoryPresets.push_back({ "Polyrythm 1", String::fromUTF8(BinaryData::Polyrythm_1_preset, BinaryData::Polyrythm_1_presetSize) });
-		factoryPresets.push_back({ "Polyrythm 2", String::fromUTF8(BinaryData::Polyrythm_2_preset, BinaryData::Polyrythm_2_presetSize) });
+		factoryPresets.push_back({ "Polyrythm", String::fromUTF8(BinaryData::Polyrythm_preset, BinaryData::Polyrythm_presetSize) });
+		factoryPresets.push_back({ "Oval Galaxy", String::fromUTF8(BinaryData::Oval_Galaxy_preset, BinaryData::Oval_Galaxy_presetSize) });
 		factoryPresets.push_back({ "Shuffle Hussle", String::fromUTF8(BinaryData::Shuffle_Hussle_preset, BinaryData::Shuffle_Hussle_presetSize) });
 		factoryPresets.push_back({ "Stress Timer", String::fromUTF8(BinaryData::Stress_Timer_preset, BinaryData::Stress_Timer_presetSize) });
 		factoryPresets.push_back({ "Total Chaos", String::fromUTF8(BinaryData::Total_Chaos_preset, BinaryData::Total_Chaos_presetSize) });

@@ -23,41 +23,41 @@ namespace BinaryData
     extern const char*   ByTempo_svg;
     const int            ByTempo_svgSize = 318123;
 
-    extern const char*   Harpeggio_preset;
-    const int            Harpeggio_presetSize = 2300;
-
-    extern const char*   Juggling_preset;
-    const int            Juggling_presetSize = 2274;
-
-    extern const char*   Dance_Of_Fire_preset;
-    const int            Dance_Of_Fire_presetSize = 2288;
-
-    extern const char*   Drip_Drop_preset;
-    const int            Drip_Drop_presetSize = 2280;
-
-    extern const char*   Init_preset;
-    const int            Init_presetSize = 2174;
-
-    extern const char*   Master_Card_preset;
-    const int            Master_Card_presetSize = 2252;
-
-    extern const char*   Polyrythm_1_preset;
-    const int            Polyrythm_1_presetSize = 2263;
-
-    extern const char*   Polyrythm_2_preset;
-    const int            Polyrythm_2_presetSize = 2300;
-
-    extern const char*   Shuffle_Hussle_preset;
-    const int            Shuffle_Hussle_presetSize = 2313;
-
-    extern const char*   Stress_Timer_preset;
-    const int            Stress_Timer_presetSize = 2275;
+    extern const char*   Wiggling_Snake_preset;
+    const int            Wiggling_Snake_presetSize = 2590;
 
     extern const char*   Total_Chaos_preset;
-    const int            Total_Chaos_presetSize = 2296;
+    const int            Total_Chaos_presetSize = 2589;
 
-    extern const char*   Wiggling_Snake_preset;
-    const int            Wiggling_Snake_presetSize = 2272;
+    extern const char*   Stress_Timer_preset;
+    const int            Stress_Timer_presetSize = 2570;
+
+    extern const char*   Shuffle_Hussle_preset;
+    const int            Shuffle_Hussle_presetSize = 2574;
+
+    extern const char*   Oval_Galaxy_preset;
+    const int            Oval_Galaxy_presetSize = 2579;
+
+    extern const char*   Polyrythm_preset;
+    const int            Polyrythm_presetSize = 2562;
+
+    extern const char*   Master_Card_preset;
+    const int            Master_Card_presetSize = 2581;
+
+    extern const char*   Juggling_preset;
+    const int            Juggling_presetSize = 2563;
+
+    extern const char*   Harpeggio_preset;
+    const int            Harpeggio_presetSize = 2577;
+
+    extern const char*   Drip_Drop_preset;
+    const int            Drip_Drop_presetSize = 2589;
+
+    extern const char*   Dance_Of_Fire_preset;
+    const int            Dance_Of_Fire_presetSize = 2575;
+
+    extern const char*   Init_preset;
+    const int            Init_presetSize = 2554;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
     const int namedResourceListSize = 17;

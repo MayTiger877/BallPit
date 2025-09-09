@@ -369,7 +369,9 @@ float BallPitAudioProcessor::getVariedNoteVelocity(int currentNoteVelocity)
 	int velocityToAdd = (rand() % 100) - 50;
 	velocityToAdd = std::round((velocityToAdd * volumeVariation));
 
-	return (float)jmin((velocityToAdd + currentNoteVelocity), 127);
+	float toReturn = (float)jmin((velocityToAdd + currentNoteVelocity), 127);
+	
+	return (toReturn >= 0.0f) ? toReturn : 0.0f;
 }
 
 void BallPitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
